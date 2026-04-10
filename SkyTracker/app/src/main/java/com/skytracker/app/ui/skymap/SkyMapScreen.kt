@@ -17,9 +17,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +30,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.skytracker.app.data.model.CelestialBodyUI
 import com.skytracker.app.data.model.CelestialType
 import com.skytracker.app.ui.theme.CardBackground
-import com.skytracker.app.ui.theme.DeepSpaceBlue
 import com.skytracker.app.ui.theme.SpaceBlack
 import kotlin.math.min
 
@@ -133,80 +132,96 @@ fun SkyDomeCanvas(
     bodies: List<CelestialBodyUI>,
     modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = modifier) {
-        val cx = size.width / 2f
-        val cy = size.height / 2f
+    BoxWithConstraints(modifier = modifier) {
+        val widthPx  = constraints.maxWidth.toFloat()
+        val heightPx = constraints.maxHeight.toFloat()
+        val cx = widthPx  / 2f
+        val cy = heightPx / 2f
         val radius = min(cx, cy) - 4f
 
-        // ── Background – space gradient ────────────────────────────────────
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFF0A1245),
-                    Color(0xFF020818)
-                ),
-                center = Offset(cx, cy),
-                radius = radius
-            ),
-            radius = radius,
-            center = Offset(cx, cy)
-        )
+        // ── All graphical drawing on the Canvas ───────────────────────────────
+        Canvas(modifier = Modifier.fillMaxSize()) {
 
-        // ── Altitude circles (30° and 60°) ─────────────────────────────────
-        listOf(30.0, 60.0).forEach { alt ->
-            val r = (radius * (90.0 - alt) / 90.0).toFloat()
+            // Background – space gradient
             drawCircle(
-                color = Color(0x33FFFFFF),
-                radius = r,
-                center = Offset(cx, cy),
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1f)
+                brush = Brush.radialGradient(
+                    colors = listOf(Color(0xFF0A1245), Color(0xFF020818)),
+                    center = Offset(cx, cy),
+                    radius = radius
+                ),
+                radius = radius,
+                center = Offset(cx, cy)
             )
-        }
 
-        // ── Horizon ring ──────────────────────────────────────────────────
-        drawCircle(
-            color = Color(0x66AAAAAA),
-            radius = radius,
-            center = Offset(cx, cy),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f)
-        )
-
-        // ── Cardinal direction lines ───────────────────────────────────────
-        val cardinals = listOf(0.0, 90.0, 180.0, 270.0)
-        cardinals.forEach { az ->
-            val azRad = Math.toRadians(az)
-            val ex = cx + (radius * Math.sin(azRad)).toFloat()
-            val ey = cy - (radius * Math.cos(azRad)).toFloat()
-            drawLine(
-                color = Color(0x33FFFFFF),
-                start = Offset(cx, cy),
-                end   = Offset(ex, ey),
-                strokeWidth = 1f
-            )
-        }
-
-        // ── Stars (background dots) ───────────────────────────────────────
-        drawStarfield(cx, cy, radius)
-
-        // ── Celestial bodies ──────────────────────────────────────────────
-        bodies.forEach { body ->
-            if (body.altitude > -5.0) {  // show slightly below horizon for realism
-                val (dx, dy) = com.skytracker.app.util.AstronomyUtils.horizontalToCanvas(
-                    body.altitude, body.azimuth, radius
+            // Altitude circles (30° and 60°)
+            listOf(30.0, 60.0).forEach { alt ->
+                val r = (radius * (90.0 - alt) / 90.0).toFloat()
+                drawCircle(
+                    color = Color(0x33FFFFFF),
+                    radius = r,
+                    center = Offset(cx, cy),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1f)
                 )
-                val bx = cx + dx
-                val by = cy + dy
-                drawCelestialBody(body, bx, by)
+            }
+
+            // Horizon ring
+            drawCircle(
+                color = Color(0x66AAAAAA),
+                radius = radius,
+                center = Offset(cx, cy),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f)
+            )
+
+            // Cardinal direction lines
+            listOf(0.0, 90.0, 180.0, 270.0).forEach { az ->
+                val azRad = Math.toRadians(az)
+                val ex = cx + (radius * Math.sin(azRad)).toFloat()
+                val ey = cy - (radius * Math.cos(azRad)).toFloat()
+                drawLine(
+                    color = Color(0x33FFFFFF),
+                    start = Offset(cx, cy),
+                    end   = Offset(ex, ey),
+                    strokeWidth = 1f
+                )
+            }
+
+            // Stars (background dots)
+            drawStarfield(cx, cy, radius)
+
+            // Celestial bodies
+            bodies.forEach { body ->
+                if (body.altitude > -5.0) {
+                    val (dx, dy) = com.skytracker.app.util.AstronomyUtils.horizontalToCanvas(
+                        body.altitude, body.azimuth, radius
+                    )
+                    drawCelestialBody(body, cx + dx, cy + dy)
+                }
             }
         }
 
-        // ── Cardinal labels ───────────────────────────────────────────────
-        drawCardinalLabels(cx, cy, radius)
+        // ── Cardinal labels as Compose Text (avoids nativeCanvas) ────────────
+        val labelOffset = radius + 28f
+        listOf("N" to 0.0, "L" to 90.0, "S" to 180.0, "O" to 270.0).forEach { (label, az) ->
+            val azRad = Math.toRadians(az)
+            val lx = (cx + labelOffset * Math.sin(azRad)).toFloat()
+            val ly = (cy - labelOffset * Math.cos(azRad)).toFloat()
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.offset {
+                    IntOffset(
+                        (lx - 8.dp.toPx()).toInt(),
+                        (ly - 8.dp.toPx()).toInt()
+                    )
+                }
+            )
+        }
     }
 }
 
 private fun DrawScope.drawStarfield(cx: Float, cy: Float, radius: Float) {
-    // Deterministic "random" stars using a fixed seed pattern
     val stars = listOf(
         Triple(0.3f, 0.1f, 1.5f), Triple(-0.4f, 0.2f, 1f),  Triple(0.6f, -0.3f, 2f),
         Triple(-0.2f, -0.5f, 1.5f), Triple(0.5f, 0.5f, 1f), Triple(-0.6f, -0.1f, 2f),
@@ -221,13 +236,8 @@ private fun DrawScope.drawStarfield(cx: Float, cy: Float, radius: Float) {
     stars.forEach { (rx, ry, sz) ->
         val x = cx + rx * radius
         val y = cy + ry * radius
-        val d2 = (rx * rx + ry * ry)
-        if (d2 < 1f) {
-            drawCircle(
-                color = Color(0xCCFFFFFF),
-                radius = sz,
-                center = Offset(x, y)
-            )
+        if ((rx * rx + ry * ry) < 1f) {
+            drawCircle(color = Color(0xCCFFFFFF), radius = sz, center = Offset(x, y))
         }
     }
 }
@@ -265,24 +275,6 @@ private fun DrawScope.drawCelestialBody(body: CelestialBodyUI, x: Float, y: Floa
     }
 }
 
-private fun DrawScope.drawCardinalLabels(cx: Float, cy: Float, radius: Float) {
-    val paint = android.graphics.Paint().apply {
-        isAntiAlias = true
-        textSize = 36f
-        color = android.graphics.Color.WHITE
-        typeface = android.graphics.Typeface.DEFAULT_BOLD
-    }
-
-    val labels = listOf("N" to 0.0, "L" to 90.0, "S" to 180.0, "O" to 270.0)
-    labels.forEach { (label, az) ->
-        val azRad = Math.toRadians(az)
-        val offset = 28f
-        val lx = cx + ((radius + offset) * Math.sin(azRad)).toFloat() - paint.measureText(label) / 2f
-        val ly = cy - ((radius + offset) * Math.cos(azRad)).toFloat() + paint.textSize / 3f
-        drawContext.canvas.nativeCanvas.drawText(label, lx, ly, paint)
-    }
-}
-
 @Composable
 private fun VisibleBodiesSection(bodies: List<CelestialBodyUI>) {
     val visible = bodies.filter { it.isVisible }.sortedByDescending { it.altitude }
@@ -314,7 +306,6 @@ private fun CelestialBodyCard(body: CelestialBodyUI) {
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Colour indicator
             Surface(
                 color = body.color,
                 shape = RoundedCornerShape(50),
