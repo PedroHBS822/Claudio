@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches: ["**"]
-  workflow_dispatch:   # permite rodar manualmente pelo site do GitHub
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,6 +20,11 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.4"
+
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
 
@@ -32,25 +37,20 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
-      - name: Tornar gradlew executável
-        run: chmod +x SkyTracker/gradlew
-        working-directory: ${{ github.workspace }}
-
       - name: Injetar chaves de API
         working-directory: SkyTracker
         env:
           OPENWEATHER_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
           MAPS_KEY: ${{ secrets.MAPS_API_KEY }}
         run: |
-          # Se as chaves existirem como Secrets usa-as; caso contrário usa placeholder
-          OW_KEY="${OPENWEATHER_KEY:-COLOQUE_SUA_CHAVE_AQUI}"
-          MP_KEY="${MAPS_KEY:-COLOQUE_SUA_CHAVE_AQUI}"
+          OW_KEY="${OPENWEATHER_KEY:-PLACEHOLDER_OW}"
+          MP_KEY="${MAPS_KEY:-PLACEHOLDER_MAPS}"
           sed -i "s/YOUR_OPENWEATHERMAP_API_KEY/$OW_KEY/g" app/build.gradle.kts
           sed -i "s/YOUR_GOOGLE_MAPS_API_KEY/$MP_KEY/g"    app/build.gradle.kts
 
       - name: Build APK Debug
         working-directory: SkyTracker
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
