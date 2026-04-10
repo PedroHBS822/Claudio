@@ -23,10 +23,10 @@ android {
         }
 
         // Add your API keys here
-        buildConfigField("String", "OPENWEATHER_API_KEY", "\"YOUR_OPENWEATHERMAP_API_KEY\"")
-        buildConfigField("String", "MAPS_API_KEY", "\"YOUR_GOOGLE_MAPS_API_KEY\"")
+        buildConfigField("String", "OPENWEATHER_API_KEY", "\"231ea97128333bdbe04c7d8eb0bddead\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"AIzaSyCDtNFVTy_ZSRe5zFXgLsQboNIfRdD_Qu8\"")
 
-        manifestPlaceholders["mapsApiKey"] = "YOUR_GOOGLE_MAPS_API_KEY"
+        manifestPlaceholders["mapsApiKey"] = "AIzaSyCDtNFVTy_ZSRe5zFXgLsQboNIfRdD_Qu8"
     }
 
     buildTypes {
