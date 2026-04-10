@@ -163,7 +163,7 @@ object AstronomyUtils {
         val T = (jd - 2451545.0) / 36525.0
 
         val el  = getOrbitalElements(planet, T)
-        val elE = getOrbitalElements(Planet.EARTH,  T)
+        val elE = earthOrbitalElements(T)
 
         // Solve Kepler's equation for each body
         val Ep = solveKepler(el.M, el.e)
@@ -218,14 +218,6 @@ object AstronomyUtils {
                 w = ((131.60246718 + 0.00268329 * T) - (76.67984255 - 0.27769418 * T)).mod(360.0),
                 M = (181.97909950 + 58517.81538729 * T - (131.60246718 + 0.00268329 * T)).mod(360.0)
             )
-            Planet.EARTH -> OrbitalElements(
-                a = 1.00000261,
-                e = 0.01671123 - 0.00004392 * T,
-                i = -0.00001531 - 0.01294668 * T,
-                omega = 0.0,
-                w = (102.93768193 + 0.32327364 * T).mod(360.0),
-                M = (100.46457166 + 35999.37244981 * T - (102.93768193 + 0.32327364 * T)).mod(360.0)
-            )
             Planet.MARS -> OrbitalElements(
                 a = 1.52371034,
                 e = 0.09339410 + 0.00007882 * T,
@@ -252,6 +244,16 @@ object AstronomyUtils {
             )
         }
     }
+
+    // Earth's orbital elements (internal use only — not a visible planet)
+    private fun earthOrbitalElements(T: Double) = OrbitalElements(
+        a = 1.00000261,
+        e = 0.01671123 - 0.00004392 * T,
+        i = -0.00001531 - 0.01294668 * T,
+        omega = 0.0,
+        w = (102.93768193 + 0.32327364 * T).mod(360.0),
+        M = (100.46457166 + 35999.37244981 * T - (102.93768193 + 0.32327364 * T)).mod(360.0)
+    )
 
     // Heliocentric ecliptic XYZ from orbital elements + eccentric anomaly
     private fun eclipticXYZ(el: OrbitalElements, E: Double): Triple<Double, Double, Double> {

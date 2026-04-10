@@ -16,9 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -268,22 +266,20 @@ private fun DrawScope.drawCelestialBody(body: CelestialBodyUI, x: Float, y: Floa
 }
 
 private fun DrawScope.drawCardinalLabels(cx: Float, cy: Float, radius: Float) {
-    drawIntoCanvas { canvas ->
-        val paint = Paint().asFrameworkPaint().apply {
-            isAntiAlias = true
-            textSize = 36f
-            color = android.graphics.Color.WHITE
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-        }
+    val paint = android.graphics.Paint().apply {
+        isAntiAlias = true
+        textSize = 36f
+        color = android.graphics.Color.WHITE
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
 
-        val labels = listOf("N" to 0.0, "L" to 90.0, "S" to 180.0, "O" to 270.0)
-        labels.forEach { (label, az) ->
-            val azRad = Math.toRadians(az)
-            val offset = 28f
-            val lx = cx + ((radius + offset) * Math.sin(azRad)).toFloat() - paint.measureText(label) / 2f
-            val ly = cy - ((radius + offset) * Math.cos(azRad)).toFloat() + paint.textSize / 3f
-            canvas.nativeCanvas.drawText(label, lx, ly, paint)
-        }
+    val labels = listOf("N" to 0.0, "L" to 90.0, "S" to 180.0, "O" to 270.0)
+    labels.forEach { (label, az) ->
+        val azRad = Math.toRadians(az)
+        val offset = 28f
+        val lx = cx + ((radius + offset) * Math.sin(azRad)).toFloat() - paint.measureText(label) / 2f
+        val ly = cy - ((radius + offset) * Math.cos(azRad)).toFloat() + paint.textSize / 3f
+        drawContext.canvas.nativeCanvas.drawText(label, lx, ly, paint)
     }
 }
 
