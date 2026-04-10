@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4-point star (compass rose) representing the sky tracker -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#00B4D8"
+        android:pathData="M54,18 L59,49 L90,54 L59,59 L54,90 L49,59 L18,54 L49,49 Z" />
+    <path
+        android:fillColor="#E0F7FA"
+        android:pathData="M54,42 L56,52 L66,54 L56,56 L54,66 L52,56 L42,54 L52,52 Z" />
+</vector>

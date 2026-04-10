@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Round fallback vector icon for API 24-25 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#050D2A"
+        android:pathData="M24,0 A24,24 0 1,1 23.99,0 Z" />
+    <path android:fillColor="#00B4D8"
+        android:pathData="M24,6 L27,22 L42,24 L27,26 L24,42 L21,26 L6,24 L21,22 Z" />
+    <path android:fillColor="#E0F7FA"
+        android:pathData="M24,18 L25.5,23 L31,24 L25.5,25 L24,30 L22.5,25 L17,24 L22.5,23 Z" />
+</vector>
