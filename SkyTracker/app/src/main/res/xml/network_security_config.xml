@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow plain HTTP only for the Open Notify ISS API (http://api.open-notify.org) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">api.open-notify.org</domain>
+    </domain-config>
+    <!-- All other traffic must use HTTPS -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

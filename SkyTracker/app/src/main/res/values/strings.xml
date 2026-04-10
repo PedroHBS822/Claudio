@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SkyTracker</string>
+    <string name="nav_sky_map">Mapa do Céu</string>
+    <string name="nav_iss">ISS</string>
+    <string name="nav_weather">Clima</string>
+    <string name="permission_location_title">Permissão de Localização</string>
+    <string name="permission_location_rationale">
+        O SkyTracker precisa da sua localização GPS para calcular com precisão a
+        posição dos astros, rastrear a ISS e fornecer previsões climáticas locais.
+    </string>
+    <string name="grant_permission">Conceder Permissão</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="loading">Carregando…</string>
+    <string name="error_location">Não foi possível obter sua localização.</string>
+    <string name="error_network">Erro de conexão. Verifique sua internet.</string>
+</resources>
