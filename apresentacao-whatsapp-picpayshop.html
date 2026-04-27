@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Canal WhatsApp PicPay Shop</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 60px 80px;
+      position: relative;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide.active { display: flex; }
+
+    /* ── COVER ── */
+    .slide-cover {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      align-items: center;
+      text-align: center;
+    }
+
+    .slide-cover .logo-area {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .slide-cover h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #21d07a;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .slide-cover .subtitle {
+      font-size: 1.3rem;
+      color: #aaa;
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #21d07a22;
+      border: 1px solid #21d07a55;
+      color: #21d07a;
+      padding: 8px 24px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    /* ── STANDARD ── */
+    .slide-std {
+      background: #111827;
+    }
+
+    .slide-std.alt {
+      background: #0d1b2a;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #21d07a;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 32px;
+      line-height: 1.2;
+    }
+
+    h2 span { color: #21d07a; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      width: 100%;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px 32px;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #21d07a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p, .card li {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      line-height: 1.7;
+    }
+
+    .card ul { padding-left: 18px; }
+
+    .highlight-box {
+      background: #21d07a15;
+      border: 1px solid #21d07a44;
+      border-radius: 16px;
+      padding: 28px 36px;
+      margin-top: 8px;
+      width: 100%;
+    }
+
+    .highlight-box p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .highlight-box strong { color: #21d07a; }
+
+    .step-list {
+      list-style: none;
+      width: 100%;
+    }
+
+    .step-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px solid #1e293b;
+      font-size: 0.98rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-num {
+      min-width: 36px;
+      height: 36px;
+      background: #21d07a;
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .chip {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin: 4px;
+    }
+
+    .chip.green {
+      background: #21d07a22;
+      border-color: #21d07a55;
+      color: #21d07a;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .stat-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .stat-card .num {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #21d07a;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .label {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .warn-box {
+      background: #ff990011;
+      border: 1px solid #ff990044;
+      border-radius: 12px;
+      padding: 16px 24px;
+      color: #fbbf24;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-top: 16px;
+      width: 100%;
+    }
+
+    .info-box {
+      background: #3b82f611;
+      border: 1px solid #3b82f644;
+      border-radius: 12px;
+      padding: 16px 24px;
+      color: #93c5fd;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-top: 16px;
+      width: 100%;
+    }
+
+    a { color: #21d07a; word-break: break-all; }
+
+    /* ── SLIDE-END ── */
+    .slide-end {
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+      align-items: center;
+      text-align: center;
+    }
+
+    .slide-end h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #21d07a;
+      margin-bottom: 16px;
+    }
+
+    .slide-end p {
+      font-size: 1.2rem;
+      color: #94a3b8;
+    }
+
+    /* ── NAVIGATION ── */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #1e293bcc;
+      backdrop-filter: blur(8px);
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 10px 24px;
+      z-index: 100;
+    }
+
+    .nav button {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 8px;
+      transition: all .2s;
+    }
+
+    .nav button:hover { background: #334155; color: #fff; }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+
+    .nav .counter {
+      font-size: 0.85rem;
+      color: #64748b;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: #21d07a;
+      transition: width .3s;
+      z-index: 101;
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- SLIDE 1 – CAPA -->
+<div class="slide slide-cover active" id="slide-1">
+  <div class="logo-area">📱</div>
+  <h1>Canal WhatsApp<br>PicPay Shop</h1>
+  <p class="subtitle">Guia de uso, boas práticas e acessos</p>
+  <span class="badge">APRESENTAÇÃO INTERNA · 2025</span>
+</div>
+
+<!-- SLIDE 2 – AGENDA -->
+<div class="slide slide-std" id="slide-2">
+  <div class="tag">Agenda</div>
+  <h2>O que vamos <span>cobrir hoje</span></h2>
+  <ul class="step-list" style="max-width:700px">
+    <li><span class="step-num">1</span><span>Como funcionava antes — o fluxo manual</span></li>
+    <li><span class="step-num">2</span><span>Como vai funcionar a partir de agora</span></li>
+    <li><span class="step-num">3</span><span>Acessos necessários</span></li>
+    <li><span class="step-num">4</span><span>Boas práticas de imagem e texto</span></li>
+    <li><span class="step-num">5</span><span>Tipos de mensagem disponíveis</span></li>
+    <li><span class="step-num">6</span><span>Como crescer o canal juntos</span></li>
+  </ul>
+</div>
+
+<!-- SLIDE 3 – ANTES -->
+<div class="slide slide-std alt" id="slide-3">
+  <div class="tag">Fluxo anterior</div>
+  <h2>Como <span>funcionava</span> antes</h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>📥 Solicitação</h3>
+      <p>Quem queria enviar uma mensagem no canal mandava texto, imagem e link no Slack<br><strong style="color:#fff">#campanhas-canalwpp-picpayshop</strong></p>
+    </div>
+    <div class="card">
+      <h3>📤 Envio manual</h3>
+      <p>Parker recebia a mensagem, transferia para o celular e fazia o envio <strong style="color:#fff">manualmente</strong> no horário estipulado.</p>
+    </div>
+  </div>
+  <div class="warn-box" style="margin-top:28px">
+    ⚠️ <strong>Problema:</strong> Não existe programação de mensagens no WhatsApp — era necessário entrar no horário exato e disparar na mão, sobrecarregando Parker com todas as solicitações.
+  </div>
+</div>
+
+<!-- SLIDE 4 – COMO VAI FUNCIONAR -->
+<div class="slide slide-std" id="slide-4">
+  <div class="tag">Novo fluxo</div>
+  <h2>Como vai <span>funcionar</span> agora</h2>
+  <ul class="step-list">
+    <li>
+      <span class="step-num">1</span>
+      <span>Envie <strong style="color:#fff">texto, imagem, dia e horário</strong> no canal do Slack <strong style="color:#21d07a">#campanhas-canalwpp-picpayshop</strong></span>
+    </li>
+    <li>
+      <span class="step-num">2</span>
+      <span>Alguém do time de <strong style="color:#fff">Shop</strong> responde confirmando se pode seguir com a campanha ou não</span>
+    </li>
+    <li>
+      <span class="step-num">3</span>
+      <span>Aprovado? Quem solicitou (agora com acesso de <strong style="color:#fff">admin</strong>) faz o próprio envio no horário combinado</span>
+    </li>
+  </ul>
+  <div class="info-box">
+    ℹ️ <strong>Prioridade:</strong> O canal tem foco em produtos de Shop. Outras campanhas podem ser negociadas, mas Shop sempre tem prioridade.
+  </div>
+</div>
+
+<!-- SLIDE 5 – ACESSOS -->
+<div class="slide slide-std alt" id="slide-5">
+  <div class="tag">Acessos</div>
+  <h2>Acessos <span>necessários</span></h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>🟢 Admin do Canal WhatsApp</h3>
+      <p>Todos os presentes nesta reunião receberão <strong style="color:#fff">acesso de administrador</strong> do Canal do WhatsApp PicPay Shop.<br><br>Com isso, cada um poderá fazer envios sem depender de Parker.</p>
+    </div>
+    <div class="card">
+      <h3>📊 AppsFlyer</h3>
+      <p>Ferramenta oficial do PicPay para transformar deeplinks em links externos.<br><br>
+      Acesso via <strong style="color:#fff">One ID</strong>:<br>
+      <em>AppsFlyer — PicPay: Conta, Pix e Cartão — iOS</em><br><br>
+      <a href="https://hq1.appsflyer.com/cdp/landing-page" target="_blank">hq1.appsflyer.com/cdp/landing-page</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 – IMAGEM -->
+<div class="slide slide-std" id="slide-6">
+  <div class="tag">Boas práticas — Imagem</div>
+  <h2>Enviando <span>imagens</span></h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>📐 Formato recomendado</h3>
+      <ul>
+        <li>Mesmo formato da DM: <strong style="color:#fff">864 × 510 px</strong></li>
+        <li>Outros formatos são aceitos em casos específicos</li>
+        <li>Prefira imagens leves e bem otimizadas</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>💻 Envio pelo computador</h3>
+      <ul>
+        <li>PCs PicPay bloqueiam envio de imagens por padrão</li>
+        <li>Solicite acesso via <strong style="color:#fff">Jira</strong> ou contatando a TI</li>
+        <li>Alternativa: <strong style="color:#fff">Vincular ao Celular</strong> (Windows) — envia sem bloqueios</li>
+        <li>Cada um escolhe conforme seu SO e preferência</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 – TEXTO -->
+<div class="slide slide-std alt" id="slide-7">
+  <div class="tag">Boas práticas — Texto</div>
+  <h2>Escrevendo a <span>mensagem</span></h2>
+  <div class="two-col">
+    <div class="card">
+      <h3>✅ Pode</h3>
+      <ul>
+        <li>Emojis com moderação (1-2 por mensagem)</li>
+        <li>Tom leve e descontraído — combina com o canal</li>
+        <li>Textos curtos e diretos</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>❌ Evite</h3>
+      <ul>
+        <li>Excesso de emojis (IAs costumam exagerar — revise!)</li>
+        <li>Textos muito longos — o link pode ficar oculto em "ler mais"</li>
+        <li>Polêmicas e discriminação de outras áreas do PicPay</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warn-box">
+    ⚠️ Atenção ao tamanho do texto: se for muito grande, o WhatsApp oculta o conteúdo com "ler mais", podendo esconder o link da campanha.
+  </div>
+</div>
+
+<!-- SLIDE 8 – TIPOS DE MENSAGEM -->
+<div class="slide slide-std" id="slide-8">
+  <div class="tag">Funcionalidades</div>
+  <h2>Tipos de <span>mensagem</span> disponíveis</h2>
+  <p style="color:#64748b; margin-bottom:24px; font-size:0.95rem">Além das mensagens tradicionais, você pode usar:</p>
+  <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:32px">
+    <span class="chip green">📝 Mensagem tradicional</span>
+    <span class="chip green">📊 Enquete</span>
+    <span class="chip green">❓ Pergunta (resposta privada)</span>
+    <span class="chip green">🧠 Quiz</span>
+    <span class="chip green">🎵 Música</span>
+    <span class="chip green">🖼️ Figurinhas</span>
+    <span class="chip green">🎞️ GIFs</span>
+  </div>
+  <div class="info-box">
+    ℹ️ As <strong>perguntas</strong> permitem que o usuário responda, mas as respostas não ficam visíveis para todo o público — ótimo para colher feedback sem expor os seguidores.
+  </div>
+</div>
+
+<!-- SLIDE 9 – CRESCIMENTO -->
+<div class="slide slide-std alt" id="slide-9">
+  <div class="tag">Crescimento</div>
+  <h2>Crescendo o canal <span>juntos</span></h2>
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="num">29K</div>
+      <div class="label">Seguidores hoje</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">∞</div>
+      <div class="label">Potencial com time unido</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">0</div>
+      <div class="label">Custo por seguidor orgânico</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:28px">
+    <p>Para crescer, precisamos da ajuda de todos:<br>
+    <strong>• Incentive o acesso nas suas jornadas e comunicações</strong><br>
+    <strong>• Use pushs redirecionando para o canal do WhatsApp</strong><br>
+    <strong>• Divulgue o canal nos seus próprios canais e redes</strong></p>
+  </div>
+</div>
+
+<!-- SLIDE 10 – RESUMO -->
+<div class="slide slide-std" id="slide-10">
+  <div class="tag">Resumo</div>
+  <h2>Resumão <span>rápido</span></h2>
+  <ul class="step-list">
+    <li><span class="step-num">✓</span><span>Você agora tem <strong style="color:#fff">acesso de admin</strong> — faz o envio você mesmo</span></li>
+    <li><span class="step-num">✓</span><span>Solicite aprovação no Slack <strong style="color:#21d07a">#campanhas-canalwpp-picpayshop</strong> antes de enviar</span></li>
+    <li><span class="step-num">✓</span><span>Use <strong style="color:#fff">AppsFlyer</strong> para gerar links externos a partir de deeplinks</span></li>
+    <li><span class="step-num">✓</span><span>Imagem no formato <strong style="color:#fff">864×510px</strong>, texto curto, emojis com moderação</span></li>
+    <li><span class="step-num">✓</span><span>Explore os tipos de mensagem: enquetes, quiz, pergunta, GIFs...</span></li>
+    <li><span class="step-num">✓</span><span>Ajude o canal a crescer além dos <strong style="color:#fff">29K seguidores</strong></span></li>
+  </ul>
+</div>
+
+<!-- SLIDE 11 – FIM -->
+<div class="slide slide-end" id="slide-11">
+  <div style="font-size:3rem; margin-bottom:24px">🙌</div>
+  <h1>Obrigado!</h1>
+  <p style="margin-bottom: 12px;">Dúvidas? Me chame no Slack!</p>
+  <p style="font-size:0.9rem; color:#475569;">Canal WhatsApp PicPay Shop · 29K seguidores e crescendo</p>
+</div>
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button id="prev" onclick="changeSlide(-1)" disabled>&#8592;</button>
+  <span class="counter" id="counter">1 / 11</span>
+  <button id="next" onclick="changeSlide(1)">&#8594;</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 11;
+
+  function changeSlide(dir) {
+    document.getElementById('slide-' + current).classList.remove('active');
+    current = Math.max(1, Math.min(total, current + dir));
+    document.getElementById('slide-' + current).classList.add('active');
+    document.getElementById('counter').textContent = current + ' / ' + total;
+    document.getElementById('prev').disabled = current === 1;
+    document.getElementById('next').disabled = current === total;
+    document.getElementById('progress').style.width = ((current / total) * 100) + '%';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+
+  document.getElementById('progress').style.width = ((1 / total) * 100) + '%';
+</script>
+</body>
+</html>
