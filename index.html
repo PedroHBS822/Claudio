@@ -18,10 +18,7 @@
       padding: 2rem 1rem;
     }
 
-    header {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+    header { margin-bottom: 2rem; text-align: center; }
 
     header h1 {
       font-size: 2rem;
@@ -81,17 +78,22 @@
       max-width: 720px;
     }
 
-    #player-wrapper {
+    #player-section {
       display: none;
       width: 100%;
       max-width: 960px;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    #player-section.visible { display: flex; }
+
+    #player-wrapper {
       background: #000;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 40px rgba(0,0,0,0.7);
     }
-
-    #player-wrapper.visible { display: block; }
 
     .aspect-ratio {
       position: relative;
@@ -99,7 +101,7 @@
       height: 0;
     }
 
-    .aspect-ratio > * {
+    .aspect-ratio iframe {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -107,45 +109,26 @@
       border: none;
     }
 
-    /* Overlay shown when embedding is blocked */
-    #embed-blocked {
-      display: none;
-      flex-direction: column;
+    #fallback-bar {
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
-      background: #111;
-      color: #ccc;
-      text-align: center;
-      padding: 2rem;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      background: #1a1a1a;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #777;
     }
 
-    #embed-blocked.show { display: flex; }
-
-    #embed-blocked svg {
-      width: 48px;
-      height: 48px;
-      color: #ff0000;
-    }
-
-    #embed-blocked p { font-size: 0.95rem; line-height: 1.5; }
-
-    #embed-blocked a {
-      display: inline-block;
-      margin-top: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: #ff0000;
-      color: #fff;
-      border-radius: 6px;
+    #fallback-bar a {
+      color: #ff4444;
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.95rem;
-      transition: background 0.2s;
+      transition: color 0.2s;
     }
 
-    #embed-blocked a:hover { background: #cc0000; }
-
-    #yt-player { display: block; }
+    #fallback-bar a:hover { color: #ff0000; }
 
     #placeholder {
       display: flex;
@@ -158,12 +141,7 @@
       text-align: center;
     }
 
-    #placeholder svg {
-      width: 64px;
-      height: 64px;
-      opacity: 0.4;
-    }
-
+    #placeholder svg { width: 64px; height: 64px; opacity: 0.4; }
     #placeholder p { font-size: 1rem; }
   </style>
 </head>
@@ -186,17 +164,20 @@
 
   <p id="error-msg">Link inválido. Cole um link do YouTube válido.</p>
 
-  <div id="player-wrapper">
-    <div class="aspect-ratio">
-      <div id="yt-player"></div>
-      <div id="embed-blocked">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <p>Este vídeo não pode ser reproduzido aqui.<br>O dono desativou a incorporação em sites externos.</p>
-        <a id="yt-direct-link" href="#" target="_blank" rel="noopener">Assistir no YouTube</a>
+  <div id="player-section">
+    <div id="player-wrapper">
+      <div class="aspect-ratio">
+        <iframe
+          id="yt-frame"
+          src=""
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
       </div>
+    </div>
+    <div id="fallback-bar">
+      <span>Vídeo bloqueado ou não carregou?</span>
+      <a id="yt-direct" href="#" target="_blank" rel="noopener">Abrir no YouTube →</a>
     </div>
   </div>
 
@@ -207,20 +188,14 @@
     <p>Cole um link do YouTube acima para começar.</p>
   </div>
 
-  <!-- YouTube IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     const input       = document.getElementById('url-input');
     const btn         = document.getElementById('play-btn');
-    const wrapper     = document.getElementById('player-wrapper');
+    const frame       = document.getElementById('yt-frame');
+    const section     = document.getElementById('player-section');
     const placeholder = document.getElementById('placeholder');
     const errorMsg    = document.getElementById('error-msg');
-    const blocked     = document.getElementById('embed-blocked');
-    const directLink  = document.getElementById('yt-direct-link');
-
-    let ytPlayer = null;
-    let currentVideoId = null;
-    let apiReady = false;
+    const directLink  = document.getElementById('yt-direct');
 
     function extractVideoId(url) {
       try {
@@ -235,64 +210,22 @@
       return null;
     }
 
-    function showBlocked(videoId) {
-      document.getElementById('yt-player').style.display = 'none';
-      blocked.classList.add('show');
-      directLink.href = `https://www.youtube.com/watch?v=${videoId}`;
-    }
-
-    function hideBlocked() {
-      document.getElementById('yt-player').style.display = 'block';
-      blocked.classList.remove('show');
-    }
-
-    function loadVideo(videoId) {
-      hideBlocked();
-      wrapper.classList.add('visible');
-      placeholder.style.display = 'none';
-
-      if (ytPlayer && apiReady) {
-        ytPlayer.loadVideoById(videoId);
-      } else if (apiReady) {
-        createPlayer(videoId);
-      }
-      // if API not ready yet, onYouTubeIframeAPIReady will pick up currentVideoId
-    }
-
-    function createPlayer(videoId) {
-      ytPlayer = new YT.Player('yt-player', {
-        videoId,
-        playerVars: { autoplay: 1, rel: 0 },
-        events: {
-          onError: (e) => {
-            // 101 and 150/153 = embedding disabled by owner
-            if ([101, 150, 153].includes(e.data)) {
-              showBlocked(currentVideoId);
-            }
-          }
-        }
-      });
-    }
-
-    window.onYouTubeIframeAPIReady = () => {
-      apiReady = true;
-      if (currentVideoId) createPlayer(currentVideoId);
-    };
-
     function play() {
       const raw = input.value.trim();
-      const videoId = raw ? extractVideoId(raw) : null;
+      const id = raw ? extractVideoId(raw) : null;
 
-      if (!videoId) {
+      if (!id) {
         errorMsg.style.display = 'block';
-        wrapper.classList.remove('visible');
+        section.classList.remove('visible');
         placeholder.style.display = 'flex';
         return;
       }
 
       errorMsg.style.display = 'none';
-      currentVideoId = videoId;
-      loadVideo(videoId);
+      frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      directLink.href = `https://www.youtube.com/watch?v=${id}`;
+      section.classList.add('visible');
+      placeholder.style.display = 'none';
     }
 
     btn.addEventListener('click', play);
