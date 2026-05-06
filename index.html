@@ -83,7 +83,7 @@
       width: 100%;
       max-width: 960px;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
 
     #player-section.visible { display: flex; }
@@ -101,34 +101,69 @@
       height: 0;
     }
 
-    .aspect-ratio iframe {
+    #player-container {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      border: none;
     }
 
-    #fallback-bar {
+    #player-container iframe,
+    #player-container > div {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Status bar abaixo do player */
+    #status-bar {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      padding: 0.6rem 1rem;
+      justify-content: space-between;
+      padding: 0.55rem 1rem;
       background: #1a1a1a;
       border-radius: 8px;
-      font-size: 0.875rem;
-      color: #777;
+      font-size: 0.85rem;
+      gap: 1rem;
     }
 
-    #fallback-bar a {
+    #status-text { color: #777; }
+    #status-text.alt { color: #f0a500; }
+
+    #status-bar a {
       color: #ff4444;
       text-decoration: none;
       font-weight: 600;
+      white-space: nowrap;
       transition: color 0.2s;
     }
 
-    #fallback-bar a:hover { color: #ff0000; }
+    #status-bar a:hover { color: #ff0000; }
+
+    /* Spinner de carregamento */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: #111;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+    }
+
+    #loading-overlay.show { display: flex; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top-color: #ff0000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     #placeholder {
       display: flex;
@@ -167,17 +202,13 @@
   <div id="player-section">
     <div id="player-wrapper">
       <div class="aspect-ratio">
-        <iframe
-          id="yt-frame"
-          src=""
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-        ></iframe>
+        <div id="player-container"></div>
+        <div id="loading-overlay"><div class="spinner"></div></div>
       </div>
     </div>
-    <div id="fallback-bar">
-      <span>Vídeo bloqueado ou não carregou?</span>
-      <a id="yt-direct" href="#" target="_blank" rel="noopener">Abrir no YouTube →</a>
+    <div id="status-bar">
+      <span id="status-text">Reproduzindo via YouTube</span>
+      <a id="yt-direct" href="#" target="_blank" rel="noopener">Abrir no YouTube ↗</a>
     </div>
   </div>
 
@@ -188,26 +219,115 @@
     <p>Cole um link do YouTube acima para começar.</p>
   </div>
 
+  <!-- Servidores alternativos Invidious/Piped (em ordem de preferência) -->
   <script>
+    const ALT_SERVERS = [
+      id => `https://piped.video/embed/${id}`,
+      id => `https://inv.nadeko.net/embed/${id}`,
+      id => `https://invidious.fdn.fr/embed/${id}`,
+    ];
+
     const input       = document.getElementById('url-input');
     const btn         = document.getElementById('play-btn');
-    const frame       = document.getElementById('yt-frame');
     const section     = document.getElementById('player-section');
+    const container   = document.getElementById('player-container');
     const placeholder = document.getElementById('placeholder');
     const errorMsg    = document.getElementById('error-msg');
     const directLink  = document.getElementById('yt-direct');
+    const statusText  = document.getElementById('status-text');
+    const loading     = document.getElementById('loading-overlay');
+
+    let currentId = null;
+    let ytPlayer  = null;
+    let apiReady  = false;
+
+    // Carrega a IFrame API do YouTube para detectar erros automaticamente
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = function () {
+      apiReady = true;
+    };
 
     function extractVideoId(url) {
       try {
         const u = new URL(url.trim());
         if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
-        const shorts = u.pathname.match(/\/shorts\/([^/?&]+)/);
-        if (shorts) return shorts[1];
-        const embed = u.pathname.match(/\/embed\/([^/?&]+)/);
-        if (embed) return embed[1];
+        const s = u.pathname.match(/\/shorts\/([^/?&]+)/);
+        if (s) return s[1];
+        const e = u.pathname.match(/\/embed\/([^/?&]+)/);
+        if (e) return e[1];
         if (u.hostname.includes('youtube.com')) return u.searchParams.get('v');
       } catch (_) {}
       return null;
+    }
+
+    function setStatus(msg, isAlt = false) {
+      statusText.textContent = msg;
+      statusText.className = isAlt ? 'alt' : '';
+    }
+
+    function showLoading() { loading.classList.add('show'); }
+    function hideLoading() { loading.classList.remove('show'); }
+
+    function loadAltServer(id, index = 0) {
+      if (index >= ALT_SERVERS.length) {
+        setStatus('Não foi possível reproduzir. Tente abrir no YouTube →', true);
+        hideLoading();
+        return;
+      }
+      const url = ALT_SERVERS[index](id) + '?autoplay=1';
+      container.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+      iframe.allowFullscreen = true;
+      // Se o iframe falhar, tenta o próximo servidor
+      iframe.onerror = () => loadAltServer(id, index + 1);
+      container.appendChild(iframe);
+      setStatus(`Servidor alternativo${index > 0 ? ' ' + (index + 1) : ''} (Piped/Invidious)`, true);
+      hideLoading();
+    }
+
+    function loadYouTube(id) {
+      container.innerHTML = '<div id="yt-target"></div>';
+      showLoading();
+
+      if (!apiReady) {
+        // API ainda não carregou: usa iframe direto e mostra alternativa manual
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        container.innerHTML = '';
+        container.appendChild(iframe);
+        setStatus('Reproduzindo via YouTube');
+        hideLoading();
+        return;
+      }
+
+      if (ytPlayer) { try { ytPlayer.destroy(); } catch (_) {} ytPlayer = null; }
+
+      ytPlayer = new YT.Player('yt-target', {
+        videoId: id,
+        playerVars: { autoplay: 1, rel: 0 },
+        events: {
+          onReady: () => hideLoading(),
+          onError: (e) => {
+            // 101, 150, 153 = incorporação bloqueada
+            if ([101, 150, 153].includes(e.data)) {
+              setStatus('YouTube bloqueou. Tentando servidor alternativo…', true);
+              showLoading();
+              loadAltServer(id);
+            } else {
+              hideLoading();
+            }
+          }
+        }
+      });
+
+      setStatus('Reproduzindo via YouTube');
     }
 
     function play() {
@@ -222,10 +342,11 @@
       }
 
       errorMsg.style.display = 'none';
-      frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      currentId = id;
       directLink.href = `https://www.youtube.com/watch?v=${id}`;
       section.classList.add('visible');
       placeholder.style.display = 'none';
+      loadYouTube(id);
     }
 
     btn.addEventListener('click', play);
