@@ -214,9 +214,11 @@
 
     <div class="server-bar">
       <span>Servidor:</span>
-      <button class="srv-btn active"      data-server="youtube"   >YouTube</button>
-      <button class="srv-btn alt"         data-server="piped"     >Piped</button>
-      <button class="srv-btn alt2"        data-server="invidious" >Invidious</button>
+      <button class="srv-btn active" data-server="youtube"    >YouTube</button>
+      <button class="srv-btn alt"    data-server="piped"      >Piped</button>
+      <button class="srv-btn alt"    data-server="piped2"     >Piped 2</button>
+      <button class="srv-btn alt2"   data-server="invidious"  >Invidious</button>
+      <button class="srv-btn alt2"   data-server="invidious2" >Invidious 2</button>
       <div class="spacer"></div>
       <a id="yt-link" href="#" target="_blank" rel="noopener">Abrir no YouTube ↗</a>
     </div>
@@ -231,9 +233,11 @@
 
   <script>
     const SERVERS = {
-      youtube:   id => `https://www.youtube.com/embed/${id}?autoplay=1`,
-      piped:     id => `https://piped.video/embed/${id}?autoplay=1`,
-      invidious: id => `https://inv.nadeko.net/embed/${id}?autoplay=1`,
+      youtube:    id => `https://www.youtube.com/embed/${id}?autoplay=1`,
+      piped:      id => `https://piped.video/embed/${id}?autoplay=1`,
+      piped2:     id => `https://piped.privacydev.net/embed/${id}?autoplay=1`,
+      invidious:  id => `https://yewtu.be/embed/${id}?autoplay=1`,
+      invidious2: id => `https://invidious.nerdvpn.de/embed/${id}?autoplay=1`,
     };
 
     const input       = document.getElementById('url-input');
