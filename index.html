@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Player</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    header h1 span {
+      color: #ff0000;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+
+    #url-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 2px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #url-input:focus {
+      border-color: #ff0000;
+    }
+
+    #url-input::placeholder {
+      color: #555;
+    }
+
+    #play-btn {
+      padding: 0.75rem 1.4rem;
+      border-radius: 8px;
+      border: none;
+      background: #ff0000;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    #play-btn:hover { background: #cc0000; }
+    #play-btn:active { transform: scale(0.97); }
+
+    #error-msg {
+      display: none;
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-top: -1.4rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    #player-wrapper {
+      display: none;
+      width: 100%;
+      max-width: 960px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+    }
+
+    #player-wrapper.visible { display: block; }
+
+    .aspect-ratio {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+    }
+
+    .aspect-ratio iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    #placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 4rem 2rem;
+      color: #444;
+      text-align: center;
+    }
+
+    #placeholder svg {
+      width: 64px;
+      height: 64px;
+      opacity: 0.4;
+    }
+
+    #placeholder p {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>You<span>Tube</span> Player</h1>
+  </header>
+
+  <div class="input-row">
+    <input
+      id="url-input"
+      type="text"
+      placeholder="Cole o link do YouTube aqui..."
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="play-btn">Reproduzir</button>
+  </div>
+
+  <p id="error-msg">Link inválido. Cole um link do YouTube válido.</p>
+
+  <div id="player-wrapper">
+    <div class="aspect-ratio">
+      <iframe
+        id="yt-frame"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+
+  <div id="placeholder">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16.8 5 12 5 12 5s-4.8 0-7 .1c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.6 19 12 19 12 19s4.8 0 7-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9l5.4 2.8-5.4 2.7z"/>
+    </svg>
+    <p>Cole um link do YouTube acima para começar.</p>
+  </div>
+
+  <script>
+    const input = document.getElementById('url-input');
+    const btn = document.getElementById('play-btn');
+    const frame = document.getElementById('yt-frame');
+    const wrapper = document.getElementById('player-wrapper');
+    const placeholder = document.getElementById('placeholder');
+    const errorMsg = document.getElementById('error-msg');
+
+    function extractVideoId(url) {
+      try {
+        const u = new URL(url.trim());
+        // youtu.be/ID
+        if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
+        // youtube.com/shorts/ID
+        const shortsMatch = u.pathname.match(/\/shorts\/([^/?&]+)/);
+        if (shortsMatch) return shortsMatch[1];
+        // youtube.com/embed/ID
+        const embedMatch = u.pathname.match(/\/embed\/([^/?&]+)/);
+        if (embedMatch) return embedMatch[1];
+        // youtube.com/watch?v=ID
+        if (u.hostname.includes('youtube.com')) return u.searchParams.get('v');
+      } catch (_) {}
+      return null;
+    }
+
+    function play() {
+      const raw = input.value.trim();
+      const videoId = raw ? extractVideoId(raw) : null;
+
+      if (!videoId) {
+        errorMsg.style.display = 'block';
+        wrapper.classList.remove('visible');
+        placeholder.style.display = 'flex';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+      frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      wrapper.classList.add('visible');
+      placeholder.style.display = 'none';
+    }
+
+    btn.addEventListener('click', play);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') play(); });
+  </script>
+</body>
+</html>
