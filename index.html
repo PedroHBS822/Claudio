@@ -30,9 +30,7 @@
       letter-spacing: -0.5px;
     }
 
-    header h1 span {
-      color: #ff0000;
-    }
+    header h1 span { color: #ff0000; }
 
     .input-row {
       display: flex;
@@ -54,13 +52,8 @@
       transition: border-color 0.2s;
     }
 
-    #url-input:focus {
-      border-color: #ff0000;
-    }
-
-    #url-input::placeholder {
-      color: #555;
-    }
+    #url-input:focus { border-color: #ff0000; }
+    #url-input::placeholder { color: #555; }
 
     #play-btn {
       padding: 0.75rem 1.4rem;
@@ -106,13 +99,53 @@
       height: 0;
     }
 
-    .aspect-ratio iframe {
+    .aspect-ratio > * {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       border: none;
     }
+
+    /* Overlay shown when embedding is blocked */
+    #embed-blocked {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      background: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    #embed-blocked.show { display: flex; }
+
+    #embed-blocked svg {
+      width: 48px;
+      height: 48px;
+      color: #ff0000;
+    }
+
+    #embed-blocked p { font-size: 0.95rem; line-height: 1.5; }
+
+    #embed-blocked a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    #embed-blocked a:hover { background: #cc0000; }
+
+    #yt-player { display: block; }
 
     #placeholder {
       display: flex;
@@ -131,9 +164,7 @@
       opacity: 0.4;
     }
 
-    #placeholder p {
-      font-size: 1rem;
-    }
+    #placeholder p { font-size: 1rem; }
   </style>
 </head>
 <body>
@@ -157,12 +188,15 @@
 
   <div id="player-wrapper">
     <div class="aspect-ratio">
-      <iframe
-        id="yt-frame"
-        src=""
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
+      <div id="yt-player"></div>
+      <div id="embed-blocked">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p>Este vídeo não pode ser reproduzido aqui.<br>O dono desativou a incorporação em sites externos.</p>
+        <a id="yt-direct-link" href="#" target="_blank" rel="noopener">Assistir no YouTube</a>
+      </div>
     </div>
   </div>
 
@@ -173,30 +207,77 @@
     <p>Cole um link do YouTube acima para começar.</p>
   </div>
 
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const input = document.getElementById('url-input');
-    const btn = document.getElementById('play-btn');
-    const frame = document.getElementById('yt-frame');
-    const wrapper = document.getElementById('player-wrapper');
+    const input       = document.getElementById('url-input');
+    const btn         = document.getElementById('play-btn');
+    const wrapper     = document.getElementById('player-wrapper');
     const placeholder = document.getElementById('placeholder');
-    const errorMsg = document.getElementById('error-msg');
+    const errorMsg    = document.getElementById('error-msg');
+    const blocked     = document.getElementById('embed-blocked');
+    const directLink  = document.getElementById('yt-direct-link');
+
+    let ytPlayer = null;
+    let currentVideoId = null;
+    let apiReady = false;
 
     function extractVideoId(url) {
       try {
         const u = new URL(url.trim());
-        // youtu.be/ID
         if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
-        // youtube.com/shorts/ID
-        const shortsMatch = u.pathname.match(/\/shorts\/([^/?&]+)/);
-        if (shortsMatch) return shortsMatch[1];
-        // youtube.com/embed/ID
-        const embedMatch = u.pathname.match(/\/embed\/([^/?&]+)/);
-        if (embedMatch) return embedMatch[1];
-        // youtube.com/watch?v=ID
+        const shorts = u.pathname.match(/\/shorts\/([^/?&]+)/);
+        if (shorts) return shorts[1];
+        const embed = u.pathname.match(/\/embed\/([^/?&]+)/);
+        if (embed) return embed[1];
         if (u.hostname.includes('youtube.com')) return u.searchParams.get('v');
       } catch (_) {}
       return null;
     }
+
+    function showBlocked(videoId) {
+      document.getElementById('yt-player').style.display = 'none';
+      blocked.classList.add('show');
+      directLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+    }
+
+    function hideBlocked() {
+      document.getElementById('yt-player').style.display = 'block';
+      blocked.classList.remove('show');
+    }
+
+    function loadVideo(videoId) {
+      hideBlocked();
+      wrapper.classList.add('visible');
+      placeholder.style.display = 'none';
+
+      if (ytPlayer && apiReady) {
+        ytPlayer.loadVideoById(videoId);
+      } else if (apiReady) {
+        createPlayer(videoId);
+      }
+      // if API not ready yet, onYouTubeIframeAPIReady will pick up currentVideoId
+    }
+
+    function createPlayer(videoId) {
+      ytPlayer = new YT.Player('yt-player', {
+        videoId,
+        playerVars: { autoplay: 1, rel: 0 },
+        events: {
+          onError: (e) => {
+            // 101 and 150/153 = embedding disabled by owner
+            if ([101, 150, 153].includes(e.data)) {
+              showBlocked(currentVideoId);
+            }
+          }
+        }
+      });
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      apiReady = true;
+      if (currentVideoId) createPlayer(currentVideoId);
+    };
 
     function play() {
       const raw = input.value.trim();
@@ -210,9 +291,8 @@
       }
 
       errorMsg.style.display = 'none';
-      frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-      wrapper.classList.add('visible');
-      placeholder.style.display = 'none';
+      currentVideoId = videoId;
+      loadVideo(videoId);
     }
 
     btn.addEventListener('click', play);
