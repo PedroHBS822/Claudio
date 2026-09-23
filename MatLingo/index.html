@@ -2165,7 +2165,8 @@ function doImport(){ const raw=$('#imptxt').value; if(!raw.trim()){ $('#impmsg')
   closeModal(); render(); toast(`📥 ${added} questão${added!==1?'es':''} importada${added!==1?'s':''}${errs.length?` · ${errs.length} com problema`:''}`,3200);
   if(errs.length||untagged) setTimeout(()=>modal(`<h2>Importação concluída</h2><p><b>${added}</b> questões adicionadas.</p>${untagged?`<p class="muted">${untagged} questão(ões) ficaram sem assunto identificado — o diagnóstico por assunto não vai considerá-las. Adicione a linha <b>assuntos:</b> para ligá-las à trilha.</p>`:''}${errs.length?`<p style="color:var(--red)">Problemas:</p><ul style="padding-left:20px;font-size:14px">${errs.slice(0,10).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}<div class="actions"><button class="btn block" data-close>Ok</button></div>`),400); }
 function exportImp(){ const data=JSON.stringify(fv().imp.map(q=>({fonte:q.src,assuntos:q.tags,enunciado:q.q,alternativas:q.alts,gabarito:LETTERS[q.ans],erros:Object.fromEntries(q.why.map((w,i)=>[LETTERS[i],w]).filter(x=>x[1])),resolucao:q.steps,erradas:q.trap})),null,1);
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'application/json'})); a.download=BRAND.app.toLowerCase()+'-questoes-importadas.json'; document.body.appendChild(a); a.click(); a.remove(); }
+  modal(`<h2>💾 Exportar questões importadas</h2><p class="muted" style="font-size:14px">Copie este texto e guarde-o (ou cole em "Importar questões" em outro aparelho).</p><textarea id="exptxt" class="imptxt" readonly></textarea><div class="actions"><button class="btn block" data-fa="copyexp">Copiar</button><button class="btn ghost block" data-close>Fechar</button></div>`);
+  $('#exptxt').value=data; }
 
 /* ---------- Eventos do módulo ---------- */
 document.addEventListener('click',e=>{
@@ -2183,6 +2184,7 @@ document.addEventListener('click',e=>{
     case 'impex': $('#imptxt').value=IMPORT_HELP; break;
     case 'impgo': doImport(); break;
     case 'export': exportImp(); break;
+    case 'copyexp': { const t=$('#exptxt'); t.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(e){} if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(()=>toast('Copiado! 📋'),()=>{ if(!ok) toast('Selecione o texto e copie manualmente.'); }); else toast(ok?'Copiado! 📋':'Selecione o texto e copie manualmente.'); break; }
     case 'check': fuvCheck(false); break;
     case 'endsim': closeModal(); fuvFinish(); break;
     case 'skip': fuvCheck(true); break;
