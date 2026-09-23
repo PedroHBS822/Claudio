@@ -442,6 +442,53 @@ sup .blank,.fr .blank{width:64px;font-size:18px}
 .xpchart i{display:block;width:70%;max-width:34px;background:var(--blue);border-radius:6px 6px 2px 2px}
 .xpchart small{font-size:11px;font-weight:800;color:var(--muted)}.xpchart span{font-size:12px;font-weight:800;color:var(--muted)}
 .xpchart>b{position:absolute;right:0;font-size:10px;color:var(--gold-d);border-top:2px dashed var(--gold);left:0;text-align:right;line-height:1.4;pointer-events:none}
+
+/* ---------- FUVEST ---------- */
+.fuvhero p{font-size:15px}.fuvhero a{color:var(--blue);font-weight:800}
+.fuvcount{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.fuvcount span{background:var(--bg2);border-radius:10px;padding:6px 10px;font-size:14px}
+.fuvtag{font-size:12.5px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.fuvq{border:2px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:17px;line-height:1.55;margin-bottom:14px;overflow-wrap:anywhere}
+.fuvq.small{font-size:15px;margin:10px 0}
+.fuvopts .opt{font-size:16px;min-height:52px;font-weight:600}
+.fuvopts .opt .k{font-weight:900}
+.diag{border:2px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-top:14px;font-size:15px;text-align:left;width:100%}
+.diag.badd{border-color:var(--red);background:linear-gradient(0deg,var(--bg),var(--bg))}
+.diag.good{border-color:var(--green)}
+.dline{margin:4px 0}.dwhy{margin:8px 0;padding:8px 10px;border-radius:10px;background:var(--red-l);color:var(--red-t)}
+.diag.good .dwhy{background:var(--bg2);color:var(--text)}
+.dwhy ul{padding-left:18px;margin-top:4px}
+.diag details{margin-top:8px}.diag summary{cursor:pointer}
+.solsteps{padding-left:22px;margin-top:6px}.solsteps li{margin:5px 0}
+.revbox{margin-top:10px;padding-top:10px;border-top:2px dashed var(--border)}.revbox>b{display:block;margin-bottom:4px}
+.revrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap}
+.revrow>span:first-child{display:block;flex:1;min-width:160px}.revrow small{display:block;color:var(--muted);font-size:12.5px}
+.revrow>span:last-child{display:flex;gap:6px}
+.topicrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--border);flex-wrap:wrap}
+.topicrow:first-of-type{border-top:none}
+.topicrow .ti{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.topicrow .tn{flex:1;min-width:150px;display:flex;flex-direction:column;gap:3px}.topicrow .tn small{color:var(--muted);font-size:12.5px}
+.topicrow .tb{display:flex;gap:6px}
+.fuvres{width:100%;text-align:left}.fuvres>b{display:block;margin-bottom:6px;font-size:16px}
+.corr{border-top:1px dashed var(--border);padding:8px 0}.corr summary{cursor:pointer;font-weight:800;font-size:14.5px}
+.cs{display:inline-flex;width:24px;height:24px;border-radius:50%;align-items:center;justify-content:center;color:#fff;font-size:13px;margin-right:4px}
+.cs.ok{background:var(--green)}.cs.no{background:var(--red)}.cs.bl{background:var(--muted)}
+.tagcloud{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+.buildlist{list-style:none;counter-reset:st;display:flex;flex-direction:column;gap:8px;margin:12px 0;padding:10px;border:2px dashed var(--border-d);border-radius:var(--r);min-height:64px}
+.buildlist li{counter-increment:st;display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.buildlist li::before{content:counter(st);flex:none;width:26px;height:26px;border-radius:50%;background:var(--purple);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:8px}
+.buildlist li.bempty{color:var(--muted);font-size:14px;padding:8px}.buildlist li.bempty::before{display:none}
+.buildlist li em{flex-basis:100%;font-style:normal;font-size:12.5px;font-weight:800;margin-left:34px}
+.buildlist li.m-ok em{color:var(--green-t)}.buildlist li.m-pos em{color:var(--orange)}.buildlist li.m-trap em{color:var(--red-t)}
+.buildlist li.m-ok .bstep{border-color:var(--green)}.buildlist li.m-pos .bstep{border-color:var(--orange)}.buildlist li.m-trap .bstep{border-color:var(--red);text-decoration:line-through}
+.steppool{display:flex;flex-direction:column;gap:8px}
+.bstep{flex:1;text-align:left;border:2px solid var(--border);border-bottom-width:4px;border-radius:14px;background:var(--bg);padding:10px 12px;font-size:15.5px;font-weight:700;line-height:1.4}
+.bstep:active{transform:translateY(2px);border-bottom-width:2px}
+.bstep.chosen{border-color:#ce82ff;background:#faf2ff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bstep.chosen{background:#2a1f33}}
+:root[data-theme="dark"] .bstep.chosen{background:#2a1f33}
+.bstep.static{display:block}
+.imptxt{width:100%;min-height:220px;border:2px solid var(--border);border-radius:12px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2);color:var(--text);resize:vertical}
+@media (max-width:760px){.bottomnav .navbtn{font-size:10px;letter-spacing:0}.bottomnav .navbtn .ic{font-size:22px}}
 </style>
 </head>
 <body>
@@ -1546,6 +1593,159 @@ const CARDS={
 };
 
 /* =====================================================================
+   Banco FUVEST (Matemática) — questões ORIGINAIS no estilo da 1ª fase.
+   Não são cópias de provas oficiais. Cada alternativa errada tem o erro
+   típico que leva a ela; "steps" é a resolução e "trap" são passos com
+   erros comuns usados no modo Montar resolução.
+   ===================================================================== */
+const FUVQ=[
+{id:'fm01',area:'Progressões e geometria',tags:['pa','ang'],
+ q:'As medidas dos ângulos internos de um triângulo estão em progressão aritmética, e o maior deles mede 80°. A medida do menor ângulo é',
+ alts:['20°','30°','40°','50°','60°'],ans:2,
+ why:['20° é a razão da PA, não o menor ângulo.','Com 30°, o termo médio seria 55° e a soma não daria 180°.','','50° não forma PA com soma 180° e maior termo 80°.','60° é o termo médio da PA (a), não o menor.'],
+ steps:['Escreva os ângulos como a − r, a e a + r.','A soma dos ângulos internos é 180°: 3a = 180°, logo a = 60°.','O maior é a + r = 80°, então r = 20°.','O menor é a − r = 60° − 20° = 40°.'],
+ trap:['A soma dos ângulos internos é 360°: 3a = 360°, logo a = 120°.','O menor é a + r = 80°.']},
+{id:'fm02',area:'Probabilidade',tags:['prob','mmc'],
+ q:'Dois dados comuns, não viciados, são lançados. A probabilidade de que a soma dos resultados seja um número primo é',
+ alts:[F(5,12),F(7,18),F(5,11),F(1,3),F(1,2)],ans:0,
+ why:['',`${F(7,18)} = ${F(14,36)}: faltou contar a soma 2 (1 + 1).`,`${F(5,11)} considera as 11 somas possíveis (2 a 12) igualmente prováveis — elas não são.`,`${F(1,3)} = ${F(12,36)}: faltaram as somas 2 e 3.`,`${F(1,2)} conta todas as somas ímpares, mas 9 não é primo e 2 (par) é primo.`],
+ steps:['O espaço amostral tem 6 × 6 = 36 pares igualmente prováveis.','As somas primas possíveis são 2, 3, 5, 7 e 11.','Pares favoráveis: 1 + 2 + 4 + 6 + 2 = 15.',`P = ${F(15,36)} = ${F(5,12)}.`],
+ trap:['Há 11 somas possíveis (2 a 12), todas igualmente prováveis.','As somas primas possíveis são 3, 5, 7, 9 e 11.']},
+{id:'fm03',area:'Função quadrática',tags:['fquad'],
+ q:'A altura, em metros, de um projétil lançado verticalmente é dada por h(t) = −5t² + 30t, com t em segundos. A altura máxima atingida e o instante em que ela ocorre são, respectivamente,',
+ alts:['45 m e 3 s','90 m e 3 s','45 m e 6 s','30 m e 3 s','180 m e 6 s'],ans:0,
+ why:['','90 m: calculou só 30·3, esquecendo o termo −5t².','6 s é o instante em que o projétil volta ao solo (raiz), não o do máximo.','30 m confunde o coeficiente b com a altura.','180 m e 6 s: usou t = 6 s, a raiz, no lugar do vértice.'],
+ steps:['O máximo ocorre no vértice: t<sub>v</sub> = −b/(2a).','t<sub>v</sub> = −30/(2·(−5)) = 3 s.','h(3) = −5·9 + 30·3 = −45 + 90.','h<sub>máx</sub> = 45 m.'],
+ trap:['t<sub>v</sub> = −b/a = 6 s.','h(3) = 5·9 + 30·3 = 135 m.']},
+{id:'fm04',area:'Logaritmos',tags:['log'],
+ q:'Considerando log 2 ≈ 0,30 e log 3 ≈ 0,48, o valor aproximado de log 72 é',
+ alts:['0,78','0,864','1,38','1,86','2,04'],ans:3,
+ why:['0,78 = log 2 + log 3: esqueceu os expoentes de 72 = 2³·3².','0,864 = 0,90 × 0,96: multiplicou os logaritmos em vez de somá-los.','1,38 = 3·0,30 + 0,48: esqueceu o expoente 2 de 3².','','2,04 = 2·0,30 + 3·0,48: trocou os expoentes (72 = 2³·3², não 2²·3³).'],
+ steps:['Fatore: 72 = 2³ · 3².','log 72 = log 2³ + log 3².','log 72 = 3·log 2 + 2·log 3.','log 72 ≈ 0,90 + 0,96 = 1,86.'],
+ trap:['log 72 = log 2³ · log 3².','log 72 = 2·log 2 + 3·log 3.']},
+{id:'fm05',area:'Geometria analítica',tags:['gan','fafim'],
+ q:'A reta que passa pelos pontos A(1, 2) e B(3, 8) intercepta o eixo das ordenadas no ponto',
+ alts:['(0, −1)','(0, 1)','(1/3, 0)','(0, 2)','(0, −3)'],ans:0,
+ why:['','(0, 1): erro de sinal ao isolar y em y − 2 = 3(x − 1).','(1/3, 0) é a interseção com o eixo x, não com o eixo y.','(0, 2): usou a ordenada de A como se A estivesse no eixo y.','(0, −3): usou y = 3x − 3, esquecendo de somar 2.'],
+ steps:['Coeficiente angular: m = (8 − 2)/(3 − 1) = 3.','Equação: y − 2 = 3(x − 1).','Isolando: y = 3x − 1.','No eixo y, x = 0: y = −1 → ponto (0, −1).'],
+ trap:['Coeficiente angular: m = (3 − 1)/(8 − 2) = 1/3.','No eixo y, y = 0: x = 1/3.']},
+{id:'fm06',area:'Análise combinatória',tags:['comb'],
+ q:'O número de anagramas da palavra FUVEST que começam e terminam por vogal é',
+ alts:['12','24','48','96','720'],ans:2,
+ why:['12: considerou só 3 letras no meio (3! · 2).','24: contou o meio (4!), mas esqueceu que U e E podem trocar de extremo.','','96: multiplicou por 2 mais de uma vez.','720 = 6!: são todos os anagramas, sem a restrição.'],
+ steps:['Vogais: U e E. Consoantes: F, V, S, T.','Os extremos são as duas vogais: 2 maneiras (U…E ou E…U).','As 4 consoantes permutam no meio: 4! = 24.','Total: 2 × 24 = 48.'],
+ trap:['As 6 letras permutam livremente: 6! = 720.','Os extremos só podem ser U…E: 1 maneira.']},
+{id:'fm07',area:'Porcentagem',tags:['porc','juros'],
+ q:'O preço de um produto sofreu um aumento de 25% e, em seguida, um desconto de 20%. Em relação ao preço inicial, o preço final é',
+ alts:['5% maior','5% menor','igual','2% maior','45% maior'],ans:2,
+ why:['5% maior: subtraiu as porcentagens (25% − 20%), mas elas incidem sobre valores diferentes.','5% menor: aplicou o desconto sobre o preço inicial e o aumento sobre o novo.','','2% maior: errou a multiplicação dos fatores.','45% maior: somou as porcentagens.'],
+ steps:['Aumento de 25%: multiplicar por 1,25.','Desconto de 20%: multiplicar por 0,80.','Fator total: 1,25 × 0,80 = 1,00.','O preço final é igual ao inicial.'],
+ trap:['Fator total: 25% − 20% = +5%.','Desconto de 20%: multiplicar por 1,20.']},
+{id:'fm08',area:'Trigonometria',tags:['trig'],
+ q:'Uma escada de 6 m está apoiada numa parede vertical e forma um ângulo de 60° com o chão horizontal. A altura, em metros, do ponto em que a escada toca a parede é',
+ alts:['3','3√2','3√3','6√3','2√3'],ans:2,
+ why:['3 = 6·cos 60°: essa é a distância do pé da escada à parede.','3√2 usaria sen 45°, não 60°.','','6√3: esqueceu de multiplicar por 1/2 (sen 60° = √3/2).','2√3 = 6·tg 30°: escolheu a razão errada.'],
+ steps:['A escada é a hipotenusa do triângulo retângulo: 6 m.','A altura é o cateto oposto ao ângulo de 60°.','h = 6 · sen 60° = 6 · √3/2.','h = 3√3 m.'],
+ trap:['A altura é o cateto adjacente ao ângulo de 60°.','h = 6 · cos 60° = 3 m.']},
+{id:'fm09',area:'Equação do 2º grau',tags:['eq2'],
+ q:'Uma das raízes da equação x² − 9x + k = 0 é o dobro da outra. O valor de k é',
+ alts:['6','9','18','27','36'],ans:2,
+ why:['6: tomou k como a maior raiz.','9 é a soma das raízes, não o produto.','','27 = 3 · 9: multiplicou a menor raiz pela soma.','36 = 6 · 6: elevou a maior raiz ao quadrado.'],
+ steps:['Chame as raízes de r e 2r.','Soma das raízes: r + 2r = 9 (= −b/a), logo r = 3.','As raízes são 3 e 6.','k é o produto das raízes (c/a): k = 3 · 6 = 18.'],
+ trap:['Soma das raízes: r + 2r = −9, logo r = −3.','k é a soma das raízes: k = 3 + 6 = 9.']},
+{id:'fm10',area:'Geometria plana',tags:['area','pit'],
+ q:'Um quadrado está inscrito em uma circunferência de raio 5 cm. A área do quadrado, em cm², é',
+ alts:['25','50','100','25π','50π'],ans:1,
+ why:['25: tomou o lado do quadrado igual ao raio.','','100: tomou o lado igual ao diâmetro (a diagonal é que mede 10).','25π é a área do círculo.','50π mistura a área do quadrado com π sem motivo.'],
+ steps:['A diagonal do quadrado inscrito é o diâmetro: d = 10 cm.','d = ℓ√2, logo ℓ = 10/√2 = 5√2 cm.','Área = ℓ² = (5√2)² = 50 cm².'],
+ trap:['O lado do quadrado é o diâmetro: ℓ = 10 cm.','Área = ℓ² = (5√2)² = 10√2 cm².']},
+{id:'fm11',area:'Função exponencial',tags:['fexp','pg'],
+ q:'Uma cultura de bactérias dobra de tamanho a cada 3 horas. Se ela começa com 500 bactérias, após quanto tempo terá 16 000 bactérias?',
+ alts:['5 h','10 h','15 h','32 h','96 h'],ans:2,
+ why:['5 h é o número de duplicações (2⁵ = 32), não o tempo.','10 h: usou 2 horas por duplicação.','','32 h: confundiu o fator de crescimento com o tempo.','96 h = 32 × 3: multiplicou o fator (32) em vez do expoente (5) pelas 3 horas.'],
+ steps:['N(t) = 500 · 2<sup>t/3</sup>.','16 000 = 500 · 2<sup>t/3</sup> ⇒ 2<sup>t/3</sup> = 32.','32 = 2⁵, logo t/3 = 5.','t = 15 horas.'],
+ trap:['32 = 2⁵, logo t = 5 horas.','2<sup>t/3</sup> = 16 000 − 500.']},
+{id:'fm12',area:'Estatística',tags:['est'],
+ q:'A média aritmética de cinco números é 8. Retirando-se um deles, a média dos quatro restantes passa a ser 7. O número retirado é',
+ alts:['1','7','8','12','15'],ans:3,
+ why:['1 = 8 − 7: subtraiu as médias, não as somas.','7 é a nova média.','8 é a média antiga — só seria retirado se a média não mudasse.','','15 = 8 + 7: somou as médias.'],
+ steps:['Soma dos 5 números: 5 · 8 = 40.','Soma dos 4 restantes: 4 · 7 = 28.','Número retirado: 40 − 28 = 12.'],
+ trap:['Número retirado: 8 − 7 = 1.','Soma dos 4 restantes: 5 · 7 = 35.']},
+{id:'fm13',area:'Sistemas lineares',tags:['sist'],
+ q:'Em um estacionamento há apenas carros e motos, totalizando 40 veículos e 130 rodas. O número de motos é',
+ alts:['10','15','20','25','65'],ans:1,
+ why:['10: errou a eliminação no sistema.','','20: dividiu os veículos igualmente.','25 é o número de carros.','65 = 130/2: dividiu as rodas por 2, como se todos fossem motos.'],
+ steps:['Sejam C carros e M motos: C + M = 40 e 4C + 2M = 130.','Multiplicando a primeira por 2: 2C + 2M = 80.','Subtraindo: 2C = 50, logo C = 25.','M = 40 − 25 = 15 motos.'],
+ trap:['Somando as equações: 5C + 3M = 170.','Resposta: 25 motos.']},
+{id:'fm14',area:'Números complexos',tags:['cpx'],
+ q:'O módulo do número complexo z = (1 + i)⁴ é',
+ alts:['−4','2','2√2','4','16'],ans:3,
+ why:['−4 é o próprio z; o módulo nunca é negativo.','2 = |1 + i|²: parou na segunda potência.','2√2 = |1 + i|³.','','16: elevou 2 (e não √2) à quarta potência.'],
+ steps:['(1 + i)² = 1 + 2i + i² = 2i.','(1 + i)⁴ = (2i)² = 4i² = −4.','|z| = |−4| = 4.'],
+ trap:['(1 + i)² = 1 + i² = 0.','|z| = −4.']},
+{id:'fm15',area:'Progressão geométrica',tags:['pg'],
+ q:'A soma dos infinitos termos da progressão geométrica (12, 6, 3, …) é',
+ alts:['18','21','24','36','infinita'],ans:2,
+ why:['18 = 12 + 6: somou só dois termos.','21 = 12 + 6 + 3: somou só três termos.','','36: usou S = a₁/q.','Com |q| < 1, a soma converge.'],
+ steps:['a₁ = 12 e q = 6/12 = 1/2.','Como |q| < 1, a soma infinita é S = a₁/(1 − q).','S = 12/(1/2) = 24.'],
+ trap:['q = 12/6 = 2, logo a soma é infinita.','S = a₁/(1 + q) = 8.']},
+{id:'fm16',area:'Matrizes',tags:['mat','eq2'],
+ q:`Os valores reais de x para os quais a matriz ${MX([['x',2],[3,'x + 1']])} não é invertível são`,
+ alts:['2 e −3','−2 e 3','0 e −1','1 e −6','somente 6'],ans:0,
+ why:['','−2 e 3: erro de sinal ao resolver x² + x − 6 = 0.','0 e −1 anulam x(x + 1), mas esqueceu o termo 2·3.','1 e −6 resolvem x² + 5x − 6 = 0, equação errada.','6 é o produto 2·3, não um valor de x.'],
+ steps:['Uma matriz não é invertível quando o determinante é zero.','det = x(x + 1) − 2·3.','x² + x − 6 = 0.','x = 2 ou x = −3.'],
+ trap:['det = x(x + 1) + 2·3.','Uma matriz não é invertível quando o determinante é 1.']},
+{id:'fm17',area:'Semelhança',tags:['tales','prop'],
+ q:'Num mesmo instante, um poste projeta uma sombra de 12 m e uma pessoa de 1,80 m projeta uma sombra de 2,40 m. A altura do poste é',
+ alts:['6 m','9 m','12 m','14,4 m','16 m'],ans:1,
+ why:['6 m: dividiu a sombra por 2 sem montar a proporção.','','12 m: igualou altura e sombra (só vale com o Sol a 45°).','14,4 m: multiplicou 12 por 1,2.','16 m: inverteu a razão (12 · 2,40/1,80).'],
+ steps:['Os triângulos altura–sombra são semelhantes.','H/12 = 1,80/2,40.','H = 12 · 0,75 = 9 m.'],
+ trap:['H/12 = 2,40/1,80.','H = 12 · 1,80 · 2,40 = 51,84 m.']},
+{id:'fm18',area:'Geometria espacial',tags:['esp'],
+ q:'Um cilindro tem raio da base 3 cm e altura 10 cm. O volume de um cone com a mesma base e a mesma altura, usando π ≈ 3, é',
+ alts:['30 cm³','60 cm³','90 cm³','180 cm³','270 cm³'],ans:2,
+ why:['30 cm³: dividiu por 3 duas vezes.','60 cm³: usou r·h·2 em vez de r²·h.','','180 cm³: dividiu o cilindro por 1,5.','270 cm³ é o volume do cilindro.'],
+ steps:['Volume do cilindro: π r² h = 3 · 9 · 10 = 270 cm³.','O cone tem 1/3 do volume do cilindro de mesma base e altura.','V = 270/3 = 90 cm³.'],
+ trap:['O cone tem 1/2 do volume do cilindro.','Volume do cilindro: π r h = 90 cm³.']},
+{id:'fm19',area:'Conjuntos',tags:['conj'],
+ q:'Numa turma de 50 alunos, 30 gostam de Matemática, 25 gostam de Física e 10 não gostam de nenhuma das duas. O número de alunos que gostam das duas matérias é',
+ alts:['5','10','15','20','25'],ans:2,
+ why:['5 = 30 + 25 − 50: esqueceu os 10 que não gostam de nenhuma.','10 é o número dos que não gostam de nenhuma.','','20: errou a subtração.','25 é o número dos que gostam de Física.'],
+ steps:['Gostam de pelo menos uma: 50 − 10 = 40.','n(M ∪ F) = n(M) + n(F) − n(M ∩ F).','40 = 30 + 25 − x.','x = 15.'],
+ trap:['Gostam de pelo menos uma: 50 alunos.','n(M ∪ F) = n(M) + n(F) + n(M ∩ F).']},
+{id:'fm20',area:'Função afim e inequações',tags:['fafim','ineq'],
+ q:'A empresa A cobra R$ 40,00 fixos mais R$ 2,00 por quilômetro; a empresa B cobra R$ 20,00 fixos mais R$ 3,00 por quilômetro. A empresa A é mais vantajosa para percursos',
+ alts:['de menos de 20 km','de mais de 20 km','de mais de 12 km','de mais de 60 km','de qualquer distância'],ans:1,
+ why:['Menos de 20 km: inverteu o sentido da desigualdade.','','12 km: dividiu 60 por 5 somando os preços por km.','60 km: somou os valores fixos.','Para pouca distância, B é mais barata (taxa fixa menor).'],
+ steps:['Custo de A: 40 + 2x. Custo de B: 20 + 3x.','A é mais vantajosa quando 40 + 2x < 20 + 3x.','20 < x.','A compensa para mais de 20 km.'],
+ trap:['A é mais vantajosa quando 40 + 2x > 20 + 3x.','x < 20: A compensa para menos de 20 km.']},
+{id:'fm21',area:'MMC',tags:['mmc'],
+ q:'Três luzes piscam a cada 12 s, 18 s e 30 s, respectivamente. Se às 8h00min00s piscaram juntas, elas voltarão a piscar juntas pela primeira vez às',
+ alts:['8h00min06s','8h01min00s','8h03min00s','8h06min00s','8h10min00s'],ans:2,
+ why:['6 s é o MDC(12, 18, 30), não o MMC.','1 minuto = 12 + 18 + 30 segundos: somou os intervalos.','','6 minutos = 360 s: usou um múltiplo comum, mas não o menor.','10 minutos: usou 12·18·30 dividido de forma errada.'],
+ steps:['Procuramos o menor tempo múltiplo de 12, 18 e 30: o MMC.','12 = 2²·3, 18 = 2·3², 30 = 2·3·5.','MMC = 2²·3²·5 = 180 s = 3 min.','Piscarão juntas às 8h03min00s.'],
+ trap:['Procuramos o MDC(12, 18, 30) = 6 s.','MMC = 12 + 18 + 30 = 60 s.']},
+{id:'fm22',area:'Radiciação',tags:['raiz','alg'],
+ q:'O valor de (√8 + √18)² é',
+ alts:['26','5√2','50','72','100'],ans:2,
+ why:['26 = 8 + 18: esqueceu o termo 2ab do quadrado da soma.','5√2 é √8 + √18 — faltou elevar ao quadrado.','','72 = 8·9: somou errado os radicais.','100 = (√8 + √18)² com √8 + √18 = 10, o que é falso.'],
+ steps:['√8 = 2√2 e √18 = 3√2.','√8 + √18 = 5√2.','(5√2)² = 25 · 2 = 50.'],
+ trap:['(√8 + √18)² = 8 + 18 = 26.','√8 + √18 = √26.']},
+{id:'fm23',area:'Ciclo trigonométrico',tags:['ciclo','trig'],
+ q:'O número de soluções da equação sen x = 1/2 no intervalo 0 ≤ x < 2π é',
+ alts:['nenhuma','1','2','3','4'],ans:2,
+ why:['Existem soluções, pois 1/2 está entre −1 e 1.','1: considerou só x = π/6 e esqueceu o 2º quadrante.','','3: contou π/6, 5π/6 e 13π/6 (fora do intervalo).','4: somou também as soluções de cos x = 1/2.'],
+ steps:['O seno é positivo no 1º e no 2º quadrantes.','No 1º quadrante: x = π/6.','No 2º quadrante: x = π − π/6 = 5π/6.','São 2 soluções.'],
+ trap:['O seno é positivo no 1º e no 4º quadrantes.','No 2º quadrante: x = π + π/6.']},
+{id:'fm24',area:'Geometria espacial',tags:['esp','pit'],
+ q:'A diagonal de um cubo de aresta 2 cm mede',
+ alts:['2√2 cm','2√3 cm','4 cm','6 cm','12 cm'],ans:1,
+ why:['2√2 cm é a diagonal de uma face, não do cubo.','','4 cm: somou duas arestas.','6 cm: somou três arestas.','12 cm é o quadrado da diagonal (D² = 12).'],
+ steps:['Diagonal de uma face: d = a√2 = 2√2 cm.','A diagonal do cubo é a hipotenusa do triângulo de catetos d e a.','D² = d² + a² = 8 + 4 = 12.','D = √12 = 2√3 cm.'],
+ trap:['A diagonal do cubo é igual à diagonal da face.','D² = d² − a² = 4, logo D = 2 cm.']},
+];
+
+/* =====================================================================
    Índices
    ===================================================================== */
 const ALL=[],SK={};
@@ -1740,10 +1940,270 @@ function closeModal(){ $('#modalroot').innerHTML=''; }
 const modalOpen=()=>!!$('#modalroot').firstChild;
 
 /* =====================================================================
+   Preparação FUVEST — banco de questões, simulados, diagnóstico e
+   "montar resolução" (compartilhado por MatLingo e FisLingo)
+   ===================================================================== */
+const LETTERS='ABCDE';
+const FUV_BANK=(typeof FUVQ!=='undefined'?FUVQ:[]).map(q=>Object.assign({origin:'bank',set:'Banco original (estilo FUVEST)',src:'Estilo FUVEST'},q,{tags:(q.tags||[]).filter(t=>SK[t])}));
+function fv(){ const d={stats:{},hist:[],wrong:[],imp:[],seen:{}}; if(!S.fuv) S.fuv=d; for(const k in d) if(S.fuv[k]==null) S.fuv[k]=d[k]; return S.fuv; }
+function fuvAll(){ return FUV_BANK.concat(fv().imp); }
+function fuvById(id){ return fuvAll().find(q=>q.id===id); }
+const fuvText=q=>q.origin==='bank'?q.q:esc(q.q).replace(/\n/g,'<br>');
+const fuvAlt=(q,i)=>q.origin==='bank'?q.alts[i]:esc(q.alts[i]);
+const fuvStep=(q,s)=>q.origin==='bank'?s:esc(s);
+
+/* ---------- Tela principal ---------- */
+function renderFuvest(){
+  const F=fv(),all=fuvAll(),nb=FUV_BANK.length,ni=F.imp.length,nbuild=all.filter(q=>q.steps&&q.steps.length>=2).length,nw=F.wrong.filter(id=>fuvById(id)).length;
+  const sets={}; all.forEach(q=>{ sets[q.set]=(sets[q.set]||0)+1; });
+  const topics=Object.entries(F.stats).filter(([id])=>SK[id]).map(([id,[c,w]])=>({id,c,w,acc:c/(c+w)})).filter(t=>t.c+t.w>0).sort((a,b)=>a.acc-b.acc||b.w-a.w);
+  const tagCount={}; all.forEach(q=>q.tags.forEach(t=>tagCount[t]=(tagCount[t]||0)+1));
+  let h=`<h2 class="section-title">🎓 Preparação FUVEST</h2>
+  <div class="card fuvhero"><p>Treine no formato da <b>1ª fase</b> (5 alternativas), veja <b>exatamente o que errou</b> e receba um <b>plano de revisão</b> ligado à trilha. No modo <b>Montar resolução</b>, você organiza a solução inteira, passo a passo.</p>
+   <div class="fuvcount"><span><b>${nb}</b> questões originais no estilo FUVEST</span><span><b>${ni}</b> importadas por você</span></div>
+   <p class="muted" style="font-size:13px;margin-top:8px">As questões do banco foram escritas para este app no estilo e nível da FUVEST — não são cópias das provas oficiais. Para treinar com as <b>provas oficiais</b> (em <a href="https://www.fuvest.br" target="_blank" rel="noopener">fuvest.br</a>) e com os <b>simulados do seu cursinho</b>, use <b>Importar questões</b>: elas ganham correção, diagnóstico e plano de revisão.</p></div>
+  <div class="practice-card"><div class="pic" style="background:#fff4d6">📝</div><div class="grow"><h3>Mini-simulado</h3><p>10 questões · 30 min · correção comentada no final, como na prova.</p><button class="btn gold sm" data-fa="sim10" ${all.length?'':'disabled'}>Começar</button></div></div>
+  <div class="practice-card"><div class="pic" style="background:#ffdfe0">🏁</div><div class="grow"><h3>Simulado longo</h3><p>${Math.min(20,all.length)} questões · ${Math.min(20,all.length)*3} min (≈ 3 min por questão, ritmo da FUVEST).</p><button class="btn red sm" data-fa="sim20" ${all.length?'':'disabled'}>Começar</button></div></div>
+  <div class="practice-card"><div class="pic" style="background:var(--blue-l)">🎯</div><div class="grow"><h3>Treino com correção imediata</h3><p>A cada erro: por que a alternativa marcada está errada, a resolução e o que revisar.</p><button class="btn blue sm" data-fa="treino" ${all.length?'':'disabled'}>Treinar</button></div></div>
+  <div class="practice-card"><div class="pic" style="background:#f3e3ff">🧩</div><div class="grow"><h3>Montar resolução</h3><p>Monte a solução inteira na ordem certa — há passos com erros comuns para você evitar. ${nbuild} questões disponíveis.</p><button class="btn sm purple" data-fa="build" ${nbuild?'':'disabled'}>Montar</button></div></div>
+  ${nw?`<div class="practice-card"><div class="pic" style="background:var(--red-l)">🔁</div><div class="grow"><h3>Refazer questões erradas</h3><p>${nw} questão${nw>1?'es':''} que você errou esperando uma segunda chance.</p><button class="btn red sm" data-fa="redo">Refazer</button></div></div>`:''}
+  <h2 class="section-title" style="margin-top:24px">📊 Seu diagnóstico</h2>`;
+  if(!topics.length) h+=`<div class="card"><p class="muted">Responda questões para ver quais assuntos você domina e quais precisa revisar.</p></div>`;
+  else h+=`<div class="card"><p class="muted" style="font-size:14px;margin-bottom:8px">Assuntos ordenados do mais fraco para o mais forte (todas as questões FUVEST respondidas).</p>${topics.slice(0,8).map(t=>fuvTopicRow(t.id,t.c,t.w)).join('')}</div>`;
+  if(F.hist.length) h+=`<h2 class="section-title" style="margin-top:24px">🗓️ Histórico de simulados</h2><div class="card">${F.hist.slice(-6).reverse().map(x=>`<div class="mr"><span>${x.d.split('-').reverse().join('/')} · ${x.k==='sim20'?'Simulado longo':'Mini-simulado'}</span><span><b style="color:${memColor(x.c/x.n)}">${x.c}/${x.n}</b> · ${Math.round(x.t/60)} min</span></div>`).join('')}</div>`;
+  h+=`<h2 class="section-title" style="margin-top:24px">📚 Banco de questões</h2><div class="list">${Object.entries(sets).map(([name,n])=>`<div class="item"><div class="ico" style="background:${name.startsWith('Banco')?BRAND.body:'#ff9600'}">${name.startsWith('Banco')?'✍️':'📥'}</div><div class="grow"><b>${esc(name)}</b><small>${n} questão${n>1?'es':''}</small></div><button class="btn sm ghost" data-fa="set" data-set="${esc(name)}">Treinar</button>${name.startsWith('Banco')?'':`<button class="link" style="color:var(--red)" data-fa="del" data-set="${esc(name)}">apagar</button>`}</div>`).join('')}</div>
+  <div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" data-fa="import">📥 Importar questões</button>${ni?'<button class="btn ghost" data-fa="export">💾 Exportar importadas</button>':''}</div>
+  <h2 class="section-title" style="margin-top:24px">🏷️ Treinar por assunto</h2><div class="tagcloud">${Object.entries(tagCount).sort((a,b)=>b[1]-a[1]).map(([id,n])=>`<button class="chip" data-fa="topic" data-skill="${id}">${SK[id].icon} ${SK[id].name} · ${n}</button>`).join('')}</div>`;
+  return h;
+}
+function fuvTopicRow(id,c,w){ const s=SK[id],acc=c/(c+w||1),lv=sk(id).lv;
+  return `<div class="topicrow"><span class="ti" style="background:${s.unit.color}">${s.icon}</span><span class="tn"><b>${s.name}</b><small>${c} certas · ${w} erradas${lv?'':' · ainda não estudado na trilha'}</small><span class="minibar"><i style="width:${acc*100}%;background:${memColor(acc)}"></i></span></span><span class="tb"><button class="btn sm ghost" data-theory="${id}">Aula</button><button class="btn sm" ${lv?`data-practice="${id}"`:`data-start="${id}"`}>${lv?'Revisar':'Estudar'}</button></span></div>`; }
+
+/* ---------- Sessões ---------- */
+function startFuv(kind,opts={}){
+  const F=fv(); let pool=fuvAll();
+  if(opts.set) pool=pool.filter(q=>q.set===opts.set);
+  if(opts.skill) pool=pool.filter(q=>q.tags.includes(opts.skill));
+  if(kind==='redo') pool=pool.filter(q=>F.wrong.includes(q.id));
+  if(kind==='build') pool=pool.filter(q=>q.steps&&q.steps.length>=2);
+  if(!pool.length){ toast('Nenhuma questão disponível para esse modo.'); return; }
+  const n=kind==='sim10'?10:kind==='sim20'?20:kind==='build'?6:10;
+  const qs=shuffle(pool).sort((a,b)=>(F.seen[a.id]||0)-(F.seen[b.id]||0)).slice(0,n);
+  closeModal(); OPEN_POP=null;
+  const exam=kind==='sim10'||kind==='sim20';
+  L={mode:'fuv',kind,exam,queue:qs.map(q=>q.id),i:0,total:qs.length,done:0,correct:0,wrong:0,blank:0,combo:0,maxCombo:0,t0:Date.now(),per:{},missed:[],answers:[],state:'answer',sel:null,lives:null,timeLeft:exam?qs.length*180:null,timer:null};
+  $('#lesson').classList.remove('hidden'); document.body.style.overflow='hidden';
+  if(exam) L.timer=setInterval(()=>{ if(!L||L.mode!=='fuv'||L.state==='result')return; L.timeLeft--; fuvTop(); if(L.timeLeft<=0){ toast('⏰ Tempo esgotado!'); fuvFinish(); } },1000);
+  fuvRender();
+}
+function fuvTop(){ const bar=$('#lprog'); bar.className='pbar'+(L.exam?' blue':' purple'); bar.firstElementChild.style.width=(L.i/L.total*100)+'%';
+  const st=$('#lstat'); if(L.exam){ const m=Math.floor(Math.max(0,L.timeLeft)/60),s=Math.max(0,L.timeLeft)%60; st.className='ltimer'; st.innerHTML=`⏱ ${m}:${pad(s)} · ${L.i+1}/${L.total}`; } else { st.className='lhearts'; st.innerHTML=`<span style="color:var(--purple)">${Math.min(L.i+1,L.total)}/${L.total}</span>`; } }
+function fuvCur(){ return fuvById(L.queue[L.i]); }
+function fuvPseudo(q){ const tag=q.tags.find(t=>SK[t]); return {skill:tag||ALL[0].id,type:'mc',prompt:fuvText(q),hint:q.steps&&q.steps.length?'Comece assim: '+fuvStep(q,q.steps[0]):'Identifique o assunto, anote os dados e escolha a fórmula.',answer:`(${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}`,exp:q.steps&&q.steps.length?q.steps.map((s,i)=>`${i+1}. ${fuvStep(q,s)}`).join('<br>'):(q.why&&q.why[q.ans])||''}; }
+function fuvHead(q){ return `<div class="fuvtag">${q.origin==='bank'?'✍️ Estilo FUVEST':'📥 '+esc(q.src)}${q.area?' · '+esc(q.area):q.tags.length?' · '+q.tags.map(t=>SK[t].name).join(', '):''}</div>`; }
+function fuvRender(){
+  if(L.i>=L.queue.length) return fuvFinish();
+  const q=fuvCur(); if(!q){ L.i++; return fuvRender(); }
+  if(L.kind==='build') return fuvBuildRender(q);
+  L.state='answer'; L.sel=null; L.cur=fuvPseudo(q);
+  $('#lqbox').innerHTML=`${fuvHead(q)}<div class="fuvq">${fuvText(q)}</div>${q.visual?`<div class="visual">${q.visual}</div>`:''}
+   <div class="opts fuvopts" id="opts">${q.alts.map((a,i)=>`<button class="opt" data-fi="${i}"><span class="k">${LETTERS[i]}</span><span>${fuvAlt(q,i)}</span></button>`).join('')}</div>`;
+  $('#lbody').scrollTop=0; $('#lfoot').className='lfoot';
+  $('#lfootin').innerHTML=`<div class="footrow"><div class="tools">${q.tags[0]?`<button class="toolbtn" data-theory="${q.tags[0]}" title="Aula">📖<span class="t"> Aula</span></button>`:''}${L.exam?'':'<button class="toolbtn" data-act="lchat" title="Dúvida">💬<span class="t"> Dúvida</span></button>'}${L.exam?'<button class="toolbtn" data-fa="skip" title="Deixar em branco">⏭<span class="t"> Pular</span></button>':''}</div><button class="btn" id="bCheck" data-fa="check" disabled>${L.exam?'Confirmar':'Verificar'}</button></div>`;
+  fuvTop();
+}
+function fuvSelect(i){ if(!L||L.mode!=='fuv'||L.state!=='answer')return; const q=fuvCur(); if(i>=q.alts.length)return; L.sel=i; beep(SND.tap); document.querySelectorAll('#opts .opt').forEach((b,j)=>b.classList.toggle('sel',j===i)); $('#bCheck').disabled=false; }
+function fuvRecord(q,ok,sel){ const F=fv(); F.seen[q.id]=(F.seen[q.id]||0)+1;
+  q.tags.forEach(t=>{ const s=F.stats[t]||(F.stats[t]=[0,0]); ok?s[0]++:s[1]++; const p=L.per[t]||(L.per[t]={c:0,w:0}); ok?p.c++:p.w++;
+    if(!ok){ const st=sk(t); if(st.lv>=1&&st.stab) st.stab=Math.max(0.5,round(st.stab*0.6,2)); } });
+  F.wrong=F.wrong.filter(id=>id!==q.id); if(!ok) F.wrong.unshift(q.id); if(F.wrong.length>200) F.wrong.length=200;
+  L.answers.push({id:q.id,sel,ok}); S.answered++; if(ok) S.correct++; save(); }
+function fuvCheck(skip){
+  if(!L||L.mode!=='fuv'||L.state!=='answer')return; const q=fuvCur();
+  if(skip){ L.blank++; L.answers.push({id:q.id,sel:null,ok:false}); const F=fv(); F.seen[q.id]=(F.seen[q.id]||0)+1; q.tags.forEach(t=>{ const p=L.per[t]||(L.per[t]={c:0,w:0}); p.w++; }); L.i++; return fuvRender(); }
+  if(L.sel==null)return; const ok=L.sel===q.ans; fuvRecord(q,ok,L.sel);
+  if(ok){ L.correct++; L.combo++; L.maxCombo=Math.max(L.maxCombo,L.combo); } else { L.wrong++; L.combo=0; L.missed.push(q.id); }
+  if(L.exam){ L.i++; return fuvRender(); }
+  L.state='feedback'; beep(ok?SND.ok:SND.bad);
+  document.querySelectorAll('#opts .opt').forEach((b,j)=>{ if(j===q.ans)b.classList.add('right'); else if(j===L.sel)b.classList.add('wrong'); b.classList.remove('sel'); }); $('#opts').classList.add('done');
+  const box=$('#lqbox'); box.insertAdjacentHTML('beforeend',fuvDiag(q,L.sel,true)); if(!ok){ box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); }
+  $('#lfoot').className='lfoot '+(ok?'ok':'bad');
+  $('#lfootin').innerHTML=`<div class="fbtxt"><div class="fbicon">${ok?'✔':'✘'}</div><div style="min-width:0"><div class="fbtitle">${ok?pick(PRAISE):`Você marcou (${LETTERS[L.sel]}); a correta é (${LETTERS[q.ans]})`}</div><div class="fbdetail">${ok?'Confira a resolução abaixo.':'Veja abaixo o que você errou e o que revisar.'}</div></div></div><div class="fbactions"><button class="link" data-act="lchat">💬 Tirar dúvida</button>${q.steps&&q.steps.length>=2?'<button class="link" data-fa="buildthis">🧩 Montar a resolução</button>':''}<button class="btn ${ok?'':'red'}" data-fa="next" id="bCont">Continuar</button></div>`;
+  setTimeout(()=>{ const d=$('#lqbox .diag'); if(d&&!ok) d.scrollIntoView({behavior:'smooth',block:'start'}); },80);
+}
+/* Diagnóstico de uma questão: o que errou + resolução + o que revisar */
+function fuvDiag(q,sel,open){
+  const ok=sel===q.ans, blank=sel==null;
+  const why=(!ok&&!blank&&q.why&&q.why[sel])?q.why[sel]:(!ok&&!blank?'Essa alternativa não satisfaz o enunciado. Compare com a resolução abaixo para achar o passo em que seu raciocínio se desviou.':'');
+  const steps=q.steps&&q.steps.length?`<ol class="solsteps">${q.steps.map(s=>`<li>${fuvStep(q,s)}</li>`).join('')}</ol>`:(q.why&&q.why[q.ans]?`<p>${fuvStep(q,q.why[q.ans])}</p>`:'<p class="muted">Sem resolução cadastrada para esta questão.</p>');
+  const rev=fuvRev(q,ok);
+  return `<div class="diag ${ok?'good':'badd'}">${blank?`<div class="dline"><b>⚪ Em branco.</b> A correta é (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}.</div>`:ok?`<div class="dline"><b>✅ Correto:</b> (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}</div>`:`<div class="dline"><b>❌ Você marcou (${LETTERS[sel]}):</b> ${fuvAlt(q,sel)}</div><div class="dwhy"><b>Onde está o erro:</b> ${fuvStep(q,why)}</div><div class="dline"><b>✅ Correta: (${LETTERS[q.ans]})</b> ${fuvAlt(q,q.ans)}</div>`}
+   <details ${open?'open':''}><summary><b>📝 Resolução passo a passo</b></summary>${steps}</details>${rev}</div>`; }
+function fuvRev(q,ok){ return q.tags.length?`<div class="revbox"><b>📚 O que revisar</b>${q.tags.map(t=>{const s=SK[t],lv=sk(t).lv;return `<div class="revrow"><span>${s.icon} <b>${s.name}</b><small>${lv?`memória ${Math.round(retention(t)*100)}% · nível ${lv}/5`:'ainda não estudado na trilha'}</small></span><span><button class="btn sm ghost" data-theory="${t}">Aula</button><button class="btn sm" ${lv?`data-practice="${t}"`:`data-start="${t}"`}>${lv?'Praticar':'Estudar'}</button></span></div>`;}).join('')}${!ok&&q.tags.some(t=>sk(t).lv)?'<small class="muted">Esses assuntos foram antecipados na sua revisão espaçada.</small>':''}</div>`:''; }
+function fuvNext(){ if(!L||L.mode!=='fuv')return; if(L.kind==='build-one'){ L.kind=L.prevKind; L.state='result'; $('#lqbox').innerHTML=L.resHTML; $('#lfoot').className='lfoot'; $('#lfootin').innerHTML=L.resFoot; return; } L.i++; fuvRender(); }
+
+/* ---------- Montar resolução ---------- */
+function fuvBuildRender(q,after){
+  L.state='build'; L.cur=fuvPseudo(q);
+  const pool=shuffle(q.steps.map((s,i)=>({t:s,i})).concat((q.trap||[]).map((s,j)=>({t:s,i:-1-j}))));
+  L.build={q:q.id,pool,chosen:[],after:!!after};
+  const box=$('#lqbox');
+  box.innerHTML=`${fuvHead(q)}<div class="fuvq">${fuvText(q)}</div>${q.visual?`<div class="visual">${q.visual}</div>`:''}
+   <h2 class="qtitle" style="margin:14px 0 4px">🧩 Monte a resolução</h2><p class="muted" style="font-size:14px">Toque nos passos na ordem certa. ${q.trap&&q.trap.length?`<b>Atenção:</b> ${q.trap.length} passo${q.trap.length>1?'s contêm':' contém'} um erro comum e não deve${q.trap.length>1?'m':''} entrar.`:''} Toque num passo escolhido para devolvê-lo.</p>
+   <ol class="buildlist" id="blist"></ol><div class="steppool" id="bpool"></div>`;
+  $('#lbody').scrollTop=0; $('#lfoot').className='lfoot';
+  $('#lfootin').innerHTML=`<div class="footrow"><div class="tools">${q.tags[0]?`<button class="toolbtn" data-theory="${q.tags[0]}">📖<span class="t"> Aula</span></button>`:''}<button class="toolbtn" data-act="lchat">💬<span class="t"> Dúvida</span></button></div><button class="btn" id="bCheck" data-fa="bcheck" disabled>Verificar resolução</button></div>`;
+  fuvBuildDraw(); fuvTop(); }
+function fuvBuildDraw(){ const b=L.build,q=fuvById(b.q);
+  $('#blist').innerHTML=b.chosen.length?b.chosen.map((k,pos)=>`<li><button class="bstep chosen" data-bu="${pos}">${fuvStep(q,b.pool[k].t)}</button></li>`).join(''):'<li class="bempty">Sua resolução aparece aqui…</li>';
+  $('#bpool').innerHTML=b.pool.map((p,k)=>b.chosen.includes(k)?'':`<button class="bstep" data-bp="${k}">${fuvStep(q,p.t)}</button>`).join('');
+  const c=$('#bCheck'); if(c) c.disabled=!b.chosen.length; }
+function fuvBuildCheck(){ const b=L.build,q=fuvById(b.q); if(!b.chosen.length)return;
+  const seq=b.chosen.map(k=>b.pool[k].i); const ok=seq.length===q.steps.length&&seq.every((v,i)=>v===i);
+  let right=0; const marks=seq.map((v,pos)=>{ if(v<0) return 'trap'; if(v===pos){right++;return 'ok';} return 'pos'; });
+  L.state='build-done';
+  if(!b.after){ fuvRecordBuild(q,ok); }
+  beep(ok?SND.ok:SND.bad);
+  $('#blist').innerHTML=seq.map((v,pos)=>`<li class="m-${marks[pos]}"><span class="bstep static">${fuvStep(q,b.pool[b.chosen[pos]].t)}</span><em>${marks[pos]==='ok'?'✔ posição certa':marks[pos]==='pos'?'↕ passo certo, posição errada':'✘ contém um erro'}</em></li>`).join('');
+  $('#bpool').innerHTML='';
+  const missing=q.steps.filter((_,i)=>!seq.includes(i)).length;
+  $('#lqbox').insertAdjacentHTML('beforeend',`<div class="diag ${ok?'good':'badd'}"><div class="dline"><b>${ok?'✅ Resolução completa e na ordem certa!':`Você acertou ${right} de ${q.steps.length} passos na posição certa${missing?` e deixou ${missing} de fora`:''}${seq.some(v=>v<0)?'; incluiu passo com erro':''}.`}</b></div>
+   ${(q.trap||[]).length?`<div class="dwhy"><b>Passos com erro (armadilhas):</b><ul>${q.trap.map(t=>`<li>${fuvStep(q,t)}</li>`).join('')}</ul></div>`:''}
+   <details open><summary><b>📝 Resolução correta</b></summary><ol class="solsteps">${q.steps.map(s=>`<li>${fuvStep(q,s)}</li>`).join('')}</ol></details>
+   <div class="dline"><b>Resposta:</b> (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}</div>${fuvRev(q,ok)}</div>`);
+  $('#lfoot').className='lfoot '+(ok?'ok':'bad');
+  $('#lfootin').innerHTML=`<div class="fbtxt"><div class="fbicon">${ok?'✔':'✘'}</div><div><div class="fbtitle">${ok?'Resolução perfeita!':'Compare com a resolução correta'}</div><div class="fbdetail">${right}/${q.steps.length} passos na posição certa</div></div></div><div class="fbactions">${ok?'':'<button class="link" data-fa="rebuild">↺ Tentar de novo</button>'}<button class="btn ${ok?'':'red'}" data-fa="next" id="bCont">Continuar</button></div>`; }
+function fuvRecordBuild(q,ok){ const F=fv(); F.seen[q.id]=(F.seen[q.id]||0)+1; q.tags.forEach(t=>{ const s=F.stats[t]||(F.stats[t]=[0,0]); ok?s[0]++:s[1]++; const p=L.per[t]||(L.per[t]={c:0,w:0}); ok?p.c++:p.w++; }); L.answers.push({id:q.id,sel:ok?q.ans:null,ok,build:true}); if(ok)L.correct++; else { L.wrong++; L.missed.push(q.id); } save(); }
+
+/* ---------- Resultado ---------- */
+function fuvFinish(){
+  if(!L||L.state==='result')return; if(L.timer)clearInterval(L.timer);
+  // questões não alcançadas no simulado contam como em branco
+  if(L.exam) for(let k=L.i;k<L.queue.length;k++){ const q=fuvById(L.queue[k]); if(q){ L.answers.push({id:q.id,sel:null,ok:false}); L.blank++; q.tags.forEach(t=>{const p=L.per[t]||(L.per[t]={c:0,w:0}); p.w++;}); } }
+  L.state='result'; L.cur=null; { const st=$('#lstat'); st.className='lhearts'; st.innerHTML=`<span style="color:var(--purple)">✔ ${L.answers.filter(a=>a.ok).length}/${L.answers.length}</span>`; }
+  const n=L.answers.length,c=L.answers.filter(a=>a.ok).length,secs=Math.round((Date.now()-L.t0)/1000),acc=n?c/n:0;
+  const xp=n?10+2*c:0; if(xp) markStudy(xp); S.gems+=L.exam?5+c:2;
+  if(L.exam) fv().hist.push({d:today(),k:L.kind,c,n,t:secs});
+  checkAch(); save(); beep(acc>=0.5?SND.done:SND.fail); if(acc>=0.6) confetti();
+  const per=Object.entries(L.per).filter(([id])=>SK[id]).sort((a,b)=>(a[1].c/(a[1].c+a[1].w))-(b[1].c/(b[1].c+b[1].w)));
+  const weak=per.filter(([,p])=>p.w>0).map(([id])=>id);
+  const rs=(col,hd,v)=>`<div class="rstat" style="--c:${col}"><div class="h">${hd}</div><div class="v">${v}</div></div>`;
+  $('#lqbox').innerHTML=`<div class="result" style="justify-content:flex-start">
+   <div class="ms">${mascot(acc>=0.5?'happy':'sad')}</div><h1 class="${acc<0.5?'fail':''}">${L.exam?'Simulado concluído!':L.kind==='build'?'Resoluções montadas!':'Treino concluído!'}</h1>
+   <div class="rstats">${rs('#58cc02','Acertos',`${c}/${n}`)}${rs('#ffc800','XP ganho','⚡ '+xp)}${rs('#1cb0f6','Tempo',`⏱ ${Math.floor(secs/60)}:${pad(secs%60)}`)}</div>
+   ${L.exam&&L.blank?`<p class="muted">${L.blank} em branco (não respondidas).</p>`:''}
+   ${per.length?`<div class="card fuvres"><b>📊 Desempenho por assunto</b>${per.map(([id,p])=>`<div class="topicrow"><span class="ti" style="background:${SK[id].unit.color}">${SK[id].icon}</span><span class="tn"><b>${SK[id].name}</b><small>${p.c} de ${p.c+p.w} certas</small><span class="minibar"><i style="width:${p.c/(p.c+p.w)*100}%;background:${memColor(p.c/(p.c+p.w))}"></i></span></span></div>`).join('')}</div>`:''}
+   ${weak.length?`<div class="card fuvres" style="border-color:var(--orange)"><b>📚 Seu plano de revisão</b><p class="muted" style="font-size:14px">Estes assuntos causaram seus erros. ${weak.some(id=>sk(id).lv)?'Os que você já estudou foram antecipados na revisão espaçada.':''}</p>${weak.map(id=>fuvTopicRow(id,L.per[id].c,L.per[id].w)).join('')}
+     ${weak.some(id=>sk(id).lv)?`<button class="btn gold block" style="margin-top:10px" data-fa="revweak">Revisar esses assuntos agora</button>`:''}</div>`:''}
+   <div class="card fuvres"><b>📝 Correção comentada</b>${L.answers.map((a,k)=>{const q=fuvById(a.id);if(!q)return '';return `<details class="corr"><summary><span class="cs ${a.ok?'ok':a.sel==null?'bl':'no'}">${a.ok?'✔':a.sel==null?'–':'✘'}</span> Questão ${k+1} · ${q.tags.map(t=>SK[t].name).join(', ')||esc(q.area||'')}${a.build?' · montagem':''}</summary><div class="fuvq small">${fuvText(q)}</div>${fuvDiag(q,a.sel,true)}${!a.ok&&q.steps&&q.steps.length>=2?`<button class="btn sm purple" data-fa="buildid" data-q="${q.id}">🧩 Montar esta resolução</button>`:''}</details>`;}).join('')}</div></div>`;
+  $('#lbody').scrollTop=0; $('#lprog').firstElementChild.style.width='100%';
+  $('#lfoot').className='lfoot'; $('#lfootin').innerHTML=`<div class="footrow" style="justify-content:flex-end"><button class="btn" data-act="quit" id="bCont">Concluir</button></div>`;
+  L.weak=weak; L.resHTML=$('#lqbox').innerHTML; L.resFoot=$('#lfootin').innerHTML;
+}
+
+/* ---------- Importação ---------- */
+const IMPORT_HELP=`### FUVEST 2024 · Q12
+assuntos: progressão aritmética, probabilidade
+Os ângulos internos de um triângulo estão em PA e o maior mede 80°. O menor mede:
+A) 20°
+B) 30°
+C) 40°
+D) 50°
+E) 60°
+gabarito: C
+erro A: confundiu a razão com o menor ângulo
+resolução:
+- Ângulos: a − r, a, a + r
+- 3a = 180° ⇒ a = 60°
+- 60° + r = 80° ⇒ r = 20°
+- Menor: 60° − 20° = 40°`;
+function autoTags(txt){ const m=' '+normChat(txt)+' ',out=[]; GLOSS.forEach(g=>{ if(out.includes(g.s)||!SK[g.s])return; if(g.k.some(k=>k.length>=4&&m.includes(' '+k))) out.push(g.s); }); return out.slice(0,3); }
+function mapTag(t){ const n=normChat(t); if(!n)return null; if(SK[n])return n; const bn=ALL.find(s=>normChat(s.name)===n)||ALL.find(s=>normChat(s.name).includes(n)||n.includes(normChat(s.name))); if(bn)return bn.id; const g=findGloss(n); return g&&SK[g.s]?g.s:null; }
+function parseImport(raw){
+  raw=raw.trim(); const out=[],errs=[];
+  if(raw.startsWith('[')||raw.startsWith('{')){ try{ let arr=JSON.parse(raw); if(!Array.isArray(arr)) arr=arr.questoes||[arr];
+      arr.forEach((o,k)=>{ const alts=o.alternativas||o.alts||[]; const g=String(o.gabarito??o.ans??'').trim().toUpperCase(); const ans=/^[A-E]$/.test(g)?LETTERS.indexOf(g):+g;
+        if(!o.enunciado&&!o.q||alts.length<2||!(ans>=0&&ans<alts.length)){ errs.push(`Item ${k+1}: faltam enunciado, alternativas ou gabarito.`); return; }
+        const why=[]; if(o.erros) Object.entries(o.erros).forEach(([L_,t])=>{ why[LETTERS.indexOf(L_.toUpperCase())]=t; });
+        const src=o.fonte||o.src||'Importada'; out.push(mkImp(src,o.assuntos||o.tags||[],o.enunciado||o.q,alts,ans,why,o.resolucao||o.steps||[],o.erradas||o.trap||[])); }); }catch(e){ errs.push('JSON inválido: '+e.message); } return {out,errs}; }
+  const blocks=raw.split(/^\s*#{2,3}\s*/m).map(b=>b.trim()).filter(Boolean);
+  blocks.forEach((b,k)=>{ const lines=b.split('\n'); const src=lines.shift().trim()||'Importada'; let tags=[],en=[],alts=[],ans=-1,why=[],steps=[],traps=[],mode='en';
+    lines.forEach(l=>{ const t=l.trim(); let m;
+      if(/^#(?!#)/.test(t)) return;
+      if(!t){ if(mode==='en') en.push(''); return; }
+      if((m=t.match(/^(assuntos?|tags?|mat[eé]rias?)\s*:\s*(.*)$/i))){ tags=m[2].split(/[,;]/).map(x=>x.trim()).filter(Boolean); return; }
+      if((m=t.match(/^(gabarito|resposta|correta)\s*:\s*\(?([A-Ea-e])\)?/i))){ ans=LETTERS.indexOf(m[2].toUpperCase()); mode='x'; return; }
+      if((m=t.match(/^erro\s*\(?([A-Ea-e])\)?\s*:\s*(.*)$/i))){ why[LETTERS.indexOf(m[1].toUpperCase())]=m[2]; return; }
+      if(/^resolu[cç][aã]o\s*:?\s*$/i.test(t)){ mode='res'; return; }
+      if((m=t.match(/^resolu[cç][aã]o\s*:\s*(.+)$/i))){ steps=m[1].split('|').map(x=>x.trim()).filter(Boolean); mode='res'; return; }
+      if(/^(passos? )?errad[oa]s?\s*:?\s*$/i.test(t)||/^armadilhas?\s*:?\s*$/i.test(t)){ mode='trap'; return; }
+      if(mode==='res'||mode==='trap'){ const s=t.replace(/^(\d+[\.\)]|[-•*])\s*/,''); (mode==='res'?steps:traps).push(s); return; }
+      if((m=t.match(/^\(?([A-Ea-e])\s*[\)\.\-:]\s*(.+)$/))&&(alts.length===LETTERS.indexOf(m[1].toUpperCase()))){ alts.push(m[2]); mode='alt'; return; }
+      if(mode==='alt'&&alts.length){ alts[alts.length-1]+=' '+t; return; }
+      en.push(t); });
+    const enun=en.join('\n').trim();
+    if(!enun||alts.length<2||ans<0||ans>=alts.length){ errs.push(`Questão ${k+1} ("${src.slice(0,40)}"): ${!enun?'sem enunciado':alts.length<2?'alternativas não encontradas (use A) … E))':'gabarito ausente ou inválido'}.`); return; }
+    out.push(mkImp(src,tags,enun,alts,ans,why,steps,traps)); });
+  return {out,errs}; }
+function mkImp(src,tags,q,alts,ans,why,steps,trap){ const set=String(src).split(/[·|–—]/)[0].replace(/\bQ(uest[aã]o)?\s*\d+\b/i,'').trim()||'Importadas';
+  let tg=(Array.isArray(tags)?tags:String(tags).split(',')).map(mapTag).filter(Boolean); if(!tg.length) tg=autoTags(q+' '+alts.join(' '));
+  let h=0; const str=src+q; for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))|0;
+  return {id:'imp'+Math.abs(h).toString(36),origin:'imp',set,src:String(src),area:'',tags:[...new Set(tg)],q:String(q),alts:alts.map(String),ans,why:why.map(x=>x==null?x:String(x)),steps:(steps||[]).map(String),trap:(trap||[]).map(String)}; }
+function importModal(){
+  modal(`<h2>📥 Importar questões</h2><p class="muted" style="font-size:14px">Cole as questões das provas oficiais (baixe em <a href="https://www.fuvest.br" target="_blank" rel="noopener">fuvest.br</a>) ou dos simulados do seu cursinho. Uma questão por bloco, começando com <b>###</b> e a fonte. Os <b>assuntos</b> ligam a questão à trilha (se faltar, o app tenta descobrir pelo texto). <b>resolução</b> e <b>erro X</b> são opcionais, mas com eles a correção e o modo Montar resolução ficam muito melhores. Também aceita JSON.</p>
+   <textarea id="imptxt" class="imptxt" placeholder="${esc(IMPORT_HELP)}"></textarea>
+   <div class="row" style="flex-wrap:wrap;margin-top:8px"><label class="btn sm ghost" style="cursor:pointer">📄 Abrir arquivo .txt/.json<input type="file" id="impfile" accept=".txt,.json,text/plain,application/json" hidden></label><button class="link" data-fa="impex">ver exemplo</button></div>
+   <div id="impmsg" class="muted" style="font-size:14px;margin-top:8px"></div>
+   <div class="actions"><button class="btn block" data-fa="impgo">Importar</button><button class="btn ghost block" data-close>Cancelar</button></div>`);
+  const f=$('#impfile'); f.addEventListener('change',()=>{ const file=f.files[0]; if(!file)return; const r=new FileReader(); r.onload=()=>{ $('#imptxt').value=r.result; }; r.readAsText(file); });
+}
+function doImport(){ const raw=$('#imptxt').value; if(!raw.trim()){ $('#impmsg').innerHTML='Cole as questões primeiro.'; return; }
+  const {out,errs}=parseImport(raw); const F=fv(); let added=0; out.forEach(q=>{ if(!F.imp.some(x=>x.id===q.id)){ F.imp.push(q); added++; } });
+  try{ save(); }catch(e){}
+  const untagged=out.filter(q=>!q.tags.length).length;
+  if(!out.length){ $('#impmsg').innerHTML=`<span style="color:var(--red)">Nenhuma questão reconhecida.</span><br>${errs.slice(0,5).map(esc).join('<br>')}`; return; }
+  closeModal(); render(); toast(`📥 ${added} questão${added!==1?'es':''} importada${added!==1?'s':''}${errs.length?` · ${errs.length} com problema`:''}`,3200);
+  if(errs.length||untagged) setTimeout(()=>modal(`<h2>Importação concluída</h2><p><b>${added}</b> questões adicionadas.</p>${untagged?`<p class="muted">${untagged} questão(ões) ficaram sem assunto identificado — o diagnóstico por assunto não vai considerá-las. Adicione a linha <b>assuntos:</b> para ligá-las à trilha.</p>`:''}${errs.length?`<p style="color:var(--red)">Problemas:</p><ul style="padding-left:20px;font-size:14px">${errs.slice(0,10).map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`:''}<div class="actions"><button class="btn block" data-close>Ok</button></div>`),400); }
+function exportImp(){ const data=JSON.stringify(fv().imp.map(q=>({fonte:q.src,assuntos:q.tags,enunciado:q.q,alternativas:q.alts,gabarito:LETTERS[q.ans],erros:Object.fromEntries(q.why.map((w,i)=>[LETTERS[i],w]).filter(x=>x[1])),resolucao:q.steps,erradas:q.trap})),null,1);
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'application/json'})); a.download=BRAND.app.toLowerCase()+'-questoes-importadas.json'; document.body.appendChild(a); a.click(); a.remove(); }
+
+/* ---------- Eventos do módulo ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-fa],[data-fi],[data-bp],[data-bu]'); if(!t)return; const d=t.dataset;
+  if(d.fi!=null){ fuvSelect(+d.fi); return; }
+  if(d.bp!=null&&L&&L.state==='build'){ L.build.chosen.push(+d.bp); beep(SND.tap); fuvBuildDraw(); return; }
+  if(d.bu!=null&&L&&L.state==='build'){ L.build.chosen.splice(+d.bu,1); fuvBuildDraw(); return; }
+  switch(d.fa){
+    case 'sim10': case 'sim20': case 'treino': case 'build': case 'redo': startFuv(d.fa); break;
+    case 'set': startFuv('treino',{set:d.set}); break;
+    case 'topic': startFuv('treino',{skill:d.skill}); break;
+    case 'del': modal(`<h2>Apagar "${esc(d.set)}"?</h2><p class="muted">As questões importadas deste conjunto serão removidas deste aparelho.</p><div class="actions"><button class="btn red block" data-fa="delyes" data-set="${esc(d.set)}">Apagar</button><button class="btn ghost block" data-close>Cancelar</button></div>`); break;
+    case 'delyes': { const F=fv(); F.imp=F.imp.filter(q=>q.set!==d.set); save(); closeModal(); render(); toast('Conjunto apagado.'); break; }
+    case 'import': importModal(); break;
+    case 'impex': $('#imptxt').value=IMPORT_HELP; break;
+    case 'impgo': doImport(); break;
+    case 'export': exportImp(); break;
+    case 'check': fuvCheck(false); break;
+    case 'endsim': closeModal(); fuvFinish(); break;
+    case 'skip': fuvCheck(true); break;
+    case 'next': fuvNext(); break;
+    case 'buildthis': { const q=fuvCur(); fuvBuildRender(q,true); break; }
+    case 'buildid': { const q=fuvById(d.q); L.prevKind=L.kind; L.kind='build-one'; fuvBuildRender(q,true); break; }
+    case 'bcheck': fuvBuildCheck(); break;
+    case 'rebuild': { const q=fuvById(L.build.q); fuvBuildRender(q,true); break; }
+    case 'revweak': { const ids=(L.weak||[]).filter(id=>sk(id).lv); quitLesson(); if(ids.length) startSession('review',{ids:ids.slice(0,6)}); break; }
+  }
+});
+function fuvKey(e){
+  if(L.state==='answer'){ const k=e.key.toUpperCase(); const i=LETTERS.indexOf(k); if(i>=0&&k.length===1){ fuvSelect(i); return; } if(/^[1-5]$/.test(e.key)){ fuvSelect(+e.key-1); return; } if(e.key==='Enter'){ e.preventDefault(); fuvCheck(false); } }
+  else if(e.key==='Enter'){ e.preventDefault(); if(L.state==='feedback'||L.state==='build-done'){ fuvNext(); } else if(L.state==='build') fuvBuildCheck(); else if(L.state==='result') quitLesson(); }
+}
+
+/* =====================================================================
    Navegação e telas
    ===================================================================== */
 let VIEW='learn',OPEN_POP=null;
-const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
+const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','FUVEST'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
 const LOGO=`<svg viewBox="0 0 120 120">${mascot().replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg><span>${BRAND.app}</span>`;
 function applyTheme(){ const r=document.documentElement; if(S.theme==='auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme',S.theme); }
 function statsHTML(){ const lvl=lvlOf(S.xp); return `
@@ -1775,6 +2235,7 @@ function render(){
   if(VIEW==='learn') v.innerHTML=renderLearn();
   else if(VIEW==='review') v.innerHTML=renderReview();
   else if(VIEW==='lessons') v.innerHTML=renderLessons();
+  else if(VIEW==='fuvest') v.innerHTML=renderFuvest();
   else v.innerHTML=renderProfile();
 }
 const OFFS=[0,-46,-72,-46,0,46,72,46];
@@ -2049,6 +2510,8 @@ function quitLesson(){ if(L&&L.timer)clearInterval(L.timer); L=null; closeModal(
 function askQuit(){
   if(!L||L.state==='result') return quitLesson();
   if(L.mode==='timed'){ return finish(); }
+  if(L.mode==='fuv'&&L.state==='result') return quitLesson();
+  if(L.mode==='fuv'&&L.exam){ modal(`<div class="center"><h2 style="padding:0">Encerrar o simulado?</h2><p class="muted">As questões não respondidas contam como em branco e você verá a correção comentada.</p></div><div class="actions"><button class="btn block" data-close>Continuar o simulado</button><button class="btn red block" data-fa="endsim">Encerrar e corrigir</button></div>`); return; }
   if(L.mode==='cards'){ return L.done?finish():quitLesson(); }
   modal(`<div class="center"><div style="width:120px;margin:0 auto">${mascot('sad')}</div><h2 style="padding:0">Espere, não vá embora!</h2><p class="muted">Se sair agora, você perderá o progresso desta ${L.mode==='lesson'?'lição':'sessão'}.</p></div><div class="actions"><button class="btn block" data-close>Continuar estudando</button><button class="btn ghost dark block" data-act="quit">Sair</button></div>`);
 }
@@ -2124,7 +2587,7 @@ document.addEventListener('click',e=>{
   if(d.chip){ ask(d.chip); return; }
   if(d.chk){ const u=UNITS.find(x=>d.chk.startsWith(x.id+'-')); const nd=unitNodes(u).find(n=>n.t==='chk'&&n.key===d.chk); startSession('chk',{ids:nd.ids,key:d.chk}); return; }
   if(d.rate){ rateCard(+d.rate); return; }
-  if(t.classList.contains('opt')&&L){ selectOpt(+d.i); return; }
+  if(t.classList.contains('opt')&&L&&L.mode!=='fuv'){ selectOpt(+d.i); return; }
   if(t.classList.contains('tile')&&L){ if(d.unslot) unslot(); else if(d.i!=null) selectOpt(+d.i); return; }
   switch(d.act){
     case 'streak': streakModal(); break;
@@ -2165,6 +2628,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ if($('#chat').classList.contains('open')) closeChat(); else if(modalOpen()&&$('.modal-bg .close')) closeModal(); return; }
   if(!L||$('#lesson').classList.contains('hidden')||modalOpen()) return;
   if(document.activeElement&&document.activeElement.id==='chatin') return;
+  if(L.mode==='fuv'){ fuvKey(e); return; }
   if(L.mode==='cards'){ if((e.key==='Enter'||e.key===' ')&&L.state==='front'){ e.preventDefault(); flipCard(); } else if(L.state==='back'&&/^[1-4]$/.test(e.key)) rateCard(+e.key); else if(e.key==='Enter'&&L.state==='result'){ e.preventDefault(); quitLesson(); } return; }
   if(e.key==='Enter'){ e.preventDefault(); if(L.state==='intro'){ L.state='answer'; nextQ(); } else if(L.state==='answer') check(); else if(L.state==='feedback') cont(); else if(L.state==='result') quitLesson(); return; }
   if(L.state==='answer'&&/^[1-9]$/.test(e.key)&&['mc','tf','bank'].includes(L.cur.type)){ selectOpt(+e.key-1); }

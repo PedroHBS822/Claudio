@@ -1,0 +1,40 @@
+### FUVEST 2024 · Q12
+assuntos: progressão aritmética, ângulos
+Os ângulos internos de um triângulo estão em PA e o maior mede 80°. O menor mede:
+A) 20°
+B) 30°
+C) 40°
+D) 50°
+E) 60°
+gabarito: C
+erro A: confundiu a razão da PA com o menor ângulo
+erro E: 60° é o termo do meio, não o menor
+resolução:
+- Escreva os ângulos como a − r, a, a + r
+- A soma é 180°: 3a = 180°, logo a = 60°
+- Maior: 60° + r = 80°, logo r = 20°
+- Menor: 60° − 20° = 40°
+armadilhas:
+- A soma dos ângulos internos é 360°
+- O menor é a + r
+
+### Simulado Cursinho 2026 · Q3
+assuntos: probabilidade
+(cole aqui o enunciado; pode ter várias linhas)
+A) ...
+B) ...
+C) ...
+D) ...
+E) ...
+gabarito: B
+
+# Regras
+# - Cada questão começa com "###" seguido da fonte. O texto antes do "·" vira o nome do conjunto
+#   (ex.: "FUVEST 2024", "Simulado Cursinho 2026"), usado para treinar/apagar o conjunto inteiro.
+# - "assuntos:" liga a questão à trilha (nomes das habilidades, ex.: logaritmos, Pitágoras, MRUV).
+#   Se faltar, o app tenta descobrir pelo texto.
+# - "erro X:" explica por que a alternativa X está errada (aparece quando o aluno a marca).
+# - "resolução:" (um passo por linha) ativa o modo Montar resolução; "armadilhas:" são passos
+#   errados que aparecem misturados para o aluno evitar.
+# - Também é aceito JSON: [{"fonte","assuntos","enunciado","alternativas":[5],"gabarito":"C",
+#   "erros":{"A":"..."},"resolucao":[...],"erradas":[...]}]

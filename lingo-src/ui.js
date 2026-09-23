@@ -3,7 +3,7 @@
    Navegação e telas
    ===================================================================== */
 let VIEW='learn',OPEN_POP=null;
-const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
+const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','FUVEST'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
 const LOGO=`<svg viewBox="0 0 120 120">${mascot().replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg><span>${BRAND.app}</span>`;
 function applyTheme(){ const r=document.documentElement; if(S.theme==='auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme',S.theme); }
 function statsHTML(){ const lvl=lvlOf(S.xp); return `
@@ -35,6 +35,7 @@ function render(){
   if(VIEW==='learn') v.innerHTML=renderLearn();
   else if(VIEW==='review') v.innerHTML=renderReview();
   else if(VIEW==='lessons') v.innerHTML=renderLessons();
+  else if(VIEW==='fuvest') v.innerHTML=renderFuvest();
   else v.innerHTML=renderProfile();
 }
 const OFFS=[0,-46,-72,-46,0,46,72,46];
@@ -309,6 +310,8 @@ function quitLesson(){ if(L&&L.timer)clearInterval(L.timer); L=null; closeModal(
 function askQuit(){
   if(!L||L.state==='result') return quitLesson();
   if(L.mode==='timed'){ return finish(); }
+  if(L.mode==='fuv'&&L.state==='result') return quitLesson();
+  if(L.mode==='fuv'&&L.exam){ modal(`<div class="center"><h2 style="padding:0">Encerrar o simulado?</h2><p class="muted">As questões não respondidas contam como em branco e você verá a correção comentada.</p></div><div class="actions"><button class="btn block" data-close>Continuar o simulado</button><button class="btn red block" data-fa="endsim">Encerrar e corrigir</button></div>`); return; }
   if(L.mode==='cards'){ return L.done?finish():quitLesson(); }
   modal(`<div class="center"><div style="width:120px;margin:0 auto">${mascot('sad')}</div><h2 style="padding:0">Espere, não vá embora!</h2><p class="muted">Se sair agora, você perderá o progresso desta ${L.mode==='lesson'?'lição':'sessão'}.</p></div><div class="actions"><button class="btn block" data-close>Continuar estudando</button><button class="btn ghost dark block" data-act="quit">Sair</button></div>`);
 }
@@ -384,7 +387,7 @@ document.addEventListener('click',e=>{
   if(d.chip){ ask(d.chip); return; }
   if(d.chk){ const u=UNITS.find(x=>d.chk.startsWith(x.id+'-')); const nd=unitNodes(u).find(n=>n.t==='chk'&&n.key===d.chk); startSession('chk',{ids:nd.ids,key:d.chk}); return; }
   if(d.rate){ rateCard(+d.rate); return; }
-  if(t.classList.contains('opt')&&L){ selectOpt(+d.i); return; }
+  if(t.classList.contains('opt')&&L&&L.mode!=='fuv'){ selectOpt(+d.i); return; }
   if(t.classList.contains('tile')&&L){ if(d.unslot) unslot(); else if(d.i!=null) selectOpt(+d.i); return; }
   switch(d.act){
     case 'streak': streakModal(); break;
@@ -425,6 +428,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){ if($('#chat').classList.contains('open')) closeChat(); else if(modalOpen()&&$('.modal-bg .close')) closeModal(); return; }
   if(!L||$('#lesson').classList.contains('hidden')||modalOpen()) return;
   if(document.activeElement&&document.activeElement.id==='chatin') return;
+  if(L.mode==='fuv'){ fuvKey(e); return; }
   if(L.mode==='cards'){ if((e.key==='Enter'||e.key===' ')&&L.state==='front'){ e.preventDefault(); flipCard(); } else if(L.state==='back'&&/^[1-4]$/.test(e.key)) rateCard(+e.key); else if(e.key==='Enter'&&L.state==='result'){ e.preventDefault(); quitLesson(); } return; }
   if(e.key==='Enter'){ e.preventDefault(); if(L.state==='intro'){ L.state='answer'; nextQ(); } else if(L.state==='answer') check(); else if(L.state==='feedback') cont(); else if(L.state==='result') quitLesson(); return; }
   if(L.state==='answer'&&/^[1-9]$/.test(e.key)&&['mc','tf','bank'].includes(L.cur.type)){ selectOpt(+e.key-1); }
