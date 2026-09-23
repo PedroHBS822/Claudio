@@ -3,7 +3,19 @@
    Índices
    ===================================================================== */
 const ALL=[],SK={};
+if(typeof CARDS!=='undefined') UNITS.forEach(u=>u.skills.forEach(s=>{ if(!s.cards&&CARDS[s.id]) s.cards=CARDS[s.id]; }));
 UNITS.forEach((u,ui)=>u.skills.forEach(s=>{s.unit=u;s.ui=ui;s.idx=ALL.length;ALL.push(s);SK[s.id]=s;}));
+/* Gerador de "relembrar": transforma os cartões de memória em questões (prática de evocação) */
+function cardGen(s){ return lv=>{ const C=s.cards,i=R(0,C.length-1),[f,b]=C[i];
+  const sib=s.unit.skills.filter(x=>x!==s&&x.cards);
+  const backs=shuffle(C.filter((_,j)=>j!==i).map(c=>c[1])).concat(shuffle(sib.flatMap(x=>x.cards.map(c=>c[1]))));
+  const fronts=shuffle(C.filter((_,j)=>j!==i).map(c=>c[0])).concat(shuffle(sib.flatMap(x=>x.cards.map(c=>c[0]))));
+  const t=Math.random(); let q;
+  if(t<0.55) q=MC(`🧠 <b>Relembre:</b> ${f}`,b,backs,`<b>${f}</b>: ${b}.`,s.tip);
+  else if(t<0.8) q=MC(`🧠 <b>A que se refere?</b><br>${b}`,f,fronts,`${b} → <b>${f}</b>.`,s.tip);
+  else { const ok=Math.random()<.5; q=TF(`${f}: <b>${ok?b:backs[0]}</b>`,ok,`O correto é: <b>${f}</b>: ${b}.`,s.tip); }
+  q.card=true; q.cardKey=cardKey(s.id,i); return q; }; }
+ALL.forEach(s=>{ if(s.cards&&s.cards.length>=2){ s.cardGi=s.gens.length; s.gens.push(cardGen(s)); } });
 
 /* =====================================================================
    Mascote
@@ -31,11 +43,16 @@ const dkey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const today=()=>dkey(new Date());
 const addDays=(k,n)=>{const [y,m,d]=k.split('-').map(Number);return dkey(new Date(y,m-1,d+n));};
 const diffDays=(a,b)=>{const p=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).getTime();};return Math.round((p(b)-p(a))/864e5);};
-function defState(){return {name:'Estudante',xp:0,gems:100,hearts:5,heartTs:0,streak:0,best:0,last:null,days:{},goal:20,sound:true,unlockAll:false,theme:'auto',skills:{},lessons:0,reviews:0,correct:0,answered:0,perfect:0,ach:{},timedBest:0,created:today()};}
+function defState(){return {name:'Estudante',xp:0,gems:100,hearts:5,heartTs:0,streak:0,best:0,last:null,days:{},goal:20,sound:true,unlockAll:false,theme:'auto',skills:{},cards:{},mist:[],chk:{},trophy:{},nudged:null,cardsDone:0,lessons:0,reviews:0,correct:0,answered:0,perfect:0,ach:{},timedBest:0,created:today()};}
 let S=defState();
 try{const raw=localStorage.getItem(LSK);if(raw)S=Object.assign(defState(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(LSK,JSON.stringify(S));}catch(e){}}
-function sk(id){return S.skills[id]||(S.skills[id]={lv:0,int:0,ease:2.5,due:null,c:0,w:0,n:0});}
+const DAY=864e5;
+const dayStart=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).getTime();};
+/* estado de uma habilidade (com migração do formato antigo int/due para stab/lastT) */
+function sk(id){ let s=S.skills[id]; if(!s) s=S.skills[id]={lv:0,ease:2.5,stab:0,lastT:0,c:0,w:0,n:0,g:{}};
+  if(s.stab==null){ s.stab=s.lv?(s.int||1):0; s.lastT=s.lv&&s.due?dayStart(addDays(s.due,-(s.int||1))):(s.lv?Date.now():0); delete s.int; delete s.due; }
+  if(!s.g) s.g={}; return s; }
 const MAXH=5,HEART_MS=30*60*1000,REFILL=50;
 function regen(){ if(S.hearts>=MAXH){S.heartTs=0;return;} if(!S.heartTs)S.heartTs=Date.now(); const n=Math.floor((Date.now()-S.heartTs)/HEART_MS); if(n>0){S.hearts=Math.min(MAXH,S.hearts+n);S.heartTs=S.hearts>=MAXH?0:S.heartTs+n*HEART_MS;save();} }
 function loseHeart(){ if(S.hearts>=MAXH)S.heartTs=Date.now(); S.hearts=Math.max(0,S.hearts-1); }
@@ -46,11 +63,44 @@ const xpToday=()=>S.days[today()]||0;
 const lvlOf=xp=>{let n=1;while(25*n*(n+1)<=xp)n++;return n;};
 const lvlStart=n=>25*(n-1)*n;
 function isUnlocked(i){ return S.unlockAll||i===0||sk(ALL[i].id).lv>=1||sk(ALL[i-1].id).lv>=1; }
-function isDue(id){ const s=sk(id); return s.lv>=1&&s.due&&s.due<=today(); }
+/* ===== Modelo de memória (curva do esquecimento) =====
+   Retenção estimada R(t) = 0,9^(t/estabilidade): cai para 90% após "stab" dias.
+   Revisar quando R chega a ~90% (o momento ideal: difícil o bastante para fortalecer, fácil o bastante para lembrar).
+   Quanto mais "esquecido" (R menor) e ainda assim acertado, maior o ganho de estabilidade (efeito do espaçamento). */
+const eod=()=>dayStart(today())+DAY;
+function retention(id,at){ const s=sk(id); if(s.lv<1||!s.lastT||!s.stab) return 1; const t=((at||Date.now())-s.lastT)/DAY; return Math.pow(0.9,Math.max(0,t)/s.stab); }
+function isDue(id){ const s=sk(id); return s.lv>=1&&s.lastT>0&&(eod()-s.lastT)/DAY>=s.stab; }
+function nextReviewDays(id){ const s=sk(id); return Math.max(0,Math.ceil((s.lastT+s.stab*DAY-dayStart(today()))/DAY)-1); }
+function memUpdate(id,acc){ const s=sk(id); const R=retention(id);
+  if(!s.stab||!s.lastT){ s.stab=acc>=0.7?1:0.5; }
+  else if(acc>=0.9){ s.stab=Math.max(s.stab+0.5,s.stab*(1+s.ease*(1.3-R))); s.ease=Math.min(3,s.ease+0.05); }
+  else if(acc>=0.7){ s.stab=Math.max(s.stab,s.stab*(1+(s.ease-1)*(1.3-R)*0.5)); }
+  else { s.stab=Math.max(0.5,s.stab*0.4); s.ease=Math.max(1.3,s.ease-0.15); }
+  s.stab=Math.min(round(s.stab,2),365); s.lastT=Date.now(); }
+function avgRetention(){ const l=learned(); return l.length?l.reduce((a,id)=>a+retention(id),0)/l.length:0; }
+const memColor=R=>R>=0.9?'#58cc02':R>=0.8?'#ffc800':R>=0.65?'#ff9600':'#ff4b4b';
+const memLabel=R=>R>=0.9?'fresca':R>=0.8?'esfriando':R>=0.65?'esquecendo':'quase esquecida';
+/* ===== Cartões de memória (flashcards) — repetição espaçada por cartão ===== */
+function cardKey(id,i){ return id+':'+i; }
+function cs(k){ return S.cards[k]||(S.cards[k]={stab:0,lastT:0,ease:2.5,n:0}); }
+function cardR(k){ const c=cs(k); if(!c.lastT) return 0; return Math.pow(0.9,((Date.now()-c.lastT)/DAY)/c.stab); }
+function cardDue(k){ const c=cs(k); return !c.lastT||(eod()-c.lastT)/DAY>=c.stab; }
+function cardRate(k,g){ const c=cs(k),R=c.lastT?cardR(k):1; c.n++;
+  if(g===1){ c.stab=Math.max(0.2,(c.stab||0.5)*0.3); c.ease=Math.max(1.3,c.ease-0.2); }
+  else if(!c.stab){ c.stab=[0,0,0.6,1,3][g]; }
+  else if(g===2){ c.stab=Math.max(c.stab,c.stab*1.2); c.ease=Math.max(1.3,c.ease-0.1); }
+  else if(g===3){ c.stab=Math.max(c.stab+0.5,c.stab*(1+c.ease*(1.3-R))); }
+  else { c.stab=Math.max(c.stab+1,c.stab*(1+c.ease*(1.3-R))*1.3); c.ease=Math.min(3,c.ease+0.1); }
+  c.stab=Math.min(round(c.stab,2),365); c.lastT=Date.now(); }
+function cardPool(){ const due=[],fresh=[]; learned().forEach(id=>(SK[id].cards||[]).forEach((_,i)=>{ const k=cardKey(id,i); if(!cs(k).lastT) fresh.push(k); else if(cardDue(k)) due.push(k); })); due.sort((a,b)=>cardR(a)-cardR(b)); return {due,fresh}; }
+function cardsToday(){ const p=cardPool(); return p.due.length+Math.min(8,p.fresh.length); }
+/* ===== Caderno de erros ===== */
+function logMistake(q){ S.mist=S.mist||[]; const p=stripHtml(q.type==='fill'||q.type==='bank'?q.prompt+' '+q.sentence.replace('@@','___'):q.prompt).slice(0,170); S.mist=S.mist.filter(m=>!(m.s===q.skill&&m.g===q.gi&&m.p===p)); S.mist.unshift({s:q.skill,g:q.gi,p,a:stripHtml(q.answer).slice(0,70),t:Date.now()}); if(S.mist.length>80) S.mist.length=80; }
+function resolveMistake(q){ const i=(S.mist||[]).findIndex(m=>m.s===q.skill&&m.g===q.gi); if(i>=0) S.mist.splice(i,1); }
 function learned(){ return ALL.filter(s=>sk(s.id).lv>=1).map(s=>s.id); }
-function dueList(){ return learned().filter(isDue).sort((a,b)=>sk(a).due.localeCompare(sk(b).due)); }
-function strength(id){ const s=sk(id); if(s.lv<1||!s.due)return 0; const od=diffDays(s.due,today()); return od<=0?4:od<=2?3:od<=6?2:1; }
-function srsUpdate(id,acc){ const s=sk(id); if(acc>=0.8){ s.int=s.int<1?1:s.int<3?3:Math.round(s.int*s.ease); s.ease=Math.min(3,s.ease+0.1); } else if(acc>=0.5){ s.int=Math.max(1,Math.round(s.int*0.7)); } else { s.int=1; s.ease=Math.max(1.3,s.ease-0.2); } s.due=addDays(today(),s.int); }
+function dueList(){ return learned().filter(isDue).sort((a,b)=>retention(a)-retention(b)); }
+function strength(id){ const s=sk(id); if(s.lv<1)return 0; const R=retention(id); return R>=0.9?4:R>=0.8?3:R>=0.65?2:1; }
+function srsUpdate(id,acc){ memUpdate(id,acc); }
 function currentSkill(){ for(const s of ALL){ if(isUnlocked(s.idx)&&sk(s.id).lv===0)return s; } return ALL.find(s=>sk(s.id).lv<5)||null; }
 
 /* =====================================================================
@@ -70,7 +120,12 @@ const ACH=[
  {id:'x5000',e:'👑',n:'Lenda',d:'Acumule 5000 XP',t:()=>S.xp>=5000},
  {id:'master',e:'💎',n:'Mestre',d:'Leve uma habilidade ao nível 5',t:()=>ALL.some(s=>sk(s.id).lv>=5)},
  {id:'timed',e:'⏱️',n:'Relâmpago',d:'Acerte 15 no desafio de 60 s',t:()=>S.timedBest>=15},
- ...UNITS.map((u,i)=>({id:'unit'+i,e:['🥉','🥈','🥇','🏅','🏆'][i],n:`Unidade ${i+1} concluída`,d:u.title,t:()=>u.skills.every(s=>sk(s.id).lv>=1)})),
+ {id:'cards50',e:'🗂️',n:'Memória de elefante',d:'Revise 50 cartões de memória',t:()=>S.cardsDone>=50},
+ {id:'cards300',e:'🐘',n:'Memória fotográfica',d:'Revise 300 cartões de memória',t:()=>S.cardsDone>=300},
+ {id:'chk1',e:'🎁',n:'Baú aberto',d:'Complete um ponto de revisão da trilha',t:()=>Object.keys(S.chk).length>=1},
+ {id:'trophy1',e:'🏆',n:'Campeão da unidade',d:'Passe no teste de uma unidade',t:()=>Object.keys(S.trophy).length>=1},
+ {id:'fresh',e:'🧊',n:'Nada esquecido',d:'Tenha 10 habilidades com memória acima de 90%',t:()=>learned().filter(id=>retention(id)>=0.9).length>=10},
+ ...UNITS.map((u,i)=>({id:'unit'+i,e:['🥉','🥈','🥇','🏅','🎖️','🏆','👑','🌟'][i%8],n:`Unidade ${i+1} concluída`,d:u.title,t:()=>u.skills.every(s=>sk(s.id).lv>=1)})),
 ];
 function checkAch(){ const got=[]; ACH.forEach(a=>{ if(!S.ach[a.id]&&a.t()){ S.ach[a.id]=today(); got.push(a);} }); got.forEach((a,i)=>setTimeout(()=>toast(`${a.e} Conquista desbloqueada: <b>${a.n}</b>`),900+i*2200)); }
 

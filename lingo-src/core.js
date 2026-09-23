@@ -114,3 +114,21 @@ const SYS=(...l)=>`<span class="sys">${l.join('<br>')}</span>`;
 /* =====================================================================
    CONTEÚDO — Unidades, habilidades, teoria e geradores
    ===================================================================== */
+/* insere uma habilidade numa unidade, logo após outra */
+function insertSkill(uid,afterId,skill){ const u=UNITS.find(x=>x.id===uid); const i=u.skills.findIndex(s=>s.id===afterId); u.skills.splice(i<0?u.skills.length:i+1,0,skill); }
+/* gráfico de barras com grade (leitura de gráficos) */
+function chartSVG(cats,vals,step,color){ const W=300,H=200,ox=40,oy=165,mx=Math.ceil(Math.max(...vals)/step)*step,sy=140/mx,bw=Math.min(46,220/cats.length-14); let g='';
+  for(let v=0;v<=mx;v+=step){ const y=oy-v*sy; g+=`<line x1="${ox}" y1="${y}" x2="${W-6}" y2="${y}" stroke="#e5e5e5"/><text x="${ox-6}" y="${y+4}" text-anchor="end" font-size="11" fill="#777">${v}</text>`; }
+  cats.forEach((c,i)=>{ const x=ox+14+i*(bw+14)+ (220-cats.length*(bw+14))/2; g+=`<rect x="${x}" y="${oy-vals[i]*sy}" width="${bw}" height="${vals[i]*sy}" rx="4" fill="${color||'#1cb0f6'}"/><text x="${x+bw/2}" y="${oy+16}" text-anchor="middle" font-size="12" fill="#777">${c}</text>`; });
+  g+=`<line x1="${ox}" y1="${oy}" x2="${W-6}" y2="${oy}" stroke="#777" stroke-width="2"/>`; return SV(W,H,g); }
+function lineSVG(cats,vals,step){ const W=300,H=200,ox=44,oy=165,mx=Math.ceil(Math.max(...vals)/step)*step,sy=140/mx,dx=230/(cats.length-1); let g='';
+  for(let v=0;v<=mx;v+=step){ const y=oy-v*sy; g+=`<line x1="${ox}" y1="${y}" x2="${W-6}" y2="${y}" stroke="#e5e5e5"/><text x="${ox-6}" y="${y+4}" text-anchor="end" font-size="11" fill="#777">${v}</text>`; }
+  const pts=vals.map((v,i)=>`${ox+10+i*dx},${oy-v*sy}`); g+=`<polyline points="${pts.join(' ')}" fill="none" stroke="#ff9600" stroke-width="3"/>`;
+  vals.forEach((v,i)=>{ g+=`<circle cx="${ox+10+i*dx}" cy="${oy-v*sy}" r="4.5" fill="#ff9600"/><text x="${ox+10+i*dx}" y="${oy+16}" text-anchor="middle" font-size="12" fill="#777">${cats[i]}</text>`; });
+  g+=`<line x1="${ox}" y1="${oy}" x2="${W-6}" y2="${oy}" stroke="#777" stroke-width="2"/>`; return SV(W,H,g); }
+function clockSVG(h,m){ const c=90,r=78; let g=`<circle cx="${c}" cy="${c}" r="${r}" fill="#fff" stroke="#3c3c3c" stroke-width="5"/>`;
+  for(let i=1;i<=12;i++){ const a=i*Math.PI/6; g+=`<text x="${(c+62*Math.sin(a)).toFixed(1)}" y="${(c-62*Math.cos(a)+6).toFixed(1)}" text-anchor="middle" font-size="16" fill="#3c3c3c">${i}</text>`; }
+  for(let i=0;i<60;i++){ const a=i*Math.PI/30,r1=i%5?72:68; g+=`<line x1="${(c+r1*Math.sin(a)).toFixed(1)}" y1="${(c-r1*Math.cos(a)).toFixed(1)}" x2="${(c+76*Math.sin(a)).toFixed(1)}" y2="${(c-76*Math.cos(a)).toFixed(1)}" stroke="#999" stroke-width="${i%5?1:2.5}"/>`; }
+  const ha=((h%12)+m/60)*Math.PI/6,ma=m*Math.PI/30;
+  g+=`<line x1="${c}" y1="${c}" x2="${(c+38*Math.sin(ha)).toFixed(1)}" y2="${(c-38*Math.cos(ha)).toFixed(1)}" stroke="#3c3c3c" stroke-width="7" stroke-linecap="round"/><line x1="${c}" y1="${c}" x2="${(c+60*Math.sin(ma)).toFixed(1)}" y2="${(c-60*Math.cos(ma)).toFixed(1)}" stroke="#1cb0f6" stroke-width="4" stroke-linecap="round"/><circle cx="${c}" cy="${c}" r="6" fill="#3c3c3c"/>`;
+  return SV(180,180,g); }
