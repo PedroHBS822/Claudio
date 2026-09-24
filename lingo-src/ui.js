@@ -53,7 +53,7 @@ function renderLearn(){
   let h=`<div class="mobile-only" style="display:grid;gap:12px;margin-bottom:18px">${planCard()}${goalCard()}</div>`;
   UNITS.forEach((u,ui)=>{
     const open=isUnlocked(u.skills[0].idx), done=u.skills.filter(s=>sk(s.id).lv>=1).length;
-    h+=`<div class="unit ${open?'':'locked'}"><div class="unit-head" style="background:${u.color};--cd:${u.dark}"><div class="uh-t"><h2><span class="ukick">Unidade ${ui+1}</span>${u.title}</h2><p>${u.sub}</p><div class="uprog"><i style="width:${done/u.skills.length*100}%"></i></div><small>${done}/${u.skills.length} habilidades</small></div><div class="uh-b"><button class="guide" data-guide="${ui}">📖 Guia</button>${!open?`<button class="guide" data-jump="${ui}">⏩ Pular</button>`:''}</div></div><div class="path">`;
+    h+=`<div class="unit ${open?'':'locked'}" id="unit-${u.id}"><div class="unit-head" style="background:${u.color};--cd:${u.dark}"><div class="uh-t"><h2><span class="ukick">Unidade ${ui+1}</span>${u.title}</h2><p>${u.sub}</p><div class="uprog"><i style="width:${done/u.skills.length*100}%"></i></div><small>${done}/${u.skills.length} habilidades</small></div><div class="uh-b"><button class="guide" data-guide="${ui}">📖 Guia</button>${!open?`<button class="guide" data-jump="${ui}">⏩ Pular</button>`:''}</div></div><div class="path">`;
     unitNodes(u).forEach((nd,i)=>{
       const off=OFFS[i%8]*(ui%2?-1:1);
       if(nd.t==='skill'){ const s=nd.s,st=sk(s.id),lv=st.lv,un=isUnlocked(s.idx),due=isDue(s.id),R=lv?retention(s.id):1;
@@ -451,6 +451,7 @@ if(!FIRST_RUN) setTimeout(()=>{ const d=dueList(); if(d.length&&S.nudged!==today
   modal(`<div class="center"><div style="width:120px;margin:0 auto">${mascot()}</div><h2 style="padding:0">Hora de relembrar!</h2><p class="muted">${d.length} assunto${d.length>1?'s estão':' está'} esfriando: <b>${d.slice(0,3).map(id=>SK[id].name).join(', ')}${d.length>3?'…':''}</b>. Uma revisão rápida agora faz você lembrar deles por muito mais tempo.</p></div><div class="actions"><button class="btn block" data-act="nudge-go">Revisar agora (3 min)</button><button class="btn ghost block" data-close>Depois</button></div>`); } },500);
 $('#chat .chat-h b').textContent=BRAND.tutor; $('#chatin').placeholder='Pergunte algo… '+BRAND.chatPh; document.title=`${APP_NAME} · ${BRAND.course}`;
 if(FIRST_RUN) setTimeout(onboardModal,200);
+else if(lsGet('lingo_goto')){ const g=lsGet('lingo_goto'); try{localStorage.removeItem('lingo_goto');}catch(e){} setTimeout(()=>gotoUnit(g),250); }
 else if(!S.lessons&&!localStorage.getItem(LSK+'_hi')){ try{localStorage.setItem(LSK+'_hi','1');}catch(e){} setTimeout(()=>modal(`<div class="center"><div style="width:140px;margin:0 auto">${mascot('happy')}</div><h2 style="padding:0">Bem-vindo ao curso de ${esc(BRAND.course)}!</h2><p class="muted">${BRAND.welcome} Eu sou o <b>${BRAND.tutor}</b> e vou te ajudar no caminho!</p></div><div class="actions"><button class="btn block" data-start="${BRAND.first}">Começar do básico</button><button class="btn ghost block" data-close>Explorar a trilha</button></div><p class="muted center" style="font-size:13px;margin-top:12px">Já sabe o básico? Use o botão <b>⏩ Pular</b> nas unidades para fazer um teste de nivelamento.</p>`),350); }
 </script>
 </body>

@@ -66,7 +66,7 @@ function markStudy(xp){ const t=today(); let up=false; if(S.last!==t){ S.streak=
 const xpToday=()=>S.days[today()]||0;
 const lvlOf=xp=>{let n=1;while(25*n*(n+1)<=xp)n++;return n;};
 const lvlStart=n=>25*(n-1)*n;
-function isUnlocked(i){ return S.unlockAll||i===0||sk(ALL[i].id).lv>=1||sk(ALL[i-1].id).lv>=1; }
+function isUnlocked(i){ return S.unlockAll||i===0||ALL[i].unit.free||sk(ALL[i].id).lv>=1||sk(ALL[i-1].id).lv>=1; }
 /* ===== Modelo de memória (curva do esquecimento) =====
    Retenção estimada R(t) = 0,9^(t/estabilidade): cai para 90% após "stab" dias.
    Revisar quando R chega a ~90% (o momento ideal: difícil o bastante para fortalecer, fácil o bastante para lembrar).

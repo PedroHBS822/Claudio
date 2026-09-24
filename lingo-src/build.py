@@ -9,7 +9,7 @@ OUT = 'SaberLingo'
 # id, nome, ícone, cor, cor escura, descrição, arquivos de conteúdo
 COURSES = [
     ('mat', 'Matemática', '➗', '#58cc02', '#58a700', 'Do Fundamental I ao Ensino Médio', ['content-mat.js', 'content-mat2.js', 'content-mat3.js', 'oficiais-mat.js']),
-    ('por', 'Português', '📝', '#ce82ff', '#a568cc', 'Gramática, interpretação e literatura', ['content-por.js', 'oficiais-por.js']),
+    ('por', 'Português', '📝', '#ce82ff', '#a568cc', 'Gramática, interpretação, literatura e livros da FUVEST', ['content-por.js', 'content-por2.js', 'oficiais-por.js']),
     ('fis', 'Física', '⚛️', '#1cb0f6', '#1899d6', 'Do 9º ano ao Ensino Médio', ['content-fis.js', 'content-fis2.js', 'content-fis3.js', 'oficiais-fis.js']),
     ('qui', 'Química', '🧪', '#ff9600', '#e07b00', 'Da matéria à química orgânica', ['content-qui.js', 'oficiais-qui.js']),
     ('bio', 'Biologia', '🧬', '#2bb673', '#1f8f57', 'Da célula à ecologia', ['content-bio.js', 'oficiais-bio.js']),

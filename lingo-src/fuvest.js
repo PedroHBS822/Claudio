@@ -35,6 +35,23 @@ function fuvSrcChip(q){
   if(q.origin==='bank') return `<div class="srcchip bank"><b>✍️ Estilo FUVEST</b><span>Questão original do ${BRAND.app}, no formato da 1ª fase (não é de prova oficial)</span></div>`;
   return `<div class="srcchip imp"><b>📥 ${esc(q.src)}</b><span>Importada por você</span></div>`; }
 
+/* ---------- Resolução em vídeo (YouTube) ----------
+   Não há como escolher um vídeo para cada uma das milhares de questões, então o app abre a
+   busca do YouTube já filtrada pela prova, pelo ano e pelo número da questão. O segundo botão
+   busca pelo começo do enunciado, útil quando o vídeo usa a numeração de outro caderno. */
+function ytSearch(t){ return 'https://www.youtube.com/results?search_query='+encodeURIComponent(t); }
+function ofcVideo(q){ if(q.origin!=='oficial') return '';
+  const m=ofcMan(q),y=m.year||(/\d{4}/.exec(q.set)||[''])[0],rea=m.ed==='reaplicacao';
+  const byNum=`${q.exam} ${y}${rea?' reaplicação':''} questão ${q.n} resolução`;
+  const words=stripHtml(q.q.replace(/<[^>]+>/g,' ')).split(' ').filter(w=>w.length>1&&!/^(https?:|www\.|\()/.test(w)).slice(0,12).join(' ');
+  return `<div class="vidbox"><b>🎬 Resolução em vídeo</b><small>Abre o YouTube com os vídeos que resolvem esta questão (professores e cursinhos). Confira se o vídeo é de ${esc(q.set)}.</small>
+   <div class="vidbtns"><a class="btn sm red" href="${ytSearch(byNum)}" target="_blank" rel="noopener">▶ ${q.exam} ${y} · questão ${q.n}</a>${words.length>20?`<a class="btn sm ghost" href="${ytSearch(q.exam+' '+y+' '+words)}" target="_blank" rel="noopener">🔎 Buscar pelo enunciado</a>`:''}</div></div>`; }
+
+/* ---------- Leituras obrigatórias (ficam no curso de Português) ---------- */
+const BOOKS_UNIT='p7';
+function booksCard(){ return `<div class="practice-card" style="margin-top:12px"><div class="pic" style="background:#f3e3ff">📚</div><div class="grow"><h3>Leituras obrigatórias da FUVEST 2027</h3><p>As 9 obras da lista, todas de autoras de língua portuguesa: resumo, personagens, temas, vídeos e questões sobre cada livro${COURSE_ID==='por'?'':' (no curso de Português)'}.</p><button class="btn sm purple" data-fa="livros">${COURSE_ID==='por'?'Estudar os livros':'Abrir no curso de Português'}</button></div></div>`; }
+function gotoUnit(id){ if(L&&!$('#lesson').classList.contains('hidden')) return; VIEW='learn'; render(); const el=document.getElementById('unit-'+id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+
 /* ---------- Tela principal ---------- */
 function renderFuvest(){
   const F=fv(),all=fuvAll(),nb=FUV_BANK.length,ni=F.imp.length,nbuild=all.filter(q=>q.steps&&q.steps.length>=2).length,nw=F.wrong.filter(id=>fuvById(id)||ofcPidOf(id)).length;
@@ -70,7 +87,7 @@ function ofcSection(){
    <div class="fuvcount"><span><b>${nf(cnt('FUVEST'))}</b> de ${area} · FUVEST ${yrs('FUVEST')}</span><span><b>${nf(cnt('ENEM'))}</b> de ${area} · ENEM ${yrs('ENEM')}</span></div>
    <div class="seg ofctabs" role="tablist">${['FUVEST','ENEM'].map(x=>`<button class="${tab===x?'on':''}" role="tab" aria-selected="${tab===x}" data-fa="otab" data-tab="${x}">${x==='FUVEST'?'🎓 FUVEST':'📘 ENEM'}</button>`).join('')}</div>
    <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:12px"><button class="btn gold sm" data-fa="osim">📝 Simulado ${tab} · 10 questões</button><button class="btn blue sm" data-fa="otreino">🎯 Treino ${tab} com correção</button></div></div>
-  <div class="list" style="margin-top:12px">${rows}</div>
+  ${tab==='FUVEST'?booksCard():''}<div class="list" style="margin-top:12px">${rows}</div>
   <p class="muted" style="font-size:13px;margin-top:10px">${tab==='FUVEST'?'1ª fase (Conhecimentos Gerais), só as questões de '+area+'. <b>FUVEST 2025, FUVEST 2026 e os simulados oficiais de 2026 ainda não estão no banco</b>: enquanto isso, cole-os em <b>Importar questões</b>, mais abaixo.':'Provas regulares e reaplicações. A numeração é a do caderno de referência; nos cadernos de outras cores só muda a ordem das questões.'} Textos transcritos dos cadernos oficiais pelos projetos abertos ${tab==='FUVEST'?'BLUEX':'enem-api'}, com o gabarito oficial ${tab==='FUVEST'?'da FUVEST':'do INEP'}; as figuras vêm dos próprios cadernos.</p>`; }
 function fuvTopicRow(id,c,w){ const s=SK[id],acc=c/(c+w||1),lv=sk(id).lv;
   return `<div class="topicrow"><span class="ti" style="background:${s.unit.color}">${s.icon}</span><span class="tn"><b>${s.name}</b><small>${c} certas · ${w} erradas${lv?'':' · ainda não estudado na trilha'}</small><span class="minibar"><i style="width:${acc*100}%;background:${memColor(acc)}"></i></span></span><span class="tb"><button class="btn sm ghost" data-theory="${id}">Aula</button><button class="btn sm" ${lv?`data-practice="${id}"`:`data-start="${id}"`}>${lv?'Revisar':'Estudar'}</button></span></div>`; }
@@ -136,7 +153,7 @@ function fuvDiag(q,sel,open){
   const steps=q.steps&&q.steps.length?`<ol class="solsteps">${q.steps.map(s=>`<li>${fuvStep(q,s)}</li>`).join('')}</ol>`:(q.why&&q.why[q.ans]?`<p>${fuvStep(q,q.why[q.ans])}</p>`:ofc?'':'<p class="muted">Sem resolução cadastrada para esta questão.</p>');
   const rev=fuvRev(q,ok);
   return `<div class="diag ${ok?'good':'badd'}">${blank?`<div class="dline"><b>⚪ Em branco.</b> A correta é (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}.</div>`:ok?`<div class="dline"><b>✅ Correto:</b> (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}</div>`:`<div class="dline"><b>❌ Você marcou (${LETTERS[sel]}):</b> ${fuvAlt(q,sel)}</div><div class="dwhy"><b>Onde está o erro:</b> ${fuvStep(q,why)}</div><div class="dline"><b>✅ Correta: (${LETTERS[q.ans]})</b> ${fuvAlt(q,q.ans)}</div>`}
-   ${steps?`<details ${open?'open':''}><summary><b>📝 Resolução passo a passo</b></summary>${steps}</details>`:`<div class="dline muted" style="font-size:13.5px">Fonte: ${esc(q.src)} (${esc(ofcMan(q).sub)}). Gabarito oficial ${q.exam==='ENEM'?'do INEP':'da FUVEST'}.</div>`}${rev}</div>`; }
+   ${steps?`<details ${open?'open':''}><summary><b>📝 Resolução passo a passo</b></summary>${steps}</details>`:`<div class="dline muted" style="font-size:13.5px">Fonte: ${esc(q.src)} (${esc(ofcMan(q).sub)}). Gabarito oficial ${q.exam==='ENEM'?'do INEP':'da FUVEST'}.</div>`}${ofc&&!ok?ofcVideo(q):''}${rev}</div>`; }
 function fuvRev(q,ok){ return q.tags.length?`<div class="revbox"><b>📚 O que revisar</b>${q.tags.map(t=>{const s=SK[t],lv=sk(t).lv;return `<div class="revrow"><span>${s.icon} <b>${s.name}</b><small>${lv?`memória ${Math.round(retention(t)*100)}% · nível ${lv}/5`:'ainda não estudado na trilha'}</small></span><span><button class="btn sm ghost" data-theory="${t}">Aula</button><button class="btn sm" ${lv?`data-practice="${t}"`:`data-start="${t}"`}>${lv?'Praticar':'Estudar'}</button></span></div>`;}).join('')}${!ok&&q.tags.some(t=>sk(t).lv)?'<small class="muted">Esses assuntos foram antecipados na sua revisão espaçada.</small>':''}</div>`:''; }
 function fuvNext(){ if(!L||L.mode!=='fuv')return; if(L.kind==='build-one'){ L.kind=L.prevKind; L.state='result'; $('#lqbox').innerHTML=L.resHTML; $('#lfoot').className='lfoot'; $('#lfootin').innerHTML=L.resFoot; return; } L.i++; fuvRender(); }
 
@@ -281,6 +298,7 @@ document.addEventListener('click',e=>{
     case 'sim10': case 'sim20': case 'treino': case 'build': startFuv(d.fa); break;
     case 'redo': ofcEnsure(fv().wrong).then(()=>startFuv('redo'),()=>startFuv('redo')); break;
     case 'otab': S.ofcTab=d.tab; save(); render(); break;
+    case 'livros': if(UNITS.some(u=>u.id===BOOKS_UNIT)) gotoUnit(BOOKS_UNIT); else { lsSet('lingo_goto',BOOKS_UNIT); switchCourse('por'); } break;
     case 'oprova': { const m=OFC_MAN.find(x=>x.id===d.pid); if(!m)break; const mins=m.n*3;
       modal(`<div class="center"><h2 style="padding:0">${esc(m.label)}</h2><p class="muted">${esc(m.sub)}</p><p>${m.n} questões oficiais em ordem, com cronômetro de <b>${mins>=60?Math.floor(mins/60)+' h '+(mins%60?mins%60+' min':''):mins+' min'}</b> (3 min por questão, o ritmo da prova). A correção com o gabarito oficial aparece no final. Você pode encerrar quando quiser.</p></div><div class="actions"><button class="btn block" data-fa="oprovago" data-pid="${m.id}">Começar a prova</button><button class="btn ghost block" data-fa="otreinop" data-pid="${m.id}">Prefiro correção a cada questão</button></div>`); break; }
     case 'oprovago': { const m=OFC_MAN.find(x=>x.id===d.pid); closeModal(); ofcRun([m.id],()=>startFuv('oprova',{pool:OFC[m.id],ordered:true,n:OFC[m.id].length,exam:true,title:`${m.label} · ${m.sub.split(' · ')[0]}`})); break; }
