@@ -3,7 +3,7 @@
    Navegação e telas
    ===================================================================== */
 let VIEW='learn',OPEN_POP=null;
-const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','FUVEST'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
+const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','Provas'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
 const LOGO=`<svg viewBox="0 0 120 120">${mascot().replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg><span>${BRAND.app}</span>`;
 function applyTheme(){ const r=document.documentElement; if(S.theme==='auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme',S.theme); }
 function statsHTML(){ const lvl=lvlOf(S.xp); return `

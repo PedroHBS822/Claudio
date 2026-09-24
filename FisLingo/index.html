@@ -488,6 +488,24 @@ sup .blank,.fr .blank{width:64px;font-size:18px}
 :root[data-theme="dark"] .bstep.chosen{background:#2a1f33}
 .bstep.static{display:block}
 .imptxt{width:100%;min-height:220px;border:2px solid var(--border);border-radius:12px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2);color:var(--text);resize:vertical}
+.srcchip{display:flex;flex-direction:column;gap:1px;border-radius:12px;padding:8px 12px;margin-bottom:10px;border:2px solid var(--border);background:var(--bg2);font-size:14px;line-height:1.35}
+.srcchip b{font-size:15px;font-weight:900}.srcchip span{font-size:12.5px;color:var(--muted);font-weight:700}
+.srcchip.fuv{border-color:#84d8ff;background:var(--blue-l)}.srcchip.fuv b{color:var(--blue-d)}
+.srcchip.enem{border-color:#ffc86b;background:#fff4d6}.srcchip.enem b{color:#a15c00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .srcchip.enem{background:#3a2c10}:root:not([data-theme="light"]) .srcchip.enem b{color:#ffc86b}:root:not([data-theme="light"]) .srcchip.fuv b{color:#84d8ff}}
+:root[data-theme="dark"] .srcchip.enem{background:#3a2c10}:root[data-theme="dark"] .srcchip.enem b{color:#ffc86b}:root[data-theme="dark"] .srcchip.fuv b{color:#84d8ff}
+.corr .srcchip{margin-top:8px}
+.fuvq p{margin:0 0 10px}.fuvq p:last-child{margin-bottom:0}
+.qimg{display:block;max-width:100%;height:auto;margin:10px auto;border-radius:8px;background:#fff}
+.altimg{display:block;max-width:100%;height:auto;max-height:240px;border-radius:6px;background:#fff}
+.opt .altimg{margin:2px 0}
+.qtab{border-collapse:collapse;margin:8px 0;font-size:15px;max-width:100%}.qtab td{border:1.5px solid var(--border-d);padding:4px 8px}
+.fuvq{overflow-x:auto}
+.ofctabs{margin-top:12px}.ofctabs button{flex:1}
+.ofcrow{flex-wrap:wrap}.ofcrow .grow{min-width:150px}.ofcrow .grow small{display:block}
+.ofcrow .minibar{display:block;margin:6px 0 2px;max-width:220px}
+.ofcbtns{display:flex;gap:6px;flex-wrap:wrap}
+.ico.yr{font-size:17px;letter-spacing:-.5px;background:var(--blue)}.ico.yr.enem{background:#e59400}
 @media (max-width:760px){.bottomnav .navbtn{font-size:10px;letter-spacing:0}.bottomnav .navbtn .ic{font-size:22px}}
 </style>
 </head>
@@ -1517,6 +1535,8 @@ const FUVQ=[
  steps:['T = 2π√(L/g): o período é inversamente proporcional a √g.','g<sub>Lua</sub> = g/6 ⇒ T<sub>Lua</sub> = T·√6.','T<sub>Lua</sub> = 2·√6 ≈ 2·2,45.','T<sub>Lua</sub> ≈ 4,9 s.'],
  trap:['T é proporcional a g: T<sub>Lua</sub> = 2/6 ≈ 0,33 s.','T é inversamente proporcional a g: T<sub>Lua</sub> = 2·6 = 12 s.']},
 ];
+/* Índice das provas oficiais (gerado por lingo-src/oficiais/build_oficiais.py) */
+const OFICIAIS_MAN=[{"exam":"FUVEST","year":2024,"label":"FUVEST 2024","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2024","n":11,"file":"provas/fuvest-2024.js","kb":335},{"exam":"FUVEST","year":2023,"label":"FUVEST 2023","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2023","n":10,"file":"provas/fuvest-2023.js","kb":218},{"exam":"FUVEST","year":2022,"label":"FUVEST 2022","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2022","n":10,"file":"provas/fuvest-2022.js","kb":119},{"exam":"FUVEST","year":2021,"label":"FUVEST 2021","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2021","n":11,"file":"provas/fuvest-2021.js","kb":77},{"exam":"FUVEST","year":2020,"label":"FUVEST 2020","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2020","n":13,"file":"provas/fuvest-2020.js","kb":92},{"exam":"FUVEST","year":2019,"label":"FUVEST 2019","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2019","n":12,"file":"provas/fuvest-2019.js","kb":76},{"exam":"FUVEST","year":2018,"label":"FUVEST 2018","sub":"1ª fase · Conhecimentos Gerais","ed":"regular","id":"fuvest-2018","n":11,"file":"provas/fuvest-2018.js","kb":45},{"exam":"ENEM","year":2025,"label":"ENEM 2025 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2025-reaplicacao","n":9,"file":"provas/enem-2025-reaplicacao.js","kb":128},{"exam":"ENEM","year":2025,"label":"ENEM 2025","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2025","n":14,"file":"provas/enem-2025.js","kb":169},{"exam":"ENEM","year":2024,"label":"ENEM 2024 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2024-reaplicacao","n":14,"file":"provas/enem-2024-reaplicacao.js","kb":204},{"exam":"ENEM","year":2024,"label":"ENEM 2024","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2024","n":15,"file":"provas/enem-2024.js","kb":236},{"exam":"ENEM","year":2023,"label":"ENEM 2023 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2023-reaplicacao","n":15,"file":"provas/enem-2023-reaplicacao.js","kb":43},{"exam":"ENEM","year":2023,"label":"ENEM 2023","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2023","n":14,"file":"provas/enem-2023.js","kb":76},{"exam":"ENEM","year":2022,"label":"ENEM 2022 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2022-reaplicacao","n":15,"file":"provas/enem-2022-reaplicacao.js","kb":70},{"exam":"ENEM","year":2022,"label":"ENEM 2022","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2022","n":15,"file":"provas/enem-2022.js","kb":168},{"exam":"ENEM","year":2021,"label":"ENEM 2021 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2021-reaplicacao","n":13,"file":"provas/enem-2021-reaplicacao.js","kb":202},{"exam":"ENEM","year":2021,"label":"ENEM 2021","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2021","n":15,"file":"provas/enem-2021.js","kb":252},{"exam":"ENEM","year":2020,"label":"ENEM 2020 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2020-reaplicacao","n":12,"file":"provas/enem-2020-reaplicacao.js","kb":61},{"exam":"ENEM","year":2020,"label":"ENEM 2020","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2020","n":17,"file":"provas/enem-2020.js","kb":106},{"exam":"ENEM","year":2019,"label":"ENEM 2019 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2019-reaplicacao","n":9,"file":"provas/enem-2019-reaplicacao.js","kb":106},{"exam":"ENEM","year":2019,"label":"ENEM 2019","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2019","n":16,"file":"provas/enem-2019.js","kb":100},{"exam":"ENEM","year":2018,"label":"ENEM 2018 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2018-reaplicacao","n":14,"file":"provas/enem-2018-reaplicacao.js","kb":11},{"exam":"ENEM","year":2018,"label":"ENEM 2018","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2018","n":14,"file":"provas/enem-2018.js","kb":135},{"exam":"ENEM","year":2017,"label":"ENEM 2017 · Reaplicação","sub":"2º dia · Ciências da Natureza (Física)","ed":"reaplicacao","id":"enem-2017-reaplicacao","n":16,"file":"provas/enem-2017-reaplicacao.js","kb":89},{"exam":"ENEM","year":2017,"label":"ENEM 2017","sub":"2º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2017","n":13,"file":"provas/enem-2017.js","kb":87},{"exam":"ENEM","year":2016,"label":"ENEM 2016","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2016","n":13,"file":"provas/enem-2016.js","kb":82},{"exam":"ENEM","year":2015,"label":"ENEM 2015","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2015","n":15,"file":"provas/enem-2015.js","kb":71},{"exam":"ENEM","year":2014,"label":"ENEM 2014","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2014","n":13,"file":"provas/enem-2014.js","kb":80},{"exam":"ENEM","year":2013,"label":"ENEM 2013","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2013","n":15,"file":"provas/enem-2013.js","kb":76},{"exam":"ENEM","year":2012,"label":"ENEM 2012","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2012","n":17,"file":"provas/enem-2012.js","kb":81},{"exam":"ENEM","year":2011,"label":"ENEM 2011","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2011","n":13,"file":"provas/enem-2011.js","kb":83},{"exam":"ENEM","year":2010,"label":"ENEM 2010","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2010","n":12,"file":"provas/enem-2010.js","kb":63},{"exam":"ENEM","year":2009,"label":"ENEM 2009","sub":"1º dia · Ciências da Natureza (Física)","ed":"regular","id":"enem-2009","n":15,"file":"provas/enem-2009.js","kb":98}];
 
 /* =====================================================================
    Índices
@@ -1718,23 +1738,48 @@ const modalOpen=()=>!!$('#modalroot').firstChild;
    ===================================================================== */
 const LETTERS='ABCDE';
 const FUV_BANK=(typeof FUVQ!=='undefined'?FUVQ:[]).map(q=>Object.assign({origin:'bank',set:'Banco original (estilo FUVEST)',src:'Estilo FUVEST'},q,{tags:(q.tags||[]).filter(t=>SK[t])}));
-function fv(){ const d={stats:{},hist:[],wrong:[],imp:[],seen:{}}; if(!S.fuv) S.fuv=d; for(const k in d) if(S.fuv[k]==null) S.fuv[k]=d[k]; return S.fuv; }
+function fv(){ const d={stats:{},hist:[],wrong:[],imp:[],seen:{},pv:{}}; if(!S.fuv) S.fuv=d; for(const k in d) if(S.fuv[k]==null) S.fuv[k]=d[k]; return S.fuv; }
 function fuvAll(){ return FUV_BANK.concat(fv().imp); }
-function fuvById(id){ return fuvAll().find(q=>q.id===id); }
-const fuvText=q=>q.origin==='bank'?q.q:esc(q.q).replace(/\n/g,'<br>');
-const fuvAlt=(q,i)=>q.origin==='bank'?q.alts[i]:esc(q.alts[i]);
-const fuvStep=(q,s)=>q.origin==='bank'?s:esc(s);
+function fuvById(id){ return OFC_Q[id]||fuvAll().find(q=>q.id===id); }
+const fuvText=q=>q.origin!=='imp'?q.q:esc(q.q).replace(/\n/g,'<br>');
+const fuvAlt=(q,i)=>q.origin!=='imp'?q.alts[i]:esc(q.alts[i]);
+const fuvStep=(q,s)=>q.origin!=='imp'?s:esc(s);
+
+/* ---------- Provas oficiais (FUVEST 1ª fase e ENEM), carregadas sob demanda ---------- */
+const OFC_MAN=typeof OFICIAIS_MAN!=='undefined'?OFICIAIS_MAN:[];
+const OFC={},OFC_Q={},OFC_WAIT={};
+function OFICIAIS_ADD(pid,qs){ const m=OFC_MAN.find(x=>x.id===pid); if(!m)return;
+  OFC[pid]=qs.map(o=>{ const q=Object.assign({},o,{origin:'oficial',pid,exam:m.exam,year:m.year,set:m.label,stage:m.sub.split(' · ')[0],src:`${m.label} · Questão ${o.n}`,why:[],steps:[],trap:[],
+    tags:autoTags(stripHtml(o.q.replace(/<(br|\/p|\/td)[^>]*>/g,' $&'))+' '+o.alts.map(stripHtml).join(' '))}); OFC_Q[q.id]=q; return q; });
+  (OFC_WAIT[pid]||[]).forEach(w=>w.res(OFC[pid])); delete OFC_WAIT[pid]; }
+function ofcLoad(pid){ return new Promise((res,rej)=>{ if(OFC[pid]) return res(OFC[pid]); const m=OFC_MAN.find(x=>x.id===pid); if(!m) return rej(new Error('prova desconhecida'));
+  const first=!OFC_WAIT[pid]; (OFC_WAIT[pid]=OFC_WAIT[pid]||[]).push({res,rej}); if(!first) return;
+  const sc=document.createElement('script'); sc.src=m.file; sc.async=true;
+  sc.onerror=()=>{ (OFC_WAIT[pid]||[]).forEach(w=>w.rej(new Error('falha ao carregar '+m.file))); delete OFC_WAIT[pid]; sc.remove(); };
+  document.head.appendChild(sc); }); }
+function ofcPidOf(id){ let m=/^fuv(\d{4})-/.exec(id); if(m) return 'fuvest-'+m[1]; m=/^enem(\d{4})(r?)-/.exec(id); if(m) return 'enem-'+m[1]+(m[2]?'-reaplicacao':''); return null; }
+function ofcEnsure(ids){ const p=[...new Set(ids.map(ofcPidOf).filter(x=>x&&!OFC[x]))]; if(!p.length) return Promise.resolve(); toast('⏳ Carregando as provas…',1200); return Promise.all(p.map(ofcLoad)); }
+function ofcMan(q){ return OFC_MAN.find(x=>x.id===q.pid)||{sub:''}; }
+function ofcRun(pids,fn){ const need=pids.filter(p=>!OFC[p]); if(need.length){ const m=OFC_MAN.find(x=>x.id===need[0]); toast(`⏳ Carregando ${need.length>1?need.length+' provas':m.label}…`,1400); }
+  Promise.all(pids.map(ofcLoad)).then(()=>{ if(need.length) $('#toastroot').innerHTML=''; fn(); },()=>toast('Não foi possível carregar a prova. Verifique se a pasta <b>provas/</b> está ao lado do app.',4200)); }
+/* Origem da questão: sempre visível para o aluno saber de onde e de quando ela é */
+function fuvSrcShort(q){ return q.origin==='oficial'?`${q.set} · Q${q.n}`:q.origin==='bank'?'Estilo FUVEST (original do app)':esc(q.src); }
+function fuvSrcChip(q){
+  if(q.origin==='oficial') return `<div class="srcchip ${q.exam==='ENEM'?'enem':'fuv'}"><b>${q.exam==='ENEM'?'📘':'🎓'} ${esc(q.set)} · Questão ${q.n}</b><span>${esc(ofcMan(q).sub)} · prova oficial · gabarito oficial ${q.exam==='ENEM'?'do INEP':'da FUVEST'}</span></div>`;
+  if(q.origin==='bank') return `<div class="srcchip bank"><b>✍️ Estilo FUVEST</b><span>Questão original do ${BRAND.app}, no formato da 1ª fase (não é de prova oficial)</span></div>`;
+  return `<div class="srcchip imp"><b>📥 ${esc(q.src)}</b><span>Importada por você</span></div>`; }
 
 /* ---------- Tela principal ---------- */
 function renderFuvest(){
-  const F=fv(),all=fuvAll(),nb=FUV_BANK.length,ni=F.imp.length,nbuild=all.filter(q=>q.steps&&q.steps.length>=2).length,nw=F.wrong.filter(id=>fuvById(id)).length;
+  const F=fv(),all=fuvAll(),nb=FUV_BANK.length,ni=F.imp.length,nbuild=all.filter(q=>q.steps&&q.steps.length>=2).length,nw=F.wrong.filter(id=>fuvById(id)||ofcPidOf(id)).length;
   const sets={}; all.forEach(q=>{ sets[q.set]=(sets[q.set]||0)+1; });
   const topics=Object.entries(F.stats).filter(([id])=>SK[id]).map(([id,[c,w]])=>({id,c,w,acc:c/(c+w)})).filter(t=>t.c+t.w>0).sort((a,b)=>a.acc-b.acc||b.w-a.w);
   const tagCount={}; all.forEach(q=>q.tags.forEach(t=>tagCount[t]=(tagCount[t]||0)+1));
-  let h=`<h2 class="section-title">🎓 Preparação FUVEST</h2>
-  <div class="card fuvhero"><p>Treine no formato da <b>1ª fase</b> (5 alternativas), veja <b>exatamente o que errou</b> e receba um <b>plano de revisão</b> ligado à trilha. No modo <b>Montar resolução</b>, você organiza a solução inteira, passo a passo.</p>
-   <div class="fuvcount"><span><b>${nb}</b> questões originais no estilo FUVEST</span><span><b>${ni}</b> importadas por você</span></div>
-   <p class="muted" style="font-size:13px;margin-top:8px">As questões do banco foram escritas para este app no estilo e nível da FUVEST — não são cópias das provas oficiais. Para treinar com as <b>provas oficiais</b> (em <a href="https://www.fuvest.br" target="_blank" rel="noopener">fuvest.br</a>) e com os <b>simulados do seu cursinho</b>, use <b>Importar questões</b>: elas ganham correção, diagnóstico e plano de revisão.</p></div>
+  let h=`<h2 class="section-title">🎓 Provas: FUVEST e ENEM</h2>${ofcSection()}
+  <h2 class="section-title" style="margin-top:26px">✍️ Treino no estilo FUVEST</h2>
+  <div class="card fuvhero"><p>Questões <b>originais do ${BRAND.app}</b> no formato da 1ª fase: cada alternativa errada tem a explicação do erro, há resolução passo a passo e o modo <b>Montar resolução</b>, em que você organiza a solução inteira.</p>
+   <div class="fuvcount"><span><b>${nb}</b> questões originais</span><span><b>${ni}</b> importadas por você</span></div>
+   <p class="muted" style="font-size:13px;margin-top:8px">Para treinar com provas que ainda não estão no banco oficial (como os simulados do seu cursinho), use <b>Importar questões</b>: elas ganham correção, diagnóstico e plano de revisão.</p></div>
   <div class="practice-card"><div class="pic" style="background:#fff4d6">📝</div><div class="grow"><h3>Mini-simulado</h3><p>10 questões · 30 min · correção comentada no final, como na prova.</p><button class="btn gold sm" data-fa="sim10" ${all.length?'':'disabled'}>Começar</button></div></div>
   <div class="practice-card"><div class="pic" style="background:#ffdfe0">🏁</div><div class="grow"><h3>Simulado longo</h3><p>${Math.min(20,all.length)} questões · ${Math.min(20,all.length)*3} min (≈ 3 min por questão, ritmo da FUVEST).</p><button class="btn red sm" data-fa="sim20" ${all.length?'':'disabled'}>Começar</button></div></div>
   <div class="practice-card"><div class="pic" style="background:var(--blue-l)">🎯</div><div class="grow"><h3>Treino com correção imediata</h3><p>A cada erro: por que a alternativa marcada está errada, a resolução e o que revisar.</p><button class="btn blue sm" data-fa="treino" ${all.length?'':'disabled'}>Treinar</button></div></div>
@@ -1743,28 +1788,40 @@ function renderFuvest(){
   <h2 class="section-title" style="margin-top:24px">📊 Seu diagnóstico</h2>`;
   if(!topics.length) h+=`<div class="card"><p class="muted">Responda questões para ver quais assuntos você domina e quais precisa revisar.</p></div>`;
   else h+=`<div class="card"><p class="muted" style="font-size:14px;margin-bottom:8px">Assuntos ordenados do mais fraco para o mais forte (todas as questões FUVEST respondidas).</p>${topics.slice(0,8).map(t=>fuvTopicRow(t.id,t.c,t.w)).join('')}</div>`;
-  if(F.hist.length) h+=`<h2 class="section-title" style="margin-top:24px">🗓️ Histórico de simulados</h2><div class="card">${F.hist.slice(-6).reverse().map(x=>`<div class="mr"><span>${x.d.split('-').reverse().join('/')} · ${x.k==='sim20'?'Simulado longo':'Mini-simulado'}</span><span><b style="color:${memColor(x.c/x.n)}">${x.c}/${x.n}</b> · ${Math.round(x.t/60)} min</span></div>`).join('')}</div>`;
+  if(F.hist.length) h+=`<h2 class="section-title" style="margin-top:24px">🗓️ Histórico de simulados</h2><div class="card">${F.hist.slice(-6).reverse().map(x=>`<div class="mr"><span>${x.d.split('-').reverse().join('/')} · ${esc(x.title||(x.k==='sim20'?'Simulado longo':'Mini-simulado'))}</span><span><b style="color:${memColor(x.c/x.n)}">${x.c}/${x.n}</b> · ${Math.round(x.t/60)} min</span></div>`).join('')}</div>`;
   h+=`<h2 class="section-title" style="margin-top:24px">📚 Banco de questões</h2><div class="list">${Object.entries(sets).map(([name,n])=>`<div class="item"><div class="ico" style="background:${name.startsWith('Banco')?BRAND.body:'#ff9600'}">${name.startsWith('Banco')?'✍️':'📥'}</div><div class="grow"><b>${esc(name)}</b><small>${n} questão${n>1?'es':''}</small></div><button class="btn sm ghost" data-fa="set" data-set="${esc(name)}">Treinar</button>${name.startsWith('Banco')?'':`<button class="link" style="color:var(--red)" data-fa="del" data-set="${esc(name)}">apagar</button>`}</div>`).join('')}</div>
   <div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" data-fa="import">📥 Importar questões</button>${ni?'<button class="btn ghost" data-fa="export">💾 Exportar importadas</button>':''}</div>
   <h2 class="section-title" style="margin-top:24px">🏷️ Treinar por assunto</h2><div class="tagcloud">${Object.entries(tagCount).sort((a,b)=>b[1]-a[1]).map(([id,n])=>`<button class="chip" data-fa="topic" data-skill="${id}">${SK[id].icon} ${SK[id].name} · ${n}</button>`).join('')}</div>`;
   return h;
 }
+function ofcSection(){
+  if(!OFC_MAN.length) return '';
+  const F=fv(),tab=S.ofcTab==='ENEM'?'ENEM':'FUVEST',area=BRAND.app==='FisLingo'?'Física':'Matemática';
+  const cnt=ex=>OFC_MAN.filter(m=>m.exam===ex).reduce((a,m)=>a+m.n,0), yrs=ex=>{ const y=OFC_MAN.filter(m=>m.exam===ex).map(m=>m.year); return y.length?`${Math.min(...y)}–${Math.max(...y)}`:''; };
+  const rows=OFC_MAN.filter(m=>m.exam===tab).map(m=>{ const r=F.pv[m.id]||{},d=Object.keys(r).length,c=Object.values(r).filter(Boolean).length;
+    return `<div class="item ofcrow"><div class="ico yr ${m.exam==='ENEM'?'enem':'fuv'}">${m.ed==='reaplicacao'?'R':''}${String(m.year).slice(2)}</div><div class="grow"><b>${esc(m.label)}</b><small>${esc(m.sub)} · ${m.n} questões</small>${d?`<span class="minibar"><i style="width:${d/m.n*100}%;background:${memColor(c/d)}"></i></span><small>${d}/${m.n} feitas · ${c} certa${c===1?'':'s'}</small>`:''}</div><div class="ofcbtns"><button class="btn sm" data-fa="oprova" data-pid="${m.id}">Fazer prova</button><button class="btn sm ghost" data-fa="otreinop" data-pid="${m.id}">Treinar</button></div></div>`; }).join('');
+  return `<div class="card ofchero"><p>Questões <b>reais</b> das provas, com o <b>gabarito oficial</b>. Toda questão mostra de qual prova e de que ano ela é e o seu número no caderno.</p>
+   <div class="fuvcount"><span><b>${nf(cnt('FUVEST'))}</b> de ${area} · FUVEST ${yrs('FUVEST')}</span><span><b>${nf(cnt('ENEM'))}</b> de ${area} · ENEM ${yrs('ENEM')}</span></div>
+   <div class="seg ofctabs" role="tablist">${['FUVEST','ENEM'].map(x=>`<button class="${tab===x?'on':''}" role="tab" aria-selected="${tab===x}" data-fa="otab" data-tab="${x}">${x==='FUVEST'?'🎓 FUVEST':'📘 ENEM'}</button>`).join('')}</div>
+   <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:12px"><button class="btn gold sm" data-fa="osim">📝 Simulado ${tab} · 10 questões</button><button class="btn blue sm" data-fa="otreino">🎯 Treino ${tab} com correção</button></div></div>
+  <div class="list" style="margin-top:12px">${rows}</div>
+  <p class="muted" style="font-size:13px;margin-top:10px">${tab==='FUVEST'?'1ª fase (Conhecimentos Gerais), só as questões de '+area+'. <b>FUVEST 2025, FUVEST 2026 e os simulados oficiais de 2026 ainda não estão no banco</b>: enquanto isso, cole-os em <b>Importar questões</b>, mais abaixo.':'Provas regulares e reaplicações. A numeração é a do caderno de referência; nos cadernos de outras cores só muda a ordem das questões.'} Textos transcritos dos cadernos oficiais pelos projetos abertos ${tab==='FUVEST'?'BLUEX':'enem-api'}, com o gabarito oficial ${tab==='FUVEST'?'da FUVEST':'do INEP'}; as figuras vêm dos próprios cadernos.</p>`; }
 function fuvTopicRow(id,c,w){ const s=SK[id],acc=c/(c+w||1),lv=sk(id).lv;
   return `<div class="topicrow"><span class="ti" style="background:${s.unit.color}">${s.icon}</span><span class="tn"><b>${s.name}</b><small>${c} certas · ${w} erradas${lv?'':' · ainda não estudado na trilha'}</small><span class="minibar"><i style="width:${acc*100}%;background:${memColor(acc)}"></i></span></span><span class="tb"><button class="btn sm ghost" data-theory="${id}">Aula</button><button class="btn sm" ${lv?`data-practice="${id}"`:`data-start="${id}"`}>${lv?'Revisar':'Estudar'}</button></span></div>`; }
 
 /* ---------- Sessões ---------- */
 function startFuv(kind,opts={}){
-  const F=fv(); let pool=fuvAll();
+  const F=fv(); let pool=opts.pool||fuvAll();
   if(opts.set) pool=pool.filter(q=>q.set===opts.set);
   if(opts.skill) pool=pool.filter(q=>q.tags.includes(opts.skill));
-  if(kind==='redo') pool=pool.filter(q=>F.wrong.includes(q.id));
+  if(kind==='redo') pool=F.wrong.map(fuvById).filter(Boolean);
   if(kind==='build') pool=pool.filter(q=>q.steps&&q.steps.length>=2);
   if(!pool.length){ toast('Nenhuma questão disponível para esse modo.'); return; }
-  const n=kind==='sim10'?10:kind==='sim20'?20:kind==='build'?6:10;
-  const qs=shuffle(pool).sort((a,b)=>(F.seen[a.id]||0)-(F.seen[b.id]||0)).slice(0,n);
+  const n=opts.n||(kind==='sim10'?10:kind==='sim20'?20:kind==='build'?6:10);
+  const qs=opts.ordered?pool.slice(0,n):shuffle(pool).sort((a,b)=>(F.seen[a.id]||0)-(F.seen[b.id]||0)).slice(0,n);
   closeModal(); OPEN_POP=null;
-  const exam=kind==='sim10'||kind==='sim20';
-  L={mode:'fuv',kind,exam,queue:qs.map(q=>q.id),i:0,total:qs.length,done:0,correct:0,wrong:0,blank:0,combo:0,maxCombo:0,t0:Date.now(),per:{},missed:[],answers:[],state:'answer',sel:null,lives:null,timeLeft:exam?qs.length*180:null,timer:null};
+  const exam=opts.exam!=null?opts.exam:kind==='sim10'||kind==='sim20';
+  L={mode:'fuv',kind,exam,title:opts.title||'',queue:qs.map(q=>q.id),i:0,total:qs.length,done:0,correct:0,wrong:0,blank:0,combo:0,maxCombo:0,t0:Date.now(),per:{},missed:[],answers:[],state:'answer',sel:null,lives:null,timeLeft:exam?qs.length*180:null,timer:null};
   $('#lesson').classList.remove('hidden'); document.body.style.overflow='hidden';
   if(exam) L.timer=setInterval(()=>{ if(!L||L.mode!=='fuv'||L.state==='result')return; L.timeLeft--; fuvTop(); if(L.timeLeft<=0){ toast('⏰ Tempo esgotado!'); fuvFinish(); } },1000);
   fuvRender();
@@ -1773,7 +1830,7 @@ function fuvTop(){ const bar=$('#lprog'); bar.className='pbar'+(L.exam?' blue':'
   const st=$('#lstat'); if(L.exam){ const m=Math.floor(Math.max(0,L.timeLeft)/60),s=Math.max(0,L.timeLeft)%60; st.className='ltimer'; st.innerHTML=`⏱ ${m}:${pad(s)} · ${L.i+1}/${L.total}`; } else { st.className='lhearts'; st.innerHTML=`<span style="color:var(--purple)">${Math.min(L.i+1,L.total)}/${L.total}</span>`; } }
 function fuvCur(){ return fuvById(L.queue[L.i]); }
 function fuvPseudo(q){ const tag=q.tags.find(t=>SK[t]); return {skill:tag||ALL[0].id,type:'mc',prompt:fuvText(q),hint:q.steps&&q.steps.length?'Comece assim: '+fuvStep(q,q.steps[0]):'Identifique o assunto, anote os dados e escolha a fórmula.',answer:`(${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}`,exp:q.steps&&q.steps.length?q.steps.map((s,i)=>`${i+1}. ${fuvStep(q,s)}`).join('<br>'):(q.why&&q.why[q.ans])||''}; }
-function fuvHead(q){ return `<div class="fuvtag">${q.origin==='bank'?'✍️ Estilo FUVEST':'📥 '+esc(q.src)}${q.area?' · '+esc(q.area):q.tags.length?' · '+q.tags.map(t=>SK[t].name).join(', '):''}</div>`; }
+function fuvHead(q){ return `${fuvSrcChip(q)}${q.tags.length?`<div class="fuvtag">${q.tags.map(t=>SK[t].icon+' '+SK[t].name).join(' · ')}</div>`:''}`; }
 function fuvRender(){
   if(L.i>=L.queue.length) return fuvFinish();
   const q=fuvCur(); if(!q){ L.i++; return fuvRender(); }
@@ -1790,6 +1847,7 @@ function fuvRecord(q,ok,sel){ const F=fv(); F.seen[q.id]=(F.seen[q.id]||0)+1;
   q.tags.forEach(t=>{ const s=F.stats[t]||(F.stats[t]=[0,0]); ok?s[0]++:s[1]++; const p=L.per[t]||(L.per[t]={c:0,w:0}); ok?p.c++:p.w++;
     if(!ok){ const st=sk(t); if(st.lv>=1&&st.stab) st.stab=Math.max(0.5,round(st.stab*0.6,2)); } });
   F.wrong=F.wrong.filter(id=>id!==q.id); if(!ok) F.wrong.unshift(q.id); if(F.wrong.length>200) F.wrong.length=200;
+  if(q.pid){ const r=F.pv[q.pid]||(F.pv[q.pid]={}); r[q.id]=ok?1:0; }
   L.answers.push({id:q.id,sel,ok}); S.answered++; if(ok) S.correct++; save(); }
 function fuvCheck(skip){
   if(!L||L.mode!=='fuv'||L.state!=='answer')return; const q=fuvCur();
@@ -1801,17 +1859,18 @@ function fuvCheck(skip){
   document.querySelectorAll('#opts .opt').forEach((b,j)=>{ if(j===q.ans)b.classList.add('right'); else if(j===L.sel)b.classList.add('wrong'); b.classList.remove('sel'); }); $('#opts').classList.add('done');
   const box=$('#lqbox'); box.insertAdjacentHTML('beforeend',fuvDiag(q,L.sel,true)); if(!ok){ box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); }
   $('#lfoot').className='lfoot '+(ok?'ok':'bad');
-  $('#lfootin').innerHTML=`<div class="fbtxt"><div class="fbicon">${ok?'✔':'✘'}</div><div style="min-width:0"><div class="fbtitle">${ok?pick(PRAISE):`Você marcou (${LETTERS[L.sel]}); a correta é (${LETTERS[q.ans]})`}</div><div class="fbdetail">${ok?'Confira a resolução abaixo.':'Veja abaixo o que você errou e o que revisar.'}</div></div></div><div class="fbactions"><button class="link" data-act="lchat">💬 Tirar dúvida</button>${q.steps&&q.steps.length>=2?'<button class="link" data-fa="buildthis">🧩 Montar a resolução</button>':''}<button class="btn ${ok?'':'red'}" data-fa="next" id="bCont">Continuar</button></div>`;
+  $('#lfootin').innerHTML=`<div class="fbtxt"><div class="fbicon">${ok?'✔':'✘'}</div><div style="min-width:0"><div class="fbtitle">${ok?pick(PRAISE):`Você marcou (${LETTERS[L.sel]}); a correta é (${LETTERS[q.ans]})`}</div><div class="fbdetail">${fuvSrcShort(q)} · ${ok?(q.origin==='oficial'?'confira o gabarito e os assuntos abaixo.':'confira a resolução abaixo.'):'veja abaixo o que você errou e o que revisar.'}</div></div></div><div class="fbactions"><button class="link" data-act="lchat">💬 Tirar dúvida</button>${q.steps&&q.steps.length>=2?'<button class="link" data-fa="buildthis">🧩 Montar a resolução</button>':''}<button class="btn ${ok?'':'red'}" data-fa="next" id="bCont">Continuar</button></div>`;
   setTimeout(()=>{ const d=$('#lqbox .diag'); if(d&&!ok) d.scrollIntoView({behavior:'smooth',block:'start'}); },80);
 }
 /* Diagnóstico de uma questão: o que errou + resolução + o que revisar */
 function fuvDiag(q,sel,open){
   const ok=sel===q.ans, blank=sel==null;
-  const why=(!ok&&!blank&&q.why&&q.why[sel])?q.why[sel]:(!ok&&!blank?'Essa alternativa não satisfaz o enunciado. Compare com a resolução abaixo para achar o passo em que seu raciocínio se desviou.':'');
-  const steps=q.steps&&q.steps.length?`<ol class="solsteps">${q.steps.map(s=>`<li>${fuvStep(q,s)}</li>`).join('')}</ol>`:(q.why&&q.why[q.ans]?`<p>${fuvStep(q,q.why[q.ans])}</p>`:'<p class="muted">Sem resolução cadastrada para esta questão.</p>');
+  const ofc=q.origin==='oficial';
+  const why=(!ok&&!blank&&q.why&&q.why[sel])?q.why[sel]:(!ok&&!blank?(ofc?`Pelo gabarito oficial, a resposta é (${LETTERS[q.ans]}). Refaça a conta com calma, comparando sua alternativa com a correta, e revise os assuntos abaixo. Se travar, toque em <b>💬 Tirar dúvida</b>.`:'Essa alternativa não satisfaz o enunciado. Compare com a resolução abaixo para achar o passo em que seu raciocínio se desviou.'):'');
+  const steps=q.steps&&q.steps.length?`<ol class="solsteps">${q.steps.map(s=>`<li>${fuvStep(q,s)}</li>`).join('')}</ol>`:(q.why&&q.why[q.ans]?`<p>${fuvStep(q,q.why[q.ans])}</p>`:ofc?'':'<p class="muted">Sem resolução cadastrada para esta questão.</p>');
   const rev=fuvRev(q,ok);
   return `<div class="diag ${ok?'good':'badd'}">${blank?`<div class="dline"><b>⚪ Em branco.</b> A correta é (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}.</div>`:ok?`<div class="dline"><b>✅ Correto:</b> (${LETTERS[q.ans]}) ${fuvAlt(q,q.ans)}</div>`:`<div class="dline"><b>❌ Você marcou (${LETTERS[sel]}):</b> ${fuvAlt(q,sel)}</div><div class="dwhy"><b>Onde está o erro:</b> ${fuvStep(q,why)}</div><div class="dline"><b>✅ Correta: (${LETTERS[q.ans]})</b> ${fuvAlt(q,q.ans)}</div>`}
-   <details ${open?'open':''}><summary><b>📝 Resolução passo a passo</b></summary>${steps}</details>${rev}</div>`; }
+   ${steps?`<details ${open?'open':''}><summary><b>📝 Resolução passo a passo</b></summary>${steps}</details>`:`<div class="dline muted" style="font-size:13.5px">Fonte: ${esc(q.src)} (${esc(ofcMan(q).sub)}). Gabarito oficial ${q.exam==='ENEM'?'do INEP':'da FUVEST'}.</div>`}${rev}</div>`; }
 function fuvRev(q,ok){ return q.tags.length?`<div class="revbox"><b>📚 O que revisar</b>${q.tags.map(t=>{const s=SK[t],lv=sk(t).lv;return `<div class="revrow"><span>${s.icon} <b>${s.name}</b><small>${lv?`memória ${Math.round(retention(t)*100)}% · nível ${lv}/5`:'ainda não estudado na trilha'}</small></span><span><button class="btn sm ghost" data-theory="${t}">Aula</button><button class="btn sm" ${lv?`data-practice="${t}"`:`data-start="${t}"`}>${lv?'Praticar':'Estudar'}</button></span></div>`;}).join('')}${!ok&&q.tags.some(t=>sk(t).lv)?'<small class="muted">Esses assuntos foram antecipados na sua revisão espaçada.</small>':''}</div>`:''; }
 function fuvNext(){ if(!L||L.mode!=='fuv')return; if(L.kind==='build-one'){ L.kind=L.prevKind; L.state='result'; $('#lqbox').innerHTML=L.resHTML; $('#lfoot').className='lfoot'; $('#lfootin').innerHTML=L.resFoot; return; } L.i++; fuvRender(); }
 
@@ -1856,19 +1915,19 @@ function fuvFinish(){
   L.state='result'; L.cur=null; { const st=$('#lstat'); st.className='lhearts'; st.innerHTML=`<span style="color:var(--purple)">✔ ${L.answers.filter(a=>a.ok).length}/${L.answers.length}</span>`; }
   const n=L.answers.length,c=L.answers.filter(a=>a.ok).length,secs=Math.round((Date.now()-L.t0)/1000),acc=n?c/n:0;
   const xp=n?10+2*c:0; if(xp) markStudy(xp); S.gems+=L.exam?5+c:2;
-  if(L.exam) fv().hist.push({d:today(),k:L.kind,c,n,t:secs});
+  if(L.exam) fv().hist.push({d:today(),k:L.kind,c,n,t:secs,title:L.title||''});
   checkAch(); save(); beep(acc>=0.5?SND.done:SND.fail); if(acc>=0.6) confetti();
   const per=Object.entries(L.per).filter(([id])=>SK[id]).sort((a,b)=>(a[1].c/(a[1].c+a[1].w))-(b[1].c/(b[1].c+b[1].w)));
   const weak=per.filter(([,p])=>p.w>0).map(([id])=>id);
   const rs=(col,hd,v)=>`<div class="rstat" style="--c:${col}"><div class="h">${hd}</div><div class="v">${v}</div></div>`;
   $('#lqbox').innerHTML=`<div class="result" style="justify-content:flex-start">
-   <div class="ms">${mascot(acc>=0.5?'happy':'sad')}</div><h1 class="${acc<0.5?'fail':''}">${L.exam?'Simulado concluído!':L.kind==='build'?'Resoluções montadas!':'Treino concluído!'}</h1>
+   <div class="ms">${mascot(acc>=0.5?'happy':'sad')}</div><h1 class="${acc<0.5?'fail':''}">${L.kind==='oprova'?'Prova concluída!':L.exam?'Simulado concluído!':L.kind==='build'?'Resoluções montadas!':'Treino concluído!'}</h1>${L.title?`<p class="muted" style="font-weight:800;margin-top:-8px">${esc(L.title)}</p>`:''}
    <div class="rstats">${rs('#58cc02','Acertos',`${c}/${n}`)}${rs('#ffc800','XP ganho','⚡ '+xp)}${rs('#1cb0f6','Tempo',`⏱ ${Math.floor(secs/60)}:${pad(secs%60)}`)}</div>
    ${L.exam&&L.blank?`<p class="muted">${L.blank} em branco (não respondidas).</p>`:''}
    ${per.length?`<div class="card fuvres"><b>📊 Desempenho por assunto</b>${per.map(([id,p])=>`<div class="topicrow"><span class="ti" style="background:${SK[id].unit.color}">${SK[id].icon}</span><span class="tn"><b>${SK[id].name}</b><small>${p.c} de ${p.c+p.w} certas</small><span class="minibar"><i style="width:${p.c/(p.c+p.w)*100}%;background:${memColor(p.c/(p.c+p.w))}"></i></span></span></div>`).join('')}</div>`:''}
    ${weak.length?`<div class="card fuvres" style="border-color:var(--orange)"><b>📚 Seu plano de revisão</b><p class="muted" style="font-size:14px">Estes assuntos causaram seus erros. ${weak.some(id=>sk(id).lv)?'Os que você já estudou foram antecipados na revisão espaçada.':''}</p>${weak.map(id=>fuvTopicRow(id,L.per[id].c,L.per[id].w)).join('')}
      ${weak.some(id=>sk(id).lv)?`<button class="btn gold block" style="margin-top:10px" data-fa="revweak">Revisar esses assuntos agora</button>`:''}</div>`:''}
-   <div class="card fuvres"><b>📝 Correção comentada</b>${L.answers.map((a,k)=>{const q=fuvById(a.id);if(!q)return '';return `<details class="corr"><summary><span class="cs ${a.ok?'ok':a.sel==null?'bl':'no'}">${a.ok?'✔':a.sel==null?'–':'✘'}</span> Questão ${k+1} · ${q.tags.map(t=>SK[t].name).join(', ')||esc(q.area||'')}${a.build?' · montagem':''}</summary><div class="fuvq small">${fuvText(q)}</div>${fuvDiag(q,a.sel,true)}${!a.ok&&q.steps&&q.steps.length>=2?`<button class="btn sm purple" data-fa="buildid" data-q="${q.id}">🧩 Montar esta resolução</button>`:''}</details>`;}).join('')}</div></div>`;
+   <div class="card fuvres"><b>📝 Correção comentada</b>${L.answers.map((a,k)=>{const q=fuvById(a.id);if(!q)return '';return `<details class="corr"><summary><span class="cs ${a.ok?'ok':a.sel==null?'bl':'no'}">${a.ok?'✔':a.sel==null?'–':'✘'}</span> ${k+1}. ${fuvSrcShort(q)}${q.tags.length?' · '+q.tags.map(t=>SK[t].name).join(', '):''}${a.build?' · montagem':''}</summary>${fuvSrcChip(q)}<div class="fuvq small">${fuvText(q)}</div>${fuvDiag(q,a.sel,true)}${!a.ok&&q.steps&&q.steps.length>=2?`<button class="btn sm purple" data-fa="buildid" data-q="${q.id}">🧩 Montar esta resolução</button>`:''}</details>`;}).join('')}</div></div>`;
   $('#lbody').scrollTop=0; $('#lprog').firstElementChild.style.width='100%';
   $('#lfoot').className='lfoot'; $('#lfootin').innerHTML=`<div class="footrow" style="justify-content:flex-end"><button class="btn" data-act="quit" id="bCont">Concluir</button></div>`;
   L.weak=weak; L.resHTML=$('#lqbox').innerHTML; L.resFoot=$('#lfootin').innerHTML;
@@ -1890,7 +1949,12 @@ resolução:
 - 3a = 180° ⇒ a = 60°
 - 60° + r = 80° ⇒ r = 20°
 - Menor: 60° − 20° = 40°`;
-function autoTags(txt){ const m=' '+normChat(txt)+' ',out=[]; GLOSS.forEach(g=>{ if(out.includes(g.s)||!SK[g.s])return; if(g.k.some(k=>k.length>=4&&m.includes(' '+k))) out.push(g.s); }); return out.slice(0,3); }
+/* Assuntos de uma questão pelo texto: pontua cada habilidade pelas palavras-chave do glossário
+   (frequência × especificidade: termos de várias palavras valem mais) e fica com as mais fortes */
+function autoTags(txt){ const m=' '+normChat(txt)+' ',sc={};
+  GLOSS.forEach(g=>{ if(!SK[g.s])return; g.k.forEach(k=>{ if(k.length<4)return; let i=0,n=0; while((i=m.indexOf(' '+k,i))>=0){ n++; i+=k.length+1; } if(n) sc[g.s]=(sc[g.s]||0)+Math.min(n,3)*(k.includes(' ')?3:1)*(k.length>=7?1.5:1); }); });
+  const arr=Object.entries(sc).sort((a,b)=>b[1]-a[1]); if(!arr.length) return [];
+  return arr.filter(x=>x[1]>=arr[0][1]*0.5).slice(0,3).map(x=>x[0]); }
 function mapTag(t){ const n=normChat(t); if(!n)return null; if(SK[n])return n; const bn=ALL.find(s=>normChat(s.name)===n)||ALL.find(s=>normChat(s.name).includes(n)||n.includes(normChat(s.name))); if(bn)return bn.id; const g=findGloss(n); return g&&SK[g.s]?g.s:null; }
 function parseImport(raw){
   raw=raw.trim(); const out=[],errs=[];
@@ -1923,7 +1987,7 @@ function mkImp(src,tags,q,alts,ans,why,steps,trap){ const set=String(src).split(
   let h=0; const str=src+q; for(let i=0;i<str.length;i++) h=(h*31+str.charCodeAt(i))|0;
   return {id:'imp'+Math.abs(h).toString(36),origin:'imp',set,src:String(src),area:'',tags:[...new Set(tg)],q:String(q),alts:alts.map(String),ans,why:why.map(x=>x==null?x:String(x)),steps:(steps||[]).map(String),trap:(trap||[]).map(String)}; }
 function importModal(){
-  modal(`<h2>📥 Importar questões</h2><p class="muted" style="font-size:14px">Cole as questões das provas oficiais (baixe em <a href="https://www.fuvest.br" target="_blank" rel="noopener">fuvest.br</a>) ou dos simulados do seu cursinho. Uma questão por bloco, começando com <b>###</b> e a fonte. Os <b>assuntos</b> ligam a questão à trilha (se faltar, o app tenta descobrir pelo texto). <b>resolução</b> e <b>erro X</b> são opcionais, mas com eles a correção e o modo Montar resolução ficam muito melhores. Também aceita JSON.</p>
+  modal(`<h2>📥 Importar questões</h2><p class="muted" style="font-size:14px">Cole questões que ainda não estão no banco: FUVEST 2025 e 2026 e os simulados oficiais (em <a href="https://www.fuvest.br" target="_blank" rel="noopener">fuvest.br</a>) ou os simulados do seu cursinho. Escreva a fonte com o ano (ex.: <b>### Simulado FUVEST 2026 · Q12</b>) para saber sempre de onde a questão veio. Uma questão por bloco, começando com <b>###</b> e a fonte. Os <b>assuntos</b> ligam a questão à trilha (se faltar, o app tenta descobrir pelo texto). <b>resolução</b> e <b>erro X</b> são opcionais, mas com eles a correção e o modo Montar resolução ficam muito melhores. Também aceita JSON.</p>
    <textarea id="imptxt" class="imptxt" placeholder="${esc(IMPORT_HELP)}"></textarea>
    <div class="row" style="flex-wrap:wrap;margin-top:8px"><label class="btn sm ghost" style="cursor:pointer">📄 Abrir arquivo .txt/.json<input type="file" id="impfile" accept=".txt,.json,text/plain,application/json" hidden></label><button class="link" data-fa="impex">ver exemplo</button></div>
    <div id="impmsg" class="muted" style="font-size:14px;margin-top:8px"></div>
@@ -1948,7 +2012,15 @@ document.addEventListener('click',e=>{
   if(d.bp!=null&&L&&L.state==='build'){ L.build.chosen.push(+d.bp); beep(SND.tap); fuvBuildDraw(); return; }
   if(d.bu!=null&&L&&L.state==='build'){ L.build.chosen.splice(+d.bu,1); fuvBuildDraw(); return; }
   switch(d.fa){
-    case 'sim10': case 'sim20': case 'treino': case 'build': case 'redo': startFuv(d.fa); break;
+    case 'sim10': case 'sim20': case 'treino': case 'build': startFuv(d.fa); break;
+    case 'redo': ofcEnsure(fv().wrong).then(()=>startFuv('redo'),()=>startFuv('redo')); break;
+    case 'otab': S.ofcTab=d.tab; save(); render(); break;
+    case 'oprova': { const m=OFC_MAN.find(x=>x.id===d.pid); if(!m)break; const mins=m.n*3;
+      modal(`<div class="center"><h2 style="padding:0">${esc(m.label)}</h2><p class="muted">${esc(m.sub)}</p><p>${m.n} questões oficiais em ordem, com cronômetro de <b>${mins>=60?Math.floor(mins/60)+' h '+(mins%60?mins%60+' min':''):mins+' min'}</b> (3 min por questão, o ritmo da prova). A correção com o gabarito oficial aparece no final. Você pode encerrar quando quiser.</p></div><div class="actions"><button class="btn block" data-fa="oprovago" data-pid="${m.id}">Começar a prova</button><button class="btn ghost block" data-fa="otreinop" data-pid="${m.id}">Prefiro correção a cada questão</button></div>`); break; }
+    case 'oprovago': { const m=OFC_MAN.find(x=>x.id===d.pid); closeModal(); ofcRun([m.id],()=>startFuv('oprova',{pool:OFC[m.id],ordered:true,n:OFC[m.id].length,exam:true,title:`${m.label} · ${m.sub.split(' · ')[0]}`})); break; }
+    case 'otreinop': { const m=OFC_MAN.find(x=>x.id===d.pid); closeModal(); ofcRun([m.id],()=>startFuv('otreino',{pool:OFC[m.id],title:m.label})); break; }
+    case 'osim': case 'otreino': { const tab=S.ofcTab==='ENEM'?'ENEM':'FUVEST'; let pids=OFC_MAN.filter(m=>m.exam===tab).map(m=>m.id); if(pids.length>5) pids=shuffle(pids).slice(0,5); const sim=d.fa==='osim';
+      ofcRun(pids,()=>startFuv(d.fa,{pool:pids.flatMap(p=>OFC[p]),exam:sim,title:`${sim?'Simulado':'Treino'} ${tab} · questões oficiais`})); break; }
     case 'set': startFuv('treino',{set:d.set}); break;
     case 'topic': startFuv('treino',{skill:d.skill}); break;
     case 'del': modal(`<h2>Apagar "${esc(d.set)}"?</h2><p class="muted">As questões importadas deste conjunto serão removidas deste aparelho.</p><div class="actions"><button class="btn red block" data-fa="delyes" data-set="${esc(d.set)}">Apagar</button><button class="btn ghost block" data-close>Cancelar</button></div>`); break;
@@ -1978,7 +2050,7 @@ function fuvKey(e){
    Navegação e telas
    ===================================================================== */
 let VIEW='learn',OPEN_POP=null;
-const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','FUVEST'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
+const NAV=[['learn','🏠','Aprender'],['review','🧠','Revisar'],['fuvest','🎓','Provas'],['lessons','📖','Aulas'],['profile','👤','Perfil']];
 const LOGO=`<svg viewBox="0 0 120 120">${mascot().replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg><span>${BRAND.app}</span>`;
 function applyTheme(){ const r=document.documentElement; if(S.theme==='auto') r.removeAttribute('data-theme'); else r.setAttribute('data-theme',S.theme); }
 function statsHTML(){ const lvl=lvlOf(S.xp); return `

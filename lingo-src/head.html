@@ -488,6 +488,24 @@ sup .blank,.fr .blank{width:64px;font-size:18px}
 :root[data-theme="dark"] .bstep.chosen{background:#2a1f33}
 .bstep.static{display:block}
 .imptxt{width:100%;min-height:220px;border:2px solid var(--border);border-radius:12px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2);color:var(--text);resize:vertical}
+.srcchip{display:flex;flex-direction:column;gap:1px;border-radius:12px;padding:8px 12px;margin-bottom:10px;border:2px solid var(--border);background:var(--bg2);font-size:14px;line-height:1.35}
+.srcchip b{font-size:15px;font-weight:900}.srcchip span{font-size:12.5px;color:var(--muted);font-weight:700}
+.srcchip.fuv{border-color:#84d8ff;background:var(--blue-l)}.srcchip.fuv b{color:var(--blue-d)}
+.srcchip.enem{border-color:#ffc86b;background:#fff4d6}.srcchip.enem b{color:#a15c00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .srcchip.enem{background:#3a2c10}:root:not([data-theme="light"]) .srcchip.enem b{color:#ffc86b}:root:not([data-theme="light"]) .srcchip.fuv b{color:#84d8ff}}
+:root[data-theme="dark"] .srcchip.enem{background:#3a2c10}:root[data-theme="dark"] .srcchip.enem b{color:#ffc86b}:root[data-theme="dark"] .srcchip.fuv b{color:#84d8ff}
+.corr .srcchip{margin-top:8px}
+.fuvq p{margin:0 0 10px}.fuvq p:last-child{margin-bottom:0}
+.qimg{display:block;max-width:100%;height:auto;margin:10px auto;border-radius:8px;background:#fff}
+.altimg{display:block;max-width:100%;height:auto;max-height:240px;border-radius:6px;background:#fff}
+.opt .altimg{margin:2px 0}
+.qtab{border-collapse:collapse;margin:8px 0;font-size:15px;max-width:100%}.qtab td{border:1.5px solid var(--border-d);padding:4px 8px}
+.fuvq{overflow-x:auto}
+.ofctabs{margin-top:12px}.ofctabs button{flex:1}
+.ofcrow{flex-wrap:wrap}.ofcrow .grow{min-width:150px}.ofcrow .grow small{display:block}
+.ofcrow .minibar{display:block;margin:6px 0 2px;max-width:220px}
+.ofcbtns{display:flex;gap:6px;flex-wrap:wrap}
+.ico.yr{font-size:17px;letter-spacing:-.5px;background:var(--blue)}.ico.yr.enem{background:#e59400}
 @media (max-width:760px){.bottomnav .navbtn{font-size:10px;letter-spacing:0}.bottomnav .navbtn .ic{font-size:22px}}
 </style>
 </head>
