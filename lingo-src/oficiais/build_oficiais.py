@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Converte provas oficiais (FUVEST 1ª fase e ENEM) em bancos de questões do MatLingo/FisLingo.
+"""Converte provas oficiais (FUVEST 1ª fase e ENEM) em bancos de questões do SaberLingo (uma pasta por matéria).
 
 Fontes (clonar antes de rodar):
   FUVEST 2018–2024: BLUEX (github.com/Portuguese-Benchmark-Datasets/BLUEX) — descompacte
@@ -16,7 +16,7 @@ from PIL import Image
 
 D = os.path.dirname(os.path.abspath(__file__)); SRC = os.path.dirname(D); ROOT = os.path.dirname(SRC)
 sys.path.insert(0, D)
-from classifica import classify_cn
+from classifica import classify_cn, classify_ch, classify_qb
 
 LET = 'ABCDE'
 IMG_CACHE = {}
@@ -114,11 +114,14 @@ def fuv_alt(a, imgs, base):
     if not a: raise ValueError('alternativa vazia')
     return math_fix(html.escape(re.sub(r'\s+', ' ', a), quote=False))
 
+SUBJ = {'mat': 'mathematics', 'por': 'portuguese', 'fis': 'physics', 'qui': 'chemistry', 'bio': 'biology',
+        'his': 'history', 'geo': 'geography', 'fil': 'philosophy'}
+
 def load_fuvest(bluex):
-    out = {'mat': {}, 'fis': {}}; skipped = []
+    out = {c: {} for c in SUBJ}; skipped = []
     for f in sorted(glob.glob(os.path.join(bluex, 'questions/USP/*/*.json'))):
         q = json.load(open(f, encoding='utf-8')); subj = set(q['subject'])
-        areas = [a for a, s in (('mat', 'mathematics'), ('fis', 'physics')) if s in subj]
+        areas = [a for a, s in SUBJ.items() if s in subj]
         if not areas: continue
         year = int(q['id'].split('_')[1]); num = q['number']
         if q['answer'] not in list(LET) or len(q['alternatives']) != 5:
@@ -126,13 +129,32 @@ def load_fuvest(bluex):
         try:
             item = {'id': f'fuv{year}-{num}', 'n': num, 'q': fuv_text(q['question'], q['associated_images'], bluex),
                     'alts': [fuv_alt(a, q['associated_images'], bluex) for a in q['alternatives']], 'ans': LET.index(q['answer'])}
+            if len(set(item['alts'])) < 5: raise ValueError('alternativas repetidas (erro na fonte)')
         except ValueError as e:
             skipped.append((q['id'], str(e))); continue
         for a in areas:
-            out[a].setdefault(year, []).append(dict(item, area='Matemática' if a == 'mat' else 'Física'))
+            out[a].setdefault(year, []).append(dict(item, area=AREA[a]))
     return out, skipped
 
 # ---------------------------------------------------------------- ENEM
+WRAP_END = re.compile(r'[.!?:;…"”»]\s*$')
+def unwrap(p):
+    """Junta as quebras de linha que vêm só da diagramação do PDF (prosa), preservando versos.
+    Um parágrafo é tratado como prosa quando tem frase terminando no meio de uma linha ou linhas longas;
+    aí a quebra some se a linha seguinte começa com minúscula e a anterior não fecha a frase.
+    Linhas terminadas em dois espaços (quebra explícita do markdown) são sempre mantidas."""
+    lines = p.split('\n')
+    if len(lines) < 2: return p
+    prose = any(re.search(r'[a-zà-ú]{2}[”"»)]?[.!?][”"»]? +[A-ZÀ-Ú“"]', l) for l in lines) or max(len(l) for l in lines) > 70
+    if not prose: return '<br>'.join(lines)
+    out = lines[0]
+    for l in lines[1:]:
+        if out.endswith('  '): out = out.rstrip() + '<br>' + l  # quebra explícita do markdown (versos)
+        elif out.endswith('-') and re.match(r'[a-zà-ú]', l): out = out[:-1] + l
+        elif re.match(r'\s*[a-zà-ú(\d]', l) and not WRAP_END.search(out) and '\x00' not in l[:3]: out += ' ' + l.strip()
+        else: out += '<br>' + l
+    return out
+
 def md(t, qdir):
     if not t: return ''
     t = t.replace('\r', '').replace(' ', ' ')
@@ -146,12 +168,13 @@ def md(t, qdir):
     t = re.sub(r'\[([^\]]+)\]\((https?://[^)]+)\)', r'\1', t)
     t = html.escape(t, quote=False)
     t = re.sub(r'&lt;(/?)(sub|sup)&gt;', r'<\1\2>', t)
-    t = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', t)
+    t = re.sub(r'\*{4,}', '**', t)
+    t = re.sub(r'\*\*((?:(?!\n\s*\n).)+?)\*\*', r'<b>\1</b>', t, flags=re.S)
     t = re.sub(r'(?<![A-Za-z0-9\\])_(?!_)([^_\n]+?)_(?![A-Za-z0-9])', r'<i>\1</i>', t)
     t = re.sub(r'\\([*_#])', r'\1', t)
     t = scripts(t)
     paras = [p.strip() for p in re.split(r'\n\s*\n', t) if p.strip()]
-    h = ''.join('<p>' + p.replace('\n', '<br>') + '</p>' for p in paras)
+    h = ''.join('<p>' + unwrap(p) + '</p>' for p in paras)
     def put(m):
         p = imgs[int(m.group(1))]
         if not os.path.exists(p): raise ValueError('figura ausente ' + p)
@@ -162,12 +185,12 @@ def md(t, qdir):
 def enem_area(ed, idx):
     y = int(ed[:4])
     if 136 <= idx <= 180: return 'MT'
-    if y >= 2017: return 'CN' if 91 <= idx <= 135 else None
-    if y == 2009: return 'CN' if 1 <= idx <= 45 else None
-    return 'CN' if 46 <= idx <= 90 else None
+    if y >= 2017: return 'LC' if idx <= 45 else 'CH' if idx <= 90 else 'CN'
+    if y == 2009: return 'CN' if idx <= 45 else 'CH' if idx <= 90 else 'LC'
+    return 'CH' if idx <= 45 else 'CN' if idx <= 90 else 'LC'
 
 def load_enem(root):
-    out = {'mat': {}, 'fis': {}}; skipped = []; review = []
+    out = {c: {} for c in SUBJ}; skipped = []
     for ed_dir in sorted(glob.glob(os.path.join(root, '20*'))):
         ed = os.path.basename(ed_dir)
         for f in sorted(glob.glob(os.path.join(ed_dir, 'questions/*/details.json'))):
@@ -180,10 +203,12 @@ def load_enem(root):
             ctx = re.sub(r'(?:ENEM 20\d\d\s*){2,}', '', d.get('context') or '') + '\n\n' + intro
             for i, a in enumerate(d['alternatives'][:4]):
                 if a.get('text'): a['text'] = re.sub(r'\s+' + LET[i + 1] + r'\s*$', '', a['text'])
-            if area == 'CN':
-                cls, sc = classify_cn(ctx + ' ' + ' '.join(a.get('text') or '' for a in d['alternatives']), f'{ed}-{idx}')
-                if cls != 'fis': continue
-            app = 'mat' if area == 'MT' else 'fis'
+            full = ctx + ' ' + ' '.join(a.get('text') or '' for a in d['alternatives']); key = f'{ed}-{idx}'
+            if area == 'MT': app = 'mat'
+            elif area == 'LC': app = 'por'
+            elif area == 'CH': app = classify_ch(full, key)[0]
+            elif classify_cn(full, key)[0] == 'fis': app = 'fis'
+            else: app = classify_qb(full, key)[0]
             ans = d.get('correctAlternative')
             if ans not in list(LET) or len(d['alternatives']) != 5:
                 skipped.append((f'{ed}/{idx}', 'sem gabarito/anulada')); continue
@@ -199,41 +224,58 @@ def load_enem(root):
                         if not t: raise ValueError('alternativa vazia')
                         alts.append(re.sub(r'^<p>(.*)</p>$', r'\1', t))
                 item = {'id': f'enem{ed.replace("-reaplicacao", "r")}-{idx}', 'n': idx, 'q': md(ctx, qdir), 'alts': alts,
-                        'ans': LET.index(ans), 'area': 'Matemática' if app == 'mat' else 'Física'}
+                        'ans': LET.index(ans), 'area': AREA[app]}
                 if not item['q']: raise ValueError('enunciado vazio')
+                if len(set(alts)) < 5: raise ValueError('alternativas repetidas (erro na fonte)')
             except ValueError as e:
                 skipped.append((f'{ed}/{idx}', str(e))); continue
             out[app].setdefault(ed, []).append(item)
     return out, skipped
 
 # ---------------------------------------------------------------- saída
-def write(app_key, app_dir, fuv, enem):
-    pdir = os.path.join(ROOT, app_dir, 'provas'); os.makedirs(pdir, exist_ok=True)
+APP_DIR = 'SaberLingo'
+AREA = {'mat': 'Matemática', 'por': 'Português', 'fis': 'Física', 'qui': 'Química', 'bio': 'Biologia',
+        'his': 'História', 'geo': 'Geografia', 'fil': 'Filosofia e Sociologia'}
+SUB_ENEM = {'mat': 'Matemática e suas Tecnologias', 'por': 'Linguagens, Códigos e suas Tecnologias',
+            'fis': 'Ciências da Natureza (Física)', 'qui': 'Ciências da Natureza (Química)', 'bio': 'Ciências da Natureza (Biologia)',
+            'his': 'Ciências Humanas (História)', 'geo': 'Ciências Humanas (Geografia)', 'fil': 'Ciências Humanas (Filosofia e Sociologia)'}
+
+def enem_day(course, y):
+    """Até 2016: 1º dia = Humanas + Natureza, 2º dia = Linguagens + Matemática.
+    A partir de 2017: 1º dia = Linguagens + Humanas, 2º dia = Natureza + Matemática."""
+    if course == 'mat': return '2º dia'
+    if course in ('his', 'geo', 'fil'): return '1º dia'
+    if course == 'por': return '2º dia' if y <= 2016 else '1º dia'
+    return '1º dia' if y <= 2016 else '2º dia'
+
+def write(course, fuv, enem):
+    pdir = os.path.join(ROOT, APP_DIR, 'provas', course); os.makedirs(pdir, exist_ok=True)
     for f in glob.glob(os.path.join(pdir, '*.js')): os.remove(f)
-    man = []; total = 0
-    def emit(pid, meta, qs):
+    man = []; files = {}; total = 0
+    def add(pid, fname, meta, qs):
         nonlocal total
         qs.sort(key=lambda q: q['n'])
-        fn = f'provas/{pid}.js'
-        with open(os.path.join(ROOT, app_dir, fn), 'w', encoding='utf-8') as fh:
-            fh.write(f'OFICIAIS_ADD({json.dumps(pid)},{json.dumps(qs, ensure_ascii=False, separators=(",", ":"))});\n')
-        man.append(dict(meta, id=pid, n=len(qs), file=fn, kb=os.path.getsize(os.path.join(ROOT, app_dir, fn)) // 1024)); total += len(qs)
+        files.setdefault(fname, []).append((pid, qs))
+        man.append(dict(meta, id=pid, n=len(qs), file=f'provas/{course}/{fname}')); total += len(qs)
     for y in sorted(fuv, reverse=True):
-        emit(f'fuvest-{y}', {'exam': 'FUVEST', 'year': y, 'label': f'FUVEST {y}', 'sub': '1ª fase · Conhecimentos Gerais', 'ed': 'regular'}, fuv[y])
+        add(f'fuvest-{y}', f'fuvest-{y}.js', {'exam': 'FUVEST', 'year': y, 'label': f'FUVEST {y}', 'sub': '1ª fase · Conhecimentos Gerais', 'ed': 'regular'}, fuv[y])
     for ed in sorted(enem, key=lambda e: (e[:4], e), reverse=True):
         y = int(ed[:4]); rea = ed.endswith('reaplicacao')
-        day = '2º dia' if y >= 2017 or app_key == 'mat' else '1º dia'
-        emit(f'enem-{ed}', {'exam': 'ENEM', 'year': y, 'label': f'ENEM {y}' + (' · Reaplicação' if rea else ''),
-                            'sub': f'{day} · ' + ('Matemática e suas Tecnologias' if app_key == 'mat' else 'Ciências da Natureza (Física)'),
-                            'ed': 'reaplicacao' if rea else 'regular'}, enem[ed])
-    with open(os.path.join(SRC, f'oficiais-{app_key}.js'), 'w', encoding='utf-8') as fh:
+        add(f'enem-{ed}', f'enem-{y}.js', {'exam': 'ENEM', 'year': y, 'label': f'ENEM {y}' + (' · Reaplicação' if rea else ''),
+                                          'sub': f'{enem_day(course, y)} · {SUB_ENEM[course]}', 'ed': 'reaplicacao' if rea else 'regular'}, enem[ed])
+    for fname, items in files.items():
+        with open(os.path.join(pdir, fname), 'w', encoding='utf-8') as fh:
+            for pid, qs in items:
+                fh.write(f'OFICIAIS_ADD({json.dumps(pid)},{json.dumps(qs, ensure_ascii=False, separators=(",", ":"))});\n')
+    for m in man: m['kb'] = os.path.getsize(os.path.join(ROOT, APP_DIR, m['file'])) // 1024
+    with open(os.path.join(SRC, f'oficiais-{course}.js'), 'w', encoding='utf-8') as fh:
         fh.write('/* Índice das provas oficiais (gerado por lingo-src/oficiais/build_oficiais.py) */\n')
         fh.write('const OFICIAIS_MAN=' + json.dumps(man, ensure_ascii=False, separators=(',', ':')) + ';\n')
-    print(app_dir, total, 'questões em', len(man), 'provas,', sum(m['kb'] for m in man), 'KB')
+    print(course, total, 'questões em', len(man), 'provas,', len(files), 'arquivos,', sum(os.path.getsize(os.path.join(pdir, f)) for f in files) // 1024, 'KB')
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--bluex', required=True); ap.add_argument('--enem', required=True)
     a = ap.parse_args()
     fuv, s1 = load_fuvest(a.bluex); enem, s2 = load_enem(a.enem)
     for k, why in s1 + s2: print('  ignorada', k, '—', why)
-    write('mat', 'MatLingo', fuv['mat'], enem['mat']); write('fis', 'FisLingo', fuv['fis'], enem['fis'])
+    for c in SUBJ: write(c, fuv[c], enem[c])

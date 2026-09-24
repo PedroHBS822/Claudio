@@ -46,7 +46,11 @@ const diffDays=(a,b)=>{const p=k=>{const [y,m,d]=k.split('-').map(Number);return
 function defState(){return {name:'Estudante',xp:0,gems:100,hearts:5,heartTs:0,streak:0,best:0,last:null,days:{},goal:20,sound:true,unlockAll:false,theme:'auto',skills:{},cards:{},mist:[],chk:{},trophy:{},nudged:null,cardsDone:0,lessons:0,reviews:0,correct:0,answered:0,perfect:0,ach:{},timedBest:0,created:today()};}
 let S=defState();
 try{const raw=localStorage.getItem(LSK);if(raw)S=Object.assign(defState(),JSON.parse(raw));}catch(e){}
-function save(){try{localStorage.setItem(LSK,JSON.stringify(S));}catch(e){}}
+/* Perfil compartilhado entre os cursos (nome, ofensiva, gemas, vidas, meta e preferências) */
+const COMMON=['name','gems','hearts','heartTs','streak','best','last','days','goal','sound','theme'];
+try{ const c=JSON.parse(localStorage.getItem(PKEY)||'null'); if(c) COMMON.forEach(k=>{ if(c[k]!==undefined) S[k]=c[k]; }); }catch(e){}
+function save(){ try{ localStorage.setItem(LSK,JSON.stringify(S)); const c={}; COMMON.forEach(k=>c[k]=S[k]); localStorage.setItem(PKEY,JSON.stringify(c));
+  localStorage.setItem('lingo_resumo_'+COURSE_ID,JSON.stringify({xp:S.xp,done:ALL.filter(x=>S.skills[x.id]&&S.skills[x.id].lv>=1).length,total:ALL.length,t:Date.now()})); }catch(e){} }
 const DAY=864e5;
 const dayStart=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d).getTime();};
 /* estado de uma habilidade (com migração do formato antigo int/due para stab/lastT) */
@@ -160,7 +164,7 @@ function tutor(raw){
   const answered=q&&L.state==='feedback';
   const aula=id=>`<br><button class="chip" data-theory="${id}" style="margin-top:8px">📖 Abrir aula: ${SK[id].name}</button>`;
   if(!m) return 'Pode perguntar! 🙂';
-  if(/^(oi|ola|opa|bom dia|boa tarde|boa noite|e ai|hey|hello|salve)\b/.test(m)) return `Olá, ${esc(S.name)}! 👋 Eu sou o ${BRAND.tutor}. ${q?'Estou vendo sua questão atual — quer uma <b>dica</b>?':'Pergunte sobre qualquer assunto (ex.: "o que é MMC?") ou digite uma conta.'}`;
+  if(/^(oi|ola|opa|bom dia|boa tarde|boa noite|e ai|hey|hello|salve)\b/.test(m)) return `Olá, ${esc(S.name)}! 👋 Eu sou o ${BRAND.tutor}. ${q?'Estou vendo sua questão atual — quer uma <b>dica</b>?':'Pergunte sobre qualquer assunto (ex.: '+BRAND.askEx+') ou digite uma conta.'}`;
   if(/obrigad|valeu|vlw|brigad/.test(m)) return 'Por nada! Continue praticando — a repetição é o segredo. 💪';
   /* porcentagem rápida */
   let pm=raw.replace(/−/g,'-').match(/(-?\d+(?:[.,]\d+)?)\s*%\s*de\s*(-?\d+(?:[.,]\d+)?)/i);

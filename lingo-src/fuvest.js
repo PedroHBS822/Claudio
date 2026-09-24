@@ -1,7 +1,7 @@
 
 /* =====================================================================
    Preparação FUVEST — banco de questões, simulados, diagnóstico e
-   "montar resolução" (compartilhado por MatLingo e FisLingo)
+   "montar resolução" (compartilhado por todos os cursos)
    ===================================================================== */
 const LETTERS='ABCDE';
 const FUV_BANK=(typeof FUVQ!=='undefined'?FUVQ:[]).map(q=>Object.assign({origin:'bank',set:'Banco original (estilo FUVEST)',src:'Estilo FUVEST'},q,{tags:(q.tags||[]).filter(t=>SK[t])}));
@@ -14,16 +14,15 @@ const fuvStep=(q,s)=>q.origin!=='imp'?s:esc(s);
 
 /* ---------- Provas oficiais (FUVEST 1ª fase e ENEM), carregadas sob demanda ---------- */
 const OFC_MAN=typeof OFICIAIS_MAN!=='undefined'?OFICIAIS_MAN:[];
-const OFC={},OFC_Q={},OFC_WAIT={};
+const OFC={},OFC_Q={};
 function OFICIAIS_ADD(pid,qs){ const m=OFC_MAN.find(x=>x.id===pid); if(!m)return;
   OFC[pid]=qs.map(o=>{ const q=Object.assign({},o,{origin:'oficial',pid,exam:m.exam,year:m.year,set:m.label,stage:m.sub.split(' · ')[0],src:`${m.label} · Questão ${o.n}`,why:[],steps:[],trap:[],
-    tags:autoTags(stripHtml(o.q.replace(/<(br|\/p|\/td)[^>]*>/g,' $&'))+' '+o.alts.map(stripHtml).join(' '))}); OFC_Q[q.id]=q; return q; });
-  (OFC_WAIT[pid]||[]).forEach(w=>w.res(OFC[pid])); delete OFC_WAIT[pid]; }
-function ofcLoad(pid){ return new Promise((res,rej)=>{ if(OFC[pid]) return res(OFC[pid]); const m=OFC_MAN.find(x=>x.id===pid); if(!m) return rej(new Error('prova desconhecida'));
-  const first=!OFC_WAIT[pid]; (OFC_WAIT[pid]=OFC_WAIT[pid]||[]).push({res,rej}); if(!first) return;
-  const sc=document.createElement('script'); sc.src=m.file; sc.async=true;
-  sc.onerror=()=>{ (OFC_WAIT[pid]||[]).forEach(w=>w.rej(new Error('falha ao carregar '+m.file))); delete OFC_WAIT[pid]; sc.remove(); };
-  document.head.appendChild(sc); }); }
+    tags:autoTags(stripHtml(o.q.replace(/<(br|\/p|\/td)[^>]*>/g,' $&'))+' '+o.alts.map(stripHtml).join(' '))}); OFC_Q[q.id]=q; return q; }); }
+const OFC_FILES={};
+function ofcLoad(pid){ if(OFC[pid]) return Promise.resolve(OFC[pid]); const m=OFC_MAN.find(x=>x.id===pid); if(!m) return Promise.reject(new Error('prova desconhecida'));
+  const p=OFC_FILES[m.file]||(OFC_FILES[m.file]=new Promise((res,rej)=>{ const sc=document.createElement('script'); sc.src=m.file; sc.async=true; sc.onload=res;
+    sc.onerror=()=>{ delete OFC_FILES[m.file]; sc.remove(); rej(new Error('falha ao carregar '+m.file)); }; document.head.appendChild(sc); }));
+  return p.then(()=>{ if(!OFC[pid]) throw new Error('prova vazia'); return OFC[pid]; }); }
 function ofcPidOf(id){ let m=/^fuv(\d{4})-/.exec(id); if(m) return 'fuvest-'+m[1]; m=/^enem(\d{4})(r?)-/.exec(id); if(m) return 'enem-'+m[1]+(m[2]?'-reaplicacao':''); return null; }
 function ofcEnsure(ids){ const p=[...new Set(ids.map(ofcPidOf).filter(x=>x&&!OFC[x]))]; if(!p.length) return Promise.resolve(); toast('⏳ Carregando as provas…',1200); return Promise.all(p.map(ofcLoad)); }
 function ofcMan(q){ return OFC_MAN.find(x=>x.id===q.pid)||{sub:''}; }
@@ -63,7 +62,7 @@ function renderFuvest(){
 }
 function ofcSection(){
   if(!OFC_MAN.length) return '';
-  const F=fv(),tab=S.ofcTab==='ENEM'?'ENEM':'FUVEST',area=BRAND.app==='FisLingo'?'Física':'Matemática';
+  const F=fv(),tab=S.ofcTab==='ENEM'?'ENEM':'FUVEST',area=BRAND.course;
   const cnt=ex=>OFC_MAN.filter(m=>m.exam===ex).reduce((a,m)=>a+m.n,0), yrs=ex=>{ const y=OFC_MAN.filter(m=>m.exam===ex).map(m=>m.year); return y.length?`${Math.min(...y)}–${Math.max(...y)}`:''; };
   const rows=OFC_MAN.filter(m=>m.exam===tab).map(m=>{ const r=F.pv[m.id]||{},d=Object.keys(r).length,c=Object.values(r).filter(Boolean).length;
     return `<div class="item ofcrow"><div class="ico yr ${m.exam==='ENEM'?'enem':'fuv'}">${m.ed==='reaplicacao'?'R':''}${String(m.year).slice(2)}</div><div class="grow"><b>${esc(m.label)}</b><small>${esc(m.sub)} · ${m.n} questões</small>${d?`<span class="minibar"><i style="width:${d/m.n*100}%;background:${memColor(c/d)}"></i></span><small>${d}/${m.n} feitas · ${c} certa${c===1?'':'s'}</small>`:''}</div><div class="ofcbtns"><button class="btn sm" data-fa="oprova" data-pid="${m.id}">Fazer prova</button><button class="btn sm ghost" data-fa="otreinop" data-pid="${m.id}">Treinar</button></div></div>`; }).join('');

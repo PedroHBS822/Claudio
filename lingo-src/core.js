@@ -1,7 +1,7 @@
 <script>
 "use strict";
 /* =====================================================================
-   MatLingo — utilitários
+   SaberLingo — utilitários
    ===================================================================== */
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -79,6 +79,51 @@ function FILL(prompt,sentence,value,exp,hint,o={}){
 function BANK(prompt,sentence,correct,wrongs,exp,hint,o={}){
   const q=MC(prompt,correct,wrongs,exp,hint,o); q.type='bank'; q.sentence=sentence; return q;
 }
+
+/* =====================================================================
+   Matérias teóricas: questões geradas a partir de dados
+   - pairs: [termo, descrição, (explicação extra)] → termo→descrição, descrição→termo e V/F
+   - qs:    [enunciado, correta, [erradas], explicação]         → múltipla escolha
+   - tf:    [afirmação, verdadeira?, explicação]                 → verdadeiro ou falso
+   - bank:  [frase com @@, correta, [erradas], explicação]       → completar com peça
+   - order: [[evento, ano], ...]                                 → cronologia ("o que veio antes?")
+   ===================================================================== */
+function pairGens(P,o){ o=o||{}; const hint=o.hint;
+  const tq=o.tq||(t=>`Qual alternativa descreve corretamente <b>${t}</b>?`);
+  const dq=o.dq||(d=>`A que se refere a descrição abaixo?<br><i>${d}</i>`);
+  const tf=o.tfq||((t,d)=>`<b>${t}</b>: ${d}`);
+  const ex=p=>`<b>${p[0]}</b>: ${p[1]}.${p[2]?' '+p[2]:''}`;
+  const g=[
+    lv=>{ const i=R(0,P.length-1); return MC(tq(P[i][0]),P[i][1],shuffle(P.filter((_,j)=>j!==i)).map(p=>p[1]).concat(o.dpool||[]),ex(P[i]),hint); },
+    lv=>{ const i=R(0,P.length-1); return MC(dq(P[i][1]),P[i][0],shuffle(P.filter((_,j)=>j!==i)).map(p=>p[0]).concat(o.tpool||[]),ex(P[i]),hint); },
+    lv=>{ const i=R(0,P.length-1),ok=Math.random()<0.5; const alt=pick(P.filter((_,j)=>j!==i&&P[j][1]!==P[i][1])); return TF(tf(P[i][0],ok?P[i][1]:alt[1]),ok,ok?ex(P[i]):`Falso. ${ex(P[i])} (A outra descrição é de <b>${alt[0]}</b>.)`,hint); } ];
+  if(o.noTF) g.pop();
+  return g; }
+function qsGen(Q,hint){ return lv=>{ const x=pick(Q); return MC(x[0],x[1],shuffle(x[2]),x[3],x[4]||hint); }; }
+function tfGen(T,hint){ return lv=>{ const x=pick(T); return TF(x[0],x[1],x[2],x[3]||hint); }; }
+function bankGen(B,hint){ return lv=>{ const x=pick(B); return BANK(x[4]||'Toque na peça que completa a frase',x[0],x[1],shuffle(x[2]),x[3],hint); }; }
+function orderGens(E,hint,o){ o=o||{}; const lab=o.fmt||(y=>y<0?`${-y} a.C.`:String(y));
+  return [
+    lv=>{ const k=lv>=3?4:3; const s=shuffle(E).slice(0,k); const first=s.reduce((a,b)=>a[1]<=b[1]?a:b);
+      if(s.some(x=>x!==first&&x[1]===first[1])) return MC('Qual destes aconteceu primeiro?',first[0],s.filter(x=>x!==first).map(x=>x[0]),'',hint);
+      return MC('Qual destes acontecimentos é o <b>mais antigo</b>?',first[0],s.filter(x=>x!==first).map(x=>x[0]),'Ordem: '+s.slice().sort((a,b)=>a[1]-b[1]).map(x=>`${x[0]} (${lab(x[1])})`).join(' → ')+'.',hint); },
+    lv=>{ const i=R(0,E.length-1),e=E[i],y=e[1]; const opts=[lab(y)]; const ds=shuffle([-30,-20,-12,-8,8,12,20,30,-50,50]);
+      for(const d of ds){ const v=lab(y+d); if(!opts.includes(v)&&opts.length<4) opts.push(v); }
+      return MC(`Em que ${o.unit||'ano'} ocorreu: <b>${e[0]}</b>?`,lab(y),opts.slice(1),`<b>${e[0]}</b>: ${lab(y)}.${e[2]?' '+e[2]:''}`,hint); } ]; }
+/* Monta uma habilidade de matéria teórica */
+function SKL(id,name,icon,tip,theory,d){ d=d||{}; const gens=(d.gens||[]).slice(),hint=d.hint||tip;
+  if(d.pairs) gens.push(...pairGens(d.pairs,Object.assign({hint},d)));
+  if(d.qs) { gens.push(qsGen(d.qs,hint)); if(d.qs.length>=8) gens.push(qsGen(d.qs,hint)); }
+  if(d.tf) gens.push(tfGen(d.tf,hint));
+  if(d.bank) gens.push(bankGen(d.bank,hint));
+  if(d.order) gens.push(...orderGens(d.order,hint,d));
+  const cards=d.cards||(d.pairs?d.pairs.slice(0,10).map(p=>[p[0],p[1]]):undefined);
+  return {id,name,icon,tip,theory,gens,cards}; }
+/* Glossário do Tira-Dúvidas gerado a partir das habilidades (nome, dica e cartões) */
+function autoGloss(units,extra){ const out=(extra||[]).slice(); const nk=t=>normChat(stripHtml(t)).replace(/\s*\(.*?\)\s*/g,' ').trim();
+  units.forEach(u=>u.skills.forEach(s=>{ out.push({k:[nk(s.name)],n:s.name,s:s.id,t:s.tip});
+    (s.cards||[]).forEach(c=>{ const k=nk(c[0]); if(k.length>=3&&k.length<=40) out.push({k:[k],n:stripHtml(c[0]),s:s.id,t:`<b>${c[0]}</b>: ${c[1]}.`}); }); }));
+  return out; }
 
 /* =====================================================================
    Ilustrações SVG
