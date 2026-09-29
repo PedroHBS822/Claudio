@@ -1,7 +1,7 @@
 /* =====================================================================
    Lições — Ondas, Óptica, Eletricidade, Magnetismo e Física moderna
    ===================================================================== */
-mod('ond','Ondas','o que é uma onda, e o som',[
+mod('ond','Oscilações e ondas','MHS, ondas, som e ressonância',[
 {id:'ondas',t:'Ondas e a equação v = λ·f',min:15,
  idea:`<p>Uma <b>onda</b> transporta energia de um lugar a outro <b>sem transportar matéria</b>. Numa "ola" no estádio, cada torcedor só levanta e senta; o que percorre a arquibancada é o movimento. Numa corda, cada ponto sobe e desce enquanto a forma da onda avança.</p>
  <p>Grandezas de uma onda: <b>amplitude</b> (altura da crista, ligada à energia), <b>comprimento de onda</b> λ (distância entre duas cristas), <b>frequência</b> f (oscilações por segundo, em Hz) e <b>período</b> T = 1/f. Em um período a onda avança um comprimento de onda, então <b>v = λ·f</b>.</p>
@@ -37,7 +37,7 @@ mod('ond','Ondas','o que é uma onda, e o som',[
  traps:['Confundir som "alto" (intenso) com som "alto" (agudo).','Esquecer de dividir por 2 no eco.','Achar que o Doppler muda o volume, e não a frequência.'],
  keep:['Altura: frequência. Intensidade: amplitude. Timbre: forma da onda.','Som no ar ≈ 340 m/s; não se propaga no vácuo.','Aproximação: mais agudo. Afastamento: mais grave.']}]);
 
-mod('opt','Óptica','espelhos, refração e lentes',[
+mod('opt','Luz e óptica','o espectro, espelhos, refração e lentes',[
 {id:'espelhos',t:'Reflexão e espelhos',min:16,
  idea:`<p>Na <b>reflexão</b>, a luz bate numa superfície e volta, com o ângulo de reflexão igual ao de incidência (medidos a partir da normal). Num <b>espelho plano</b>, a imagem é virtual (fica "atrás" do espelho), do mesmo tamanho e à mesma distância do espelho que o objeto.</p>
  <p>Espelhos esféricos são pedaços de uma esfera. O <b>côncavo</b> (a parte de dentro de uma colher) concentra os raios paralelos num ponto, o <b>foco</b> F. O <b>convexo</b> (a parte de fora) espalha os raios, que parecem sair de um foco atrás dele.</p>

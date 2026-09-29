@@ -43,7 +43,20 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
 .brand b{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.01em}
 .brand small{display:block;font-family:var(--display);font-size:12px;color:var(--muted);font-weight:500}
 .sidenav{display:grid;gap:4px}
-.sidebtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 4px 14px}
+.sidebtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 4px 10px}
+.sidebtns .btn{padding:7px 6px;font-size:13.5px}
+.cnt{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--warn);color:#fff;font-size:11.5px;font-weight:800}
+.sidesearch{margin:0 4px 6px}
+.search{width:100%;padding:8px 11px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);font-family:var(--display);font-size:14.5px}
+.search:focus{border-color:var(--accent);outline:none}
+.search.big{padding:12px 14px;font-size:16.5px;margin:6px 0 18px}
+.lk.chal{color:var(--muted);font-size:13.5px}
+.lk.chal .star{flex:none;width:14px;text-align:center;color:var(--energy);font-size:13px}
+.syncnote{font-family:var(--display);font-size:12.5px;color:var(--muted);margin:16px 8px 0;line-height:1.4}
+.syncnote.cloud{color:var(--ok)}
+.syncnote.home{font-size:14px;margin:26px 0 0}
+[hidden]{display:none!important}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .mod{margin-top:10px}
 .mod>h4{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:6px 8px;font-weight:700}
 .lk{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:9px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:14.5px;font-weight:500;line-height:1.25}
@@ -95,6 +108,17 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
 .chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:var(--card)}
 .chip.ok{border-color:var(--ok);color:var(--ok)}
 .chip.due{border-color:var(--warn);color:var(--warn)}
+.steps{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:14px 0 0}
+.steps button{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px 4px 5px;font-family:var(--display);font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.steps button:hover{border-color:var(--accent)}
+.steps .ck{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);font-size:12px;font-weight:800;line-height:1}
+.steps .done{color:var(--ink);border-color:var(--ok)}
+.steps .done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+#pred,#lab,.ex,#prac{scroll-margin-top:76px}
+.ptitle{font-size:clamp(32px,4.6vw,40px);font-weight:800;letter-spacing:-.02em;margin:6px 0 10px}
+.lead2{margin:0 0 12px;color:var(--muted);font-size:15.5px}
+.fmt{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+.fnote{margin:10px 0 0;font-size:15px;color:var(--muted)}
 .sec{margin:34px 0}
 .sec>h2{font-size:22px;margin-bottom:12px;display:flex;align-items:baseline;gap:10px}
 .sec>h2 .n{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
@@ -161,7 +185,8 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
 .labui{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:0}
 .labui.solo{grid-template-columns:minmax(0,1fr)}
 .ctrls{padding:14px 16px;display:grid;gap:12px;align-content:start;border-right:1px solid var(--line)}
-.ctrl label{display:flex;justify-content:space-between;gap:10px;font-family:var(--display);font-size:14px;font-weight:600}
+.ctrl{min-width:0}
+.ctrl label{display:flex;flex-wrap:wrap;justify-content:space-between;column-gap:10px;font-family:var(--display);font-size:14px;font-weight:600}
 .ctrl label output{font-family:var(--mono);font-weight:400;color:var(--accent);white-space:nowrap}
 .ctrl input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0 0}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
@@ -176,6 +201,52 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
 .tasks li{margin:4px 0}
 .legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--display);font-size:13px;color:var(--muted);padding:8px 16px 0}
 .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+
+/* tutor com IA: só aparece quando o Claude está disponível para quem vê */
+html:not(.has-ai) .ai{display:none!important}
+.aipill{display:inline-grid;place-items:center;padding:1px 7px;border-radius:6px;background:var(--acc);color:#fff;font-family:var(--display);font-size:11.5px;font-weight:800;letter-spacing:.04em;line-height:1.5}
+.aiask{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-family:var(--display);font-size:14.5px;color:var(--muted)}
+.aibox{margin-top:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:11px;padding:12px 14px;font-size:15.5px;line-height:1.55}
+.aibox p{margin:0 0 8px}
+.aibox ul,.aibox ol{margin:0 0 8px;padding-left:22px}
+.aibox code{font-family:var(--mono);font-size:.92em}
+.aitxt>:last-child{margin-bottom:0}
+.aibar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.aitag{font-family:var(--display);font-size:12.5px;color:var(--muted)}
+.aierr{color:var(--bad);font-family:var(--display);font-size:14.5px;margin:0}
+.think{color:var(--muted);font-family:var(--display);font-style:italic}
+.think::after{content:'…';display:inline-block;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.2}}
+.aigen{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.aiq{margin-top:12px;border-color:var(--acc)}
+.aiq .q p{margin:0 0 8px}
+.aihint{display:flex;gap:8px;align-items:baseline;font-family:var(--display);font-size:14.5px;color:var(--muted);margin:14px 0 0;max-width:36em}
+.chat .msgs{display:grid;gap:10px;margin-bottom:12px}
+.msg.me{justify-self:end;max-width:85%;background:var(--accent-soft);border-radius:14px 14px 4px 14px;padding:9px 13px;font-size:15.5px;white-space:pre-wrap}
+.msg.bot .aibox{margin-top:0}
+.sugg{margin-bottom:10px}
+.chatf{display:flex;gap:8px;align-items:flex-end}
+.chatf textarea{flex:1;min-width:0;resize:vertical;padding:10px 12px;border-radius:11px;border:1.5px solid var(--line);background:var(--paper);font-family:var(--body);font-size:16px;line-height:1.4}
+.chatf textarea:focus{border-color:var(--accent);outline:none}
+
+/* desafio do módulo */
+.result{display:flex;gap:22px;align-items:center;background:var(--card);border:1.5px solid var(--accent);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.result .score{font-family:var(--display);flex:none;text-align:center}
+.result .score b{font-size:64px;font-weight:800;line-height:1;color:var(--accent)}
+.result .score span{font-size:24px;color:var(--muted);font-weight:700}
+.result h2{font-size:24px;margin-bottom:6px}
+.result p{margin:0 0 12px;font-size:16px}
+
+/* formulário */
+.fmod{margin:0 0 26px}
+.fmod>h2{font-size:21px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.fitem>h3{font-size:16px;margin:14px 0 8px}
+.fitem>h3 a{color:var(--ink);text-decoration:none}
+.fitem>h3 a:hover{color:var(--accent);text-decoration:underline}
+.fitem .fcard{padding:10px 14px;margin-bottom:8px}
+.fitem .fml{font-size:22px;padding:6px 0 8px}
+.symd summary{cursor:pointer;font-family:var(--display);font-size:13.5px;color:var(--muted);padding:2px 0}
+.symd[open] summary{margin-bottom:6px}
 
 /* revisão */
 .revlist{display:grid;gap:8px;margin:14px 0}
@@ -198,6 +269,9 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
   .ctrls{border-right:0;border-bottom:1px solid var(--line)}
   .method{grid-template-columns:minmax(0,1fr)}
   .fml{font-size:22px}
+  .fml .gap{display:block;height:8px}
+  .result{flex-direction:column;align-items:flex-start;gap:10px}
+  .chatf{flex-direction:column;align-items:stretch}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -209,6 +283,8 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
    ===================================================================== */
 const MODS=[]; const LES=[]; const LX={}; const SIMS={};
 function mod(id,t,sub,lessons){ const m={id,t,sub,lessons}; MODS.push(m); lessons.forEach(l=>{ l.mod=m; l.idx=LES.length; LES.push(l); LX[l.id]=l; }); }
+/* encaixa lições num módulo já criado (depois de `after`, ou no começo) e renumera o curso */
+function addLessons(modId,after,lessons){ const m=MODS.find(x=>x.id===modId); const i=after?m.lessons.findIndex(l=>l.id===after)+1:0; m.lessons.splice(i,0,...lessons); lessons.forEach(l=>{ l.mod=m; LX[l.id]=l; }); LES.length=0; MODS.forEach(mm=>mm.lessons.forEach(l=>{ l.idx=LES.length; LES.push(l); })); }
 
 /* ---------- utilidades ---------- */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -233,11 +309,44 @@ function parseNum(str){ let t=String(str).trim().replace(/\s+/g,'').replace(/[�
 const frac=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ---------- progresso (neste navegador) ---------- */
+/* ---------- progresso: neste navegador e, quando dá, na conta do Claude ---------- */
 const KEY='fisica_do_zero_v1', DAY=864e5, BOX=[1,3,7,16,35];
-let P=(()=>{ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } })();
-P.l=P.l||{};
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){} }
+function normP(p){ p=p&&typeof p==='object'?p:{}; p.l=p.l&&typeof p.l==='object'?p.l:{}; p.mod=p.mod&&typeof p.mod==='object'?p.mod:{}; p.days=Array.isArray(p.days)?p.days:[]; return p; }
+let P=normP((()=>{ try{ return JSON.parse(localStorage.getItem(KEY)); }catch(e){ return null; } })());
+const SYNC={doc:null,state:'local',busy:false,again:false,timer:0,sent:''};
+const canon=v=>Array.isArray(v)?'['+v.map(canon).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canon(v[k])).join(',')+'}':JSON.stringify(v===undefined?null:v);
+const cloudData=()=>({v:1,l:P.l,mod:P.mod,days:P.days});
+function saveLocal(){ try{ localStorage.setItem(KEY,JSON.stringify(P)); }catch(e){} }
+function save(){ saveLocal(); if(SYNC.doc){ clearTimeout(SYNC.timer); SYNC.timer=setTimeout(push,1200); } }
+/* uma escrita por vez, e só quando os dados mudaram */
+async function push(){ if(!SYNC.doc) return; if(SYNC.busy){ SYNC.again=true; return; }
+  const data=cloudData(), c=canon(data); if(c===SYNC.sent) return;
+  SYNC.busy=true;
+  try{ await SYNC.doc.set(JSON.parse(JSON.stringify(data))); SYNC.sent=c; SYNC.state='cloud'; }
+  catch(e){ if(e&&['invalid_argument','revoked','not_granted','capability_disabled','capability_removed'].includes(e.code)){ SYNC.doc=null; SYNC.state='local'; } else SYNC.state='erro'; }
+  SYNC.busy=false; syncBadge(); if(SYNC.again){ SYNC.again=false; push(); } }
+/* junta o progresso local com o da conta: em cada lição vale o mais avançado */
+function mergeP(a,b){ const out=normP({...a}); out.l={};
+  const rank=x=>[x.s||0,x.box||0,x.n||0];
+  new Set([...Object.keys(a.l),...Object.keys(b.l)]).forEach(id=>{ const x=a.l[id], y=b.l[id];
+    if(!x||!y){ out.l[id]={...(x||y)}; return; }
+    const rx=rank(x), ry=rank(y); let win=x; for(let i=0;i<3;i++){ if(rx[i]!==ry[i]){ win=rx[i]>ry[i]?x:y; break; } }
+    const lose=win===x?y:x, w={...win}; ['pr','prr','lab','ex'].forEach(k=>{ if(w[k]==null&&lose[k]!=null) w[k]=lose[k]; }); out.l[id]=w; });
+  out.mod={...b.mod}; Object.keys(a.mod).forEach(k=>{ out.mod[k]=Math.max(+a.mod[k]||0,+out.mod[k]||0); });
+  out.days=[...new Set([...b.days,...a.days])].filter(d=>typeof d==='string').sort().slice(-400);
+  return out; }
+async function initSync(){ const cl=window.claude; if(!cl||typeof cl.use!=='function') return;
+  try{ const [db,user]=await Promise.all([cl.use('db'),cl.use('user')]); if(!db||!user) return;
+    const id=await user.id(); if(!id) return;
+    const doc=db.doc('data/users/'+id+'/progresso'), snap=await doc.get(), rem=snap.exists?snap.data():null;
+    const before=canon(cloudData());
+    if(rem&&rem.v===1){ const r=normP({l:rem.l,mod:rem.mod,days:rem.days}); SYNC.sent=canon({v:1,l:r.l,mod:r.mod,days:r.days}); const last=P.last; P=mergeP(P,r); P.last=last; saveLocal(); }
+    SYNC.doc=doc; SYNC.state='cloud'; syncBadge(); push();
+    if(canon(cloudData())!==before) refreshAfterSync();
+  }catch(e){ SYNC.doc=null; SYNC.state='local'; syncBadge(); } }
+function syncText(){ return SYNC.state==='cloud'?'Progresso salvo na sua conta: continue em qualquer aparelho.':SYNC.state==='erro'?'Não consegui salvar na sua conta agora. O progresso está guardado neste navegador.':'Progresso salvo neste navegador.'; }
+function syncBadge(){ $$('.syncnote').forEach(el=>{ el.textContent=syncText(); el.classList.toggle('cloud',SYNC.state==='cloud'); }); }
+
 function ls(id){ return P.l[id]||(P.l[id]={s:0,st:0,n:0,c:0,box:0,due:0}); }
 const isDue=id=>{ const x=P.l[id]; return !!x&&x.s===2&&x.due<=Date.now(); };
 const dueList=()=>LES.filter(l=>isDue(l.id));
@@ -245,6 +354,12 @@ const mastered=()=>LES.filter(l=>(P.l[l.id]||{}).s===2).length;
 function statusDot(id){ const x=P.l[id]; return `<span class="dot ${isDue(id)?'due':x&&x.s===2?'s2':x&&x.s===1?'s1':''}" aria-hidden="true"></span>`; }
 function statusText(id){ const x=P.l[id]; return isDue(id)?'revisão pendente':x&&x.s===2?'dominada':x&&x.s===1?'em andamento':'não iniciada'; }
 function nextLesson(){ return LES.find(l=>(P.l[l.id]||{}).s!==2)||LES[0]; }
+
+/* dias de estudo seguidos */
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function markDay(){ const t=ymd(new Date()); if(!P.days.includes(t)){ P.days.push(t); P.days.sort(); if(P.days.length>400) P.days=P.days.slice(-400); } }
+function streakDays(){ const set=new Set(P.days), d=new Date(); if(!set.has(ymd(d))){ d.setDate(d.getDate()-1); if(!set.has(ymd(d))) return 0; } let n=0; while(set.has(ymd(d))){ n++; d.setDate(d.getDate()-1); } return n; }
+const normTxt=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 
 /* ---------- cores do tema, lidas dos tokens CSS ---------- */
 const COL={};
@@ -317,121 +432,252 @@ function Sim(host,def){
   return s; }
 
 /* ---------- blocos de conteúdo ---------- */
-function formulaCard(f){ return `<div class="fcard"><div class="fml">${f.f.replace(/ {3,}/g,'<span class="gap"></span>')}</div>${f.s?`<div class="tblw"><table class="sym"><tbody>${f.s.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]||''}</td></tr>`).join('')}</tbody></table></div>`:''}${f.n?`<p style="margin:10px 0 0;font-size:15px;color:var(--muted)">${f.n}</p>`:''}</div>`; }
+function formulaCard(f,compact){ const sym=f.s?`<div class="tblw"><table class="sym"><tbody>${f.s.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]||''}</td></tr>`).join('')}</tbody></table></div>`:'';
+  return `<div class="fcard"><div class="fml">${f.f.replace(/ {3,}/g,'<span class="gap"></span>')}</div>${compact&&sym?`<details class="symd"><summary>O que é cada símbolo</summary>${sym}</details>`:sym}${f.n?`<p class="fnote">${f.n}</p>`:''}</div>`; }
+/* HTML da lição → texto simples (para buscar e para mandar ao tutor) */
+function plain(h){ const t=String(h).replace(/<span class="frac"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g,'($1)/($2)').replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub[^>]*>(.*?)<\/sub>/g,'_$1').replace(/<li>/g,'\n- ').replace(/<\/p>|<br\s*\/?>/g,'\n');
+  return (new DOMParser().parseFromString(t,'text/html').body.textContent||'').replace(/[ \t\u00a0]+/g,' ').replace(/ *\n\s*/g,'\n').trim(); }
+/* markdown mínimo e seguro para as respostas do tutor */
+function mdInline(t){ return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?![*\w])/g,'$1<i>$2</i>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\^\(?(-?[0-9A-Za-z]+)\)?/g,'<sup>$1</sup>'); }
+function md(s){ let html='',list=null,para=[]; const close=()=>{ if(list){ html+=`</${list}>`; list=null; } }, flush=()=>{ if(para.length){ html+='<p>'+para.map(mdInline).join('<br>')+'</p>'; para=[]; } };
+  for(const raw of String(s).split('\n')){ const l=raw.trim(); let m;
+    if(!l){ flush(); close(); continue; }
+    if((m=l.match(/^#{1,6}\s+(.*)/))){ flush(); close(); html+='<p><b>'+mdInline(m[1].replace(/\*\*/g,''))+'</b></p>'; continue; }
+    if((m=l.match(/^[-•*]\s+(.*)/))){ flush(); if(list!=='ul'){ close(); html+='<ul>'; list='ul'; } html+='<li>'+mdInline(m[1])+'</li>'; continue; }
+    if((m=l.match(/^\d+[.)]\s+(.*)/))){ flush(); if(list!=='ol'){ close(); html+='<ol>'; list='ol'; } html+='<li>'+mdInline(m[1])+'</li>'; continue; }
+    close(); para.push(l); }
+  flush(); close(); return html; }
+
+/* ---------- tutor com IA: usa o Claude de quem está vendo e some quando não há ---------- */
+const AI={fn:null};
+const TUTOR='Você é o tutor do site "Física do Zero", que ensina física do ensino médio a estudantes brasileiros que se preparam para o ENEM e vestibulares. Responda em português do Brasil, falando direto com o aluno ("você"), de forma curta, correta e encorajadora. Use g = 10 m/s² quando precisar. Escreva fórmulas em texto simples (ex.: v = λ·f, 3×10^8 m/s), nunca em LaTeX; pode usar **negrito** e listas com "-". Não invente dados que não estejam no enunciado.';
+async function initAI(){ const cl=window.claude; if(!cl||typeof cl.use!=='function') return; try{ const s=await cl.use('sample'); if(s){ AI.fn=s; document.documentElement.classList.add('has-ai'); } }catch(e){} }
+function aiOff(){ AI.fn=null; document.documentElement.classList.remove('has-ai'); }
+function aiErr(e){ const c=e&&e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(c)){ aiOff(); return c==='not_granted'?'Sem a sua permissão o tutor fica desligado nesta visita. O resto do site funciona normalmente.':'O tutor com IA não está disponível aqui.'; }
+  return ({rate_limited:'Muitas perguntas em pouco tempo. Espere um pouco e tente de novo.',queue_overflow:'Muitas perguntas em pouco tempo. Espere um pouco e tente de novo.',session_expired:'Sua sessão do Claude expirou. Entre de novo para usar o tutor.',refused:'O tutor não respondeu a esse pedido. Tente perguntar de outro jeito.',empty_completion:'O tutor não conseguiu responder. Tente perguntar de outro jeito.',invalid_json:'A questão veio num formato que não consegui ler. Tente criar outra.',prompt_too_large:'A pergunta ficou longa demais. Tente algo mais curto.'})[c]||'Não consegui falar com o tutor agora. Tente de novo em instantes.'; }
+/* pergunta ao Claude e mostra a resposta chegando aos poucos dentro de `out` */
+async function aiAsk(out,input,o={}){
+  if(!AI.fn){ out.innerHTML=`<div class="aibox"><p class="aierr">O tutor com IA não está disponível aqui.</p></div>`; return null; }
+  const ctl=new AbortController();
+  out.innerHTML=`<div class="aibox" aria-live="polite"><div class="aitxt"><p class="think">${o.wait||'Pensando'}</p></div><div class="aibar"><button class="btn sm ghost" type="button">Parar</button><span class="aitag">Resposta gerada por IA. Confira com a lição.</span></div></div>`;
+  const txt=$('.aitxt',out), stop=$('.aibar button',out); stop.onclick=()=>ctl.abort();
+  const opts={modelTier:o.tier||'quick',signal:ctl.signal}; if(o.cache===false) opts.cache=false;
+  if(!o.json) opts.onText=({text})=>{ txt.innerHTML=md(text); };
+  try{ const r=o.json?await AI.fn.json(input,opts):await AI.fn(input,opts); stop.remove(); if(o.json) return r;
+    txt.innerHTML=md(r.text)+(r.truncated?'<p class="aitag">(resposta cortada por ser longa)</p>':''); return r.text; }
+  catch(e){ stop.remove(); const keep=e&&e.text&&!o.json&&e.code!=='refused'?md(e.text):'';
+    txt.innerHTML=keep+(e&&e.code==='cancelled'?'<p class="aitag">Interrompido.</p>':`<p class="aierr">${esc(aiErr(e))}</p>`); return null; } }
+function lessonCtx(l){ return `Lição "${plain(l.t)}" (módulo "${l.mod.t}").\n\nTexto da lição:\n${plain(l.idea)}\n\nFórmulas: ${l.f.map(f=>plain(f.f)+(f.n?' — '+plain(f.n):'')).join(' | ')}\n\nPara lembrar: ${(l.keep||[]).map(plain).join(' | ')}`.slice(0,7000); }
+const AIPILL='<span class="aipill">IA</span>';
 
 /* ---------- prática ---------- */
 function Practice(host,lessons,o={}){
-  let cur=null,curL=null,tries=0,lastGen=-1,done=false;
-  const needed=3;
-  function streakHTML(){ if(o.review) return `<div class="streak">Revisão · ${esc(curL.t)}</div>`; const st=ls(curL.id).st; return `<div class="streak"><span>Acertos seguidos:</span>${[0,1,2].map(i=>`<i class="${i<Math.min(st,needed)?'on':''}"></i>`).join('')}<span>${ls(curL.id).s===2?'lição dominada':'3 seguidos para dominar'}</span></div>`; }
+  let cur=null,curL=null,tries=0,lastGen=-1,done=false,ans=[],k=0;
+  const needed=3, exam=!!o.exam, maxTries=exam?1:2, total=o.queue?o.queue.length:0;
+  o.score=0; o.missed=[];
+  function streakHTML(){
+    if(exam) return `<div class="streak"><span>Questão ${k} de ${total}</span><span aria-hidden="true">·</span><span>${esc(curL.t)}</span><span aria-hidden="true">·</span><span>${o.score} acerto${o.score===1?'':'s'}</span></div>`;
+    if(o.review) return `<div class="streak">Revisão · ${esc(curL.t)}</div>`;
+    const x=P.l[curL.id]||{}, st=x.st||0; return `<div class="streak"><span>Acertos seguidos:</span>${[0,1,2].map(i=>`<i class="${i<Math.min(st,needed)?'on':''}"></i>`).join('')}<span>${x.s===2?'lição dominada':'3 seguidos para dominar'}</span></div>`; }
   function next(){
-    if(o.queue){ if(!o.queue.length){ host.innerHTML=o.onEmpty?o.onEmpty():''; return; } curL=o.queue.shift(); }
+    if(o.queue){ if(!o.queue.length){ host.innerHTML=o.onEmpty?o.onEmpty(o):''; return; } curL=o.queue.shift(); k++; }
     else curL=lessons[0];
     let gi; do{ gi=Math.floor(Math.random()*curL.probs.length); }while(curL.probs.length>1&&gi===lastGen); lastGen=gi;
-    cur=curL.probs[gi](); tries=0; done=false;
+    cur=curL.probs[gi](); tries=0; done=false; ans=[];
+    cur.hint0=cur.hint||(cur.sol&&cur.sol.length>1?cur.sol[0]:'');
     if(cur.o){ const order=shuffle(cur.o.map((_,i)=>i)); cur.opts=order.map(i=>cur.o[i]); cur.ai=order.indexOf(cur.a||0); }
     draw(); }
   function draw(){
     const q=cur, id=host.id;
     host.innerHTML=`<div class="prac">${streakHTML()}<div class="q">${q.q}</div>${q.o
       ?`<div class="opts">${q.opts.map((t,i)=>`<button class="opt" type="button" data-i="${i}"><span class="k">${'ABCDE'[i]}</span><span>${t}</span></button>`).join('')}</div>`
-      :`<form class="ans" autocomplete="off"><label class="sr" for="${id}-in" style="position:absolute;left:-9999px">Sua resposta</label><input id="${id}-in" inputmode="decimal" placeholder="sua resposta" aria-label="Sua resposta"><span class="u">${q.u||''}</span><button class="btn" type="submit">Verificar</button>${q.hint?`<button class="btn ghost sm" type="button" data-act="hint">Dica</button>`:''}</form><p style="margin:8px 0 0;font-size:13.5px;color:var(--muted)">Use vírgula ou ponto para decimais. Notação científica: 3e8 ou 3x10^8.</p>`}<div class="fbx"></div></div>`;
+      :`<form class="ans" autocomplete="off"><label class="sr" for="${id}-in">Sua resposta</label><input id="${id}-in" inputmode="decimal" placeholder="sua resposta"><span class="u">${q.u||''}</span><button class="btn" type="submit">Verificar</button>${q.hint0&&!exam?`<button class="btn ghost sm" type="button" data-act="hint">Dica</button>`:''}</form><p class="fmt">Use vírgula ou ponto para decimais. Notação científica: 3e8 ou 3x10^8.</p>`}<div class="fbx"></div></div>`;
     const inp=$('input',host); if(inp&&o.focus!==false) inp.focus({preventScroll:true});
   }
   function solHTML(){ return cur.sol?`<div class="sol"><b>Resolução</b><ol>${cur.sol.map(x=>`<li>${x}</li>`).join('')}</ol></div>`:''; }
+  function whyPrompt(){ const q=cur, mc=!!q.o, right=mc?plain(q.o[0]):nt(q.a)+(q.u?' '+q.u:'');
+    return TUTOR+`\n\nO aluno está estudando a lição "${plain(curL.t)}" e errou esta questão:\n${plain(q.q)}\n`
+      +(mc?`Alternativas: ${q.opts.map((t,i)=>'ABCDE'[i]+') '+plain(t)).join('  ')}\n`:'')
+      +`Resposta(s) do aluno, em ordem: ${ans.join(' ; ')}\nResposta correta: ${right}\n`
+      +(q.sol?`Resolução do site: ${q.sol.map(plain).join(' → ')}\n`:'')+(q.why?`Comentário do site: ${plain(q.why)}\n`:'')
+      +`\nEm no máximo 130 palavras: diga qual raciocínio provavelmente levou à resposta do aluno, onde exatamente está o erro e um jeito de lembrar para não errar de novo. Não repita a resolução inteira.`; }
   function finish(ok,msg){
-    done=true; const x=ls(curL.id); x.n++; if(ok&&tries===1) x.c++;
-    if(o.review){ if(ok&&tries===1){ x.box=Math.min(BOX.length-1,x.box+1); x.due=Date.now()+BOX[x.box]*DAY; } else { x.box=0; x.due=Date.now()+DAY; } }
-    else { if(x.s===0) x.s=1; x.st=ok&&tries===1?x.st+1:0; if(x.st>=needed&&x.s!==2){ x.s=2; x.box=0; x.due=Date.now()+BOX[0]*DAY; msg+=`<div class="mastered"><div style="font-size:30px" aria-hidden="true">★</div><div><b>Lição dominada!</b><br><span style="font-size:15px">Ela volta na revisão amanhã, depois em 3, 7, 16 e 35 dias. É assim que o conteúdo passa para a memória de longo prazo.</span></div></div>`; } }
+    done=true; markDay();
+    if(exam){ if(ok) o.score++; else o.missed.push(curL); }
+    else { const x=ls(curL.id); x.n++; if(ok&&tries===1) x.c++;
+      if(o.review){ if(ok&&tries===1){ x.box=Math.min(BOX.length-1,x.box+1); x.due=Date.now()+BOX[x.box]*DAY; } else { x.box=0; x.due=Date.now()+DAY; } }
+      else { if(x.s===0) x.s=1; x.st=ok&&tries===1?x.st+1:0; if(x.st>=needed&&x.s!==2){ x.s=2; x.box=0; x.due=Date.now()+BOX[0]*DAY; msg+=`<div class="mastered"><div style="font-size:30px" aria-hidden="true">★</div><div><b>Lição dominada!</b><br><span style="font-size:15px">Ela volta na revisão amanhã, depois em 3, 7, 16 e 35 dias. É assim que o conteúdo passa para a memória de longo prazo.</span></div></div>`; } } }
     save(); o.onChange&&o.onChange();
-    $('.fbx',host).innerHTML=msg+`<div class="row" style="margin-top:12px"><button class="btn" type="button" data-act="next">${o.queue&&!o.queue.length?'Concluir':'Próxima questão'} →</button></div>`;
+    const last=o.queue&&!o.queue.length;
+    $('.fbx',host).innerHTML=msg+`<div class="row" style="margin-top:12px"><button class="btn" type="button" data-act="next">${last?(exam?'Ver resultado':'Concluir'):'Próxima questão'} →</button>${!ok||tries>1?`<button class="btn ghost ai" type="button" data-act="why">${AIPILL} Por que eu errei?</button>`:''}</div><div class="aiout"></div>`;
     $$('.opt',host).forEach(b=>b.disabled=true); const f=$('form',host); if(f) $$('input,button',f).forEach(b=>b.disabled=true);
     const s=$('.streak',host); if(s) s.outerHTML=streakHTML(); $('[data-act=next]',host).focus({preventScroll:true});
   }
-  host.addEventListener('submit',e=>{ e.preventDefault(); if(done) return; const v=parseNum($('input',host).value); const fb=$('.fbx',host);
+  host.addEventListener('submit',e=>{ e.preventDefault(); if(done) return; const raw=$('input',host).value, v=parseNum(raw), fb=$('.fbx',host);
     if(isNaN(v)){ fb.innerHTML=`<div class="fb info">Digite só o número (a unidade já está indicada ao lado). Exemplo: 12,5</div>`; return; }
-    tries++; const tol=cur.tol||.02, near=(a,b)=>Math.abs(a-b)<=Math.max(tol*Math.abs(b),1e-9);
+    tries++; ans.push(raw.trim()+(cur.u?' '+cur.u:'')); const tol=cur.tol||.02, near=(a,b)=>Math.abs(a-b)<=Math.max(tol*Math.abs(b),1e-9);
     if(near(v,cur.a)) return finish(true,`<div class="fb ok"><b>${tries===1?'Isso!':'Agora sim.'}</b> ${nf(cur.a)} ${cur.u||''}.${tries>1?' Como precisou de uma segunda tentativa, a sequência recomeça.':''}</div>`+solHTML());
     const trap=(cur.traps||[]).find(t=>near(v,t[0]));
-    if(tries===1){ fb.innerHTML=`<div class="fb bad"><b>Ainda não.</b> ${trap?trap[1]:(cur.hint||'Confira as unidades e refaça a conta.')} Tente de novo.</div>`; $('input',host).select(); return; }
+    if(tries<maxTries){ fb.innerHTML=`<div class="fb bad"><b>Ainda não.</b> ${trap?trap[1]:(cur.hint||'Confira as unidades e refaça a conta.')} Tente de novo.</div>`; $('input',host).select(); return; }
     finish(false,`<div class="fb bad"><b>A resposta é ${nf(cur.a)} ${cur.u||''}.</b> ${trap?trap[1]:''}</div>`+solHTML()); });
-  host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
+  host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!host.contains(b)) return;
     if(b.dataset.act==='next') return next();
-    if(b.dataset.act==='hint'){ $('.fbx',host).innerHTML=`<div class="fb info hint"><b>Dica:</b> ${cur.hint}</div>`; return; }
-    if(b.dataset.i!=null&&!done){ const i=+b.dataset.i; tries++; const ok=i===cur.ai;
-      if(ok||tries>=2||cur.opts.length<=2){ $$('.opt',host).forEach((x,j)=>{ if(j===cur.ai) x.classList.add('right'); else if(j===i) x.classList.add('wrong'); });
+    if(b.dataset.act==='hint'){ $('.fbx',host).innerHTML=`<div class="fb info hint"><b>Dica:</b> ${cur.hint0}</div>`; return; }
+    if(b.dataset.act==='why'){ b.disabled=true; aiAsk($('.aiout',host),whyPrompt()); return; }
+    if(b.dataset.i!=null&&!done){ const i=+b.dataset.i; tries++; ans.push('ABCDE'[i]+') '+plain(cur.opts[i])); const ok=i===cur.ai;
+      if(ok||tries>=maxTries||cur.opts.length<=2){ $$('.opt',host).forEach((x,j)=>{ if(j===cur.ai) x.classList.add('right'); else if(j===i) x.classList.add('wrong'); });
         return finish(ok,`<div class="fb ${ok?'ok':'bad'}"><b>${ok?(tries===1?'Isso!':'Agora sim.'):'Não é essa.'}</b> ${cur.why||''}</div>`+solHTML()); }
       b.classList.add('wrong'); b.disabled=true; $('.fbx',host).innerHTML=`<div class="fb bad"><b>Ainda não.</b> ${(cur.w&&cur.w[cur.o.indexOf(cur.opts[i])])||'Releia a pergunta e pense no que o laboratório mostrou.'} Tente outra alternativa.</div>`; } });
   next(); return {next}; }
 
+/* questão criada pela IA: treino extra, fora do domínio da lição */
+async function genQuestion(l,out,btn){
+  btn.disabled=true;
+  const r=await aiAsk(out,TUTOR+'\n\n'+lessonCtx(l)+'\n\nCrie UMA questão inédita de múltipla escolha no estilo do ENEM sobre esta lição, com um pequeno contexto do cotidiano, 5 alternativas e só uma correta. Se houver conta, escolha números que deem resultado exato e use g = 10 m/s². Resolva a questão antes de responder e confira que só uma alternativa está certa. Responda só com JSON neste formato: {"enunciado": "...", "alternativas": ["...", "...", "...", "...", "..."], "correta": 0, "explicacao": "resolução em até 90 palavras"}. "correta" é o índice (0 a 4) da alternativa certa; as alternativas não levam letra na frente.',{json:true,tier:'default',cache:false,wait:'Criando a questão. Isso pode levar até um minuto'});
+  btn.disabled=false; if(r==null) return;
+  const alts=Array.isArray(r.alternativas)?r.alternativas.map(t=>String(t).replace(/^\s*[A-Ea-e][).:-]\s+/,'').trim()):[];
+  if(typeof r.enunciado!=='string'||!r.enunciado.trim()||alts.length<3||alts.length>5||alts.some(t=>!t)||!Number.isInteger(r.correta)||r.correta<0||r.correta>=alts.length){ out.innerHTML=`<div class="aibox"><p class="aierr">A questão veio incompleta. Tente criar outra.</p></div>`; return; }
+  btn.innerHTML=`${AIPILL} Criar outra questão`;
+  out.innerHTML=`<div class="prac aiq"><div class="streak"><span class="aipill">IA</span><span>Questão criada por IA: pode conter erros e não conta para o domínio.</span></div><div class="q">${md(r.enunciado)}</div><div class="opts">${alts.map((t,i)=>`<button class="opt" type="button" data-i="${i}"><span class="k">${'ABCDE'[i]}</span><span>${mdInline(t)}</span></button>`).join('')}</div><div class="fbx"></div></div>`;
+  $('.opts',out).addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b||b.disabled) return; const i=+b.dataset.i, ok=i===r.correta;
+    $$('.opt',out).forEach((x,j)=>{ x.disabled=true; if(j===r.correta) x.classList.add('right'); else if(j===i) x.classList.add('wrong'); });
+    $('.fbx',out).innerHTML=`<div class="fb ${ok?'ok':'bad'}"><b>${ok?'Isso!':'A resposta é '+'ABCDE'[r.correta]+'.'}</b></div>${r.explicacao?`<div class="sol"><b>Resolução (da IA)</b>${md(String(r.explicacao))}</div>`:''}`; }); }
+
 /* ---------- telas ---------- */
-let SIMNOW=[];
+let SIMNOW=[], SQ='';
+const CHN=8;
 function disposeSims(){ SIMNOW.forEach(s=>s.dispose()); SIMNOW=[]; }
-function sidebar(){ const cur=location.hash.slice(1);
+function srch(l){ return l.srch||(l.srch=normTxt(l.t+' '+l.mod.t+' '+plain((l.keep||[]).join(' ')))); }
+function sidebar(){ const cur=location.hash.slice(1), d=dueList().length;
   return `<a class="brand" href="#"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15.5" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M5 22 Q12 4 17 17 T29 12" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="17" r="2.6" fill="var(--force)"/></svg><span><b>Física do Zero</b><small>ensino médio, do começo</small></span></a>
-  <div class="sidebtns"><a class="btn sm ghost" href="#">Início</a><a class="btn sm ghost" href="#revisao">Revisão${dueList().length?` (${dueList().length})`:''}</a></div>
-  <nav class="sidenav" aria-label="Lições">${MODS.map((m,mi)=>`<div class="mod"><h4>${mi+1}. ${m.t}</h4>${m.lessons.map(l=>`<a class="lk ${cur===l.id?'on':''}" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}</div>`).join('')}</nav>`; }
-function renderSide(){ $('#side').innerHTML=sidebar(); }
+  <div class="sidebtns"><a class="btn sm ghost" href="#">Início</a><a class="btn sm ghost" href="#revisao">Revisão${d?` <span class="cnt">${d}</span>`:''}</a><a class="btn sm ghost" href="#formulas">Fórmulas</a></div>
+  <div class="sidesearch"><label class="sr" for="sq">Buscar lição</label><input type="search" id="sq" class="search" placeholder="Buscar lição ou assunto" value="${esc(SQ)}" autocomplete="off"></div>
+  <nav class="sidenav" aria-label="Lições">${MODS.map((m,mi)=>`<div class="mod"><h4>${mi+1}. ${m.t}</h4>${m.lessons.map(l=>`<a class="lk ${cur===l.id?'on':''}" href="#${l.id}" data-s="${esc(srch(l))}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}<a class="lk chal ${cur==='desafio-'+m.id?'on':''}" href="#desafio-${m.id}" data-s="${esc(normTxt('desafio prova '+m.t))}"><span class="star" aria-hidden="true">★</span><span>Desafio do módulo${P.mod[m.id]!=null?` · ${P.mod[m.id]}/${CHN}`:''}</span></a></div>`).join('')}<p class="empty" id="snone" hidden>Nenhuma lição encontrada.</p></nav>
+  <p class="syncnote${SYNC.state==='cloud'?' cloud':''}">${syncText()}</p>`; }
+function filterSide(){ const q=normTxt(SQ.trim()); let any=false;
+  $$('#side .mod').forEach(m=>{ let vis=0; $$('.lk',m).forEach(a=>{ const on=!q||a.dataset.s.includes(q); a.hidden=!on; if(on) vis++; }); m.hidden=!vis; if(vis) any=true; });
+  const n=$('#snone'); if(n) n.hidden=any; }
+function renderSide(){ $('#side').innerHTML=sidebar(); filterSide(); }
 
 function viewHome(){
-  const nx=nextLesson(), m=mastered(), d=dueList().length, started=LES.some(l=>(P.l[l.id]||{}).s>0);
+  const nx=nextLesson(), m=mastered(), d=dueList().length, started=LES.some(l=>(P.l[l.id]||{}).s>0), sd=streakDays();
   return `<div class="wide"><section class="hero"><div><p class="eyebrow">Física do ensino médio · ${LES.length} lições</p><h1>Física do Zero, <span>entendida de verdade</span></h1>
     <p class="lead">Cada ideia aparece primeiro num experimento que você controla, depois na fórmula e por fim em exercícios com números sempre novos, até você acertar sozinho.</p>
     <div class="row"><a class="btn" href="#${nx.id}">${started?'Continuar':'Começar'}: ${esc(nx.t)} →</a>${d?`<a class="btn ghost" href="#revisao">Revisar ${d} lição${d>1?'ões':''}</a>`:''}</div>
-    <div class="stats"><div><b>${m}/${LES.length}</b><span>lições dominadas</span></div><div><b>${d}</b><span>revisões para hoje</span></div><div><b>${MODS.length}</b><span>módulos</span></div></div></div>
+    <div class="stats"><div><b>${m}/${LES.length}</b><span>lições dominadas</span></div><div><b>${d}</b><span>revisões para hoje</span></div><div><b>${sd}</b><span>${sd===1?'dia seguido':'dias seguidos'} estudando</span></div></div>
+    <p class="ai aihint">${AIPILL} <span>Tutor com IA ligado: em cada lição você pode pedir outra explicação, perguntar por que errou, tirar dúvidas e criar questões estilo ENEM.</span></p></div>
     <div class="herolab" id="herolab"></div></section>
   <h2 class="sech">Como cada lição funciona</h2>
-  <div class="method"><div><h3>1. Preveja</h3><p>Antes de ver a resposta, você aposta no que vai acontecer. Errar a previsão faz o cérebro prestar atenção.</p></div><div><h3>2. Experimente</h3><p>No laboratório, você muda os valores e vê o efeito na hora, com vetores e gráficos.</p></div><div><h3>3. Entenda</h3><p>A fórmula aparece com cada símbolo explicado e um exemplo resolvido passo a passo.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias.</p></div></div>
+  <div class="method"><div><h3>1. Preveja</h3><p>Antes de ver a resposta, você aposta no que vai acontecer. Errar a previsão faz o cérebro prestar atenção.</p></div><div><h3>2. Experimente</h3><p>No laboratório, você muda os valores e vê o efeito na hora, com vetores e gráficos.</p></div><div><h3>3. Entenda</h3><p>A fórmula aparece com cada símbolo explicado e um exemplo resolvido passo a passo.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias. No fim de cada módulo, um desafio misturado.</p></div></div>
   <h2 class="sech">Mapa do curso</h2>
-  <div class="map">${MODS.map((mo,mi)=>{ const k=mo.lessons.filter(l=>(P.l[l.id]||{}).s===2).length; return `<div class="mapcard"><p class="eyebrow" style="margin:0">Módulo ${mi+1}</p><h3>${mo.t}</h3><div class="bar" aria-label="${k} de ${mo.lessons.length} dominadas"><i style="width:${k/mo.lessons.length*100}%"></i></div>${mo.lessons.map(l=>`<a class="lk" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}</div>`; }).join('')}</div>
-  <p style="color:var(--muted);font-size:14px;margin-top:26px">Seu progresso fica salvo neste navegador.</p></div>`; }
+  <div class="map">${MODS.map((mo,mi)=>{ const k=mo.lessons.filter(l=>(P.l[l.id]||{}).s===2).length, best=P.mod[mo.id]; return `<div class="mapcard"><p class="eyebrow" style="margin:0">Módulo ${mi+1}</p><h3>${mo.t}</h3><div class="bar" aria-label="${k} de ${mo.lessons.length} dominadas"><i style="width:${k/mo.lessons.length*100}%"></i></div>${mo.lessons.map(l=>`<a class="lk" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}<a class="lk chal" href="#desafio-${mo.id}"><span class="star" aria-hidden="true">★</span><span>Desafio do módulo${best!=null?` · melhor: ${best}/${CHN}`:''}</span></a></div>`; }).join('')}</div>
+  <p class="syncnote home${SYNC.state==='cloud'?' cloud':''}">${syncText()}</p></div>`; }
+
+function chipCls(id){ const x=P.l[id]; return isDue(id)?'due':x&&x.s===2?'ok':''; }
+function stepsHTML(l){ const x=P.l[l.id]||{};
+  return [['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]].filter(s=>s[3])
+    .map(([k,t,d])=>`<li><button type="button" class="${d?'done':''}" data-go="${k}"><span class="ck" aria-hidden="true">${d?'✓':''}</span>${t}${d?'<span class="sr"> (feito)</span>':''}</button></li>`).join(''); }
+function updateHead(l){ const s=$('#steps'); if(s) s.innerHTML=stepsHTML(l); const c=$('#lstat'); if(c){ c.textContent=statusText(l.id); c.className='chip '+chipCls(l.id); } }
 
 function viewLesson(l){
-  const mi=MODS.indexOf(l.mod), x=P.l[l.id], prev=LES[l.idx-1], next=LES[l.idx+1];
+  const mi=MODS.indexOf(l.mod), prev=LES[l.idx-1], next=LES[l.idx+1], endMod=!next||next.mod!==l.mod;
   let n=0; const H=t=>`<h2><span class="n">${String(++n).padStart(2,'0')}</span>${t}</h2>`;
-  return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1}</p><h1>${l.t}</h1>
-    <div class="chips"><span class="chip">${l.min||12} min</span><span class="chip ${isDue(l.id)?'due':x&&x.s===2?'ok':''}">${statusText(l.id)}</span></div></header>
-  <section class="sec prose">${H('A ideia')}${l.idea}</section>
+  return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1} de ${LES.length}</p><h1>${l.t}</h1>
+    <div class="chips"><span class="chip">${l.min||12} min</span><span class="chip ${chipCls(l.id)}" id="lstat">${statusText(l.id)}</span></div>
+    <ol class="steps" id="steps" aria-label="Etapas da lição">${stepsHTML(l)}</ol></header>
+  <section class="sec prose">${H('A ideia')}${l.idea}<div class="ai aiask" id="aiidea"><span>Não ficou claro? Peça ao tutor:</span><button class="btn sm ghost" type="button" data-ai="simples">Explique mais simples</button><button class="btn sm ghost" type="button" data-ai="analogia">Dê uma analogia</button><button class="btn sm ghost" type="button" data-ai="fundo">Quero ir mais fundo</button></div><div class="aiout"></div></section>
   ${l.pred?`<section class="sec">${H('Preveja antes de experimentar')}<div class="pred" id="pred"><div class="q">${l.pred.q}</div><div class="opts">${l.pred.o.map((t,i)=>`<button class="opt" type="button" data-p="${i}"><span class="k">${'ABCD'[i]}</span><span>${t}</span></button>`).join('')}</div><div class="pfb"></div></div></section>`:''}
   <section class="sec"><h2 style="font-size:22px;margin-bottom:12px;display:flex;align-items:baseline;gap:10px"><span class="n" style="font-family:var(--mono);font-size:13px;color:var(--accent)">${String(++n).padStart(2,'0')}</span>Laboratório</h2></section>
   <div class="wide" style="margin-top:-22px"><div id="lab"></div></div>
   ${l.tasks?`<section class="sec prose" style="margin-top:14px"><div class="note"><b>Experimente:</b><ul class="tasks">${l.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div></section>`:''}
-  <section class="sec prose">${H('A fórmula')}${l.f.map(formulaCard).join('')}${l.fn?`<div>${l.fn}</div>`:''}</section>
+  <section class="sec prose">${H('A fórmula')}${l.f.map(f=>formulaCard(f)).join('')}${l.fn?`<div>${l.fn}</div>`:''}</section>
   ${l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
-  <section class="sec">${H('Pratique')}<p style="margin:0 0 12px;color:var(--muted);font-size:15.5px">Os números mudam a cada questão. Tente resolver sem olhar o exemplo; se errar, você ganha uma segunda chance com uma pista sobre o erro.</p><div id="prac"></div></section>
+  <section class="sec">${H('Pratique')}<p class="lead2">Os números mudam a cada questão. Tente resolver sem olhar o exemplo; se errar, você ganha uma segunda chance com uma pista sobre o erro.</p><div id="prac"></div>
+    <div class="ai aigen"><button class="btn sm ghost" type="button" id="aigen">${AIPILL} Criar uma questão estilo ENEM</button><span class="aitag">Treino extra; não conta para o domínio.</span></div><div id="aiq"></div></section>
   ${l.traps?`<section class="sec prose">${H('Erros comuns')}<ul>${l.traps.map(t=>`<li>${t}</li>`).join('')}</ul></section>`:''}
   ${l.keep?`<section class="sec prose">${H('Para lembrar')}<div class="note"><ul style="margin:0">${l.keep.map(t=>`<li>${t}</li>`).join('')}</ul></div></section>`:''}
-  <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
+  <section class="sec ai" id="chat">${H('Tire sua dúvida')}<p class="lead2">Pergunte ao tutor qualquer coisa sobre esta lição. Ele é o Claude e usa o seu plano; na primeira pergunta, pede a sua permissão.</p>
+    <div class="chat"><div class="msgs"></div><div class="row sugg">${['Onde isso aparece no dia a dia?','Como esse assunto cai no ENEM?','Me passe um exercício parecido com o exemplo'].map(t=>`<button class="btn sm ghost" type="button" data-sug>${t}</button>`).join('')}</div>
+    <form class="chatf"><label class="sr" for="chatin">Sua pergunta</label><textarea id="chatin" rows="2" placeholder="Ex.: por que a massa não aparece nessa fórmula?"></textarea><button class="btn" type="submit">Perguntar</button></form></div></section>
+  <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${endMod?`<a class="btn ghost" href="#desafio-${l.mod.id}">★ Desafio do módulo</a>`:''}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
+
+const IDEA_ASK={simples:'Explique de novo a ideia central desta lição, de um jeito mais simples, para quem está vendo o assunto pela primeira vez. Use um exemplo concreto com números. No máximo 170 palavras.',
+  analogia:'Explique a ideia central desta lição com uma analogia do dia a dia de um estudante brasileiro. Depois, em uma frase, diga onde a analogia deixa de funcionar. No máximo 170 palavras.',
+  fundo:'Aprofunde esta lição para quem já entendeu o básico: de onde vem a fórmula principal (raciocínio curto) e uma aplicação ou pegadinha que costuma cair no ENEM ou em vestibulares. No máximo 220 palavras.'};
+function mountChat(l){ const box=$('#chat'); if(!box) return; const msgs=$('.msgs',box), ta=$('textarea',box), turns=[]; let busy=false;
+  const rules=TUTOR+'\n\nVocê está conversando com um aluno que estuda esta lição do site:\n\n'+lessonCtx(l)+'\n\nResponda à pergunta do aluno em no máximo 180 palavras. Se a pergunta fugir de física ou dos estudos, traga a conversa de volta para a lição com gentileza.';
+  async function send(q){ q=q.trim(); if(!q||busy) return; busy=true; ta.value='';
+    msgs.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(q)}</div><div class="msg bot"></div>`); const out=msgs.lastElementChild;
+    turns.push({role:'user',content:q}); while(turns.length>12) turns.splice(0,2);
+    const text=await aiAsk(out,[{role:'user',content:rules},...turns],{cache:false});
+    if(text) turns.push({role:'assistant',content:text}); else turns.pop(); busy=false; }
+  $('form',box).addEventListener('submit',e=>{ e.preventDefault(); send(ta.value); });
+  ta.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); send(ta.value); } });
+  $$('[data-sug]',box).forEach(b=>b.addEventListener('click',()=>send(b.textContent))); }
 
 function mountLesson(l){
   SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
-  const pr=$('#pred'); if(pr){ const x=ls(l.id);
-    const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x.pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x.pr===l.pred.a?'ok':'info'}"><b>${x.pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
-    const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x.pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
-    if(x.pr!=null) (x.prr?reveal:pend)();
-    pr.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.p!=null&&x.pr==null){ x.pr=+b.dataset.p; save(); pend(); } else if(b.dataset.rev){ x.prr=1; save(); reveal(); } }); }
+  const x=()=>P.l[l.id]||{}, upd=()=>updateHead(l);
+  const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch));
+  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
+  const pr=$('#pred'); if(pr){
+    const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x().pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x().pr===l.pred.a?'ok':'info'}"><b>${x().pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
+    const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x().pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
+    if(x().pr!=null) (x().prr?reveal:pend)();
+    pr.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.p!=null&&x().pr==null){ ls(l.id).pr=+b.dataset.p; save(); pend(); upd(); } else if(b.dataset.rev){ ls(l.id).prr=1; save(); reveal(); } }); }
   const ex=$('.ex'); if(ex){ let k=0; const ol=$('ol',ex), bt=$('[data-ex]',ex);
-    bt.addEventListener('click',()=>{ if(k<l.ex.s.length){ ol.insertAdjacentHTML('beforeend',`<li><span>${l.ex.s[k]}</span></li>`); k++; } bt.textContent=k<l.ex.s.length?'Próximo passo':'Pronto'; if(k>=l.ex.s.length) bt.disabled=true; }); }
-  Practice($('#prac'),[l],{onChange:renderSide,focus:false});
+    bt.addEventListener('click',()=>{ if(k<l.ex.s.length){ ol.insertAdjacentHTML('beforeend',`<li><span>${l.ex.s[k]}</span></li>`); k++; } bt.textContent=k<l.ex.s.length?'Próximo passo':'Pronto'; if(k>=l.ex.s.length){ bt.disabled=true; if(!x().ex){ ls(l.id).ex=1; save(); upd(); } } }); }
+  Practice($('#prac'),[l],{onChange:()=>{ renderSide(); upd(); },focus:false});
+  const ai=$('#aiidea'); ai.addEventListener('click',e=>{ const b=e.target.closest('[data-ai]'); if(!b) return; const k=b.dataset.ai;
+    aiAsk(ai.nextElementSibling,TUTOR+'\n\n'+lessonCtx(l)+'\n\nPedido do aluno: '+IDEA_ASK[k],{tier:k==='fundo'?'default':'quick'}); });
+  const gb=$('#aigen'); gb.addEventListener('click',()=>genQuestion(l,$('#aiq'),gb));
+  mountChat(l);
 }
 
 function viewReview(){ const d=dueList();
-  return `<div class="col"><p class="eyebrow">Revisão espaçada</p><h1 style="font-size:40px;margin:6px 0 10px">Revisão de hoje</h1>
-  <p style="color:var(--muted)">Uma questão de cada lição que está na hora de relembrar, misturadas. Acertar de primeira empurra a próxima revisão para mais longe; errar traz a lição de volta amanhã.</p>
+  return `<div class="col"><p class="eyebrow">Revisão espaçada</p><h1 class="ptitle">Revisão de hoje</h1>
+  <p class="lead2">Uma questão de cada lição que está na hora de relembrar, misturadas. Acertar de primeira empurra a próxima revisão para mais longe; errar traz a lição de volta amanhã.</p>
   ${d.length?`<div class="revlist">${d.map(l=>`<a class="lk" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}</div><div id="rev"></div>`
    :`<div class="note"><p class="empty" style="margin:0">Nenhuma revisão pendente. ${mastered()?'As lições dominadas voltam aqui quando chegar a hora.':'Domine uma lição (3 acertos seguidos) e ela aparece aqui no dia seguinte.'}</p><div class="row" style="margin-top:12px"><a class="btn" href="#${nextLesson().id}">Ir para: ${esc(nextLesson().t)}</a></div></div>`}</div>`; }
 
+function viewChallenge(m){ const mi=MODS.indexOf(m), best=P.mod[m.id];
+  return `<div class="col"><p class="eyebrow">Módulo ${mi+1} · Desafio</p><h1 class="ptitle">${m.t}</h1>
+  <p class="lead2">${CHN} questões misturadas de todas as lições do módulo, sem dica e com uma tentativa cada, como numa prova.${best!=null?` Seu melhor resultado até agora: <b>${best}/${CHN}</b>.`:''}</p><div id="chal"></div>
+  <nav class="navrow" aria-label="Navegação"><a class="btn ghost" href="#${m.lessons[0].id}">← Lições do módulo</a><a class="btn ghost" href="#">Início</a></nav></div>`; }
+function mountChallenge(m){ const q=[]; while(q.length<CHN) q.push(...shuffle(m.lessons)); q.length=CHN;
+  const host=$('#chal');
+  Practice(host,m.lessons,{exam:true,queue:q,onChange:renderSide,focus:false,onEmpty:o=>{
+    const prev=P.mod[m.id], rec=prev==null||o.score>prev; P.mod[m.id]=Math.max(prev||0,o.score); save(); renderSide();
+    const miss=[...new Set(o.missed)];
+    return `<div class="result"><div class="score"><b>${o.score}</b><span>/${CHN}</span></div><div><h2>${o.score===CHN?'Gabaritou!':o.score>=6?'Muito bom.':o.score>=4?'No caminho certo.':'Hora de rever o módulo.'}</h2><p>${rec&&o.score>0?'Novo recorde neste módulo. ':''}${miss.length?'Vale rever: '+miss.map(l=>`<a href="#${l.id}">${l.t}</a>`).join(', ')+'.':'Você acertou questões de todas as lições.'}</p><div class="row"><button class="btn" type="button" data-act="again">Fazer outro desafio</button><a class="btn ghost" href="#">Início</a></div></div></div>`; }});
+  host.addEventListener('click',e=>{ if(e.target.closest('[data-act=again]')) route(); }); }
+
+function viewFormulas(){ return `<div class="col"><p class="eyebrow">Consulta rápida</p><h1 class="ptitle">Formulário</h1><p class="lead2">Todas as fórmulas do curso, na ordem das lições. Digite para filtrar por assunto, grandeza ou símbolo.</p>
+  <label class="sr" for="fq">Buscar fórmula</label><input type="search" id="fq" class="search big" placeholder="Ex.: velocidade, calor, lente, pressão" autocomplete="off">
+  <div id="flist">${MODS.map((m,mi)=>`<section class="fmod"><h2>${mi+1}. ${m.t}</h2>${m.lessons.map(l=>`<div class="fitem" data-s="${esc(normTxt(l.t+' '+m.t+' '+plain(l.f.map(f=>f.f+' '+(f.s||[]).map(r=>r.join(' ')).join(' ')+' '+(f.n||'')).join(' '))))}"><h3><a href="#${l.id}">${l.t}</a></h3>${l.f.map(f=>formulaCard(f,true)).join('')}</div>`).join('')}</section>`).join('')}</div>
+  <p class="empty" id="fnone" hidden>Nenhuma fórmula encontrada. Tente outra palavra.</p></div>`; }
+function mountFormulas(){ const inp=$('#fq'); inp.addEventListener('input',()=>{ const q=normTxt(inp.value.trim()); let any=false;
+  $$('.fmod').forEach(s=>{ let v=0; $$('.fitem',s).forEach(it=>{ const on=!q||it.dataset.s.includes(q); it.hidden=!on; if(on) v++; }); s.hidden=!v; if(v) any=true; }); $('#fnone').hidden=any; }); }
+
+const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 function route(){
-  disposeSims(); const h=location.hash.slice(1), main=$('#main');
-  if(h==='revisao'){ main.innerHTML=viewReview(); const d=dueList(); if(d.length) Practice($('#rev'),d,{review:true,queue:shuffle(d),onChange:renderSide,onEmpty:()=>`<div class="mastered"><div style="font-size:30px" aria-hidden="true">★</div><div><b>Revisão concluída.</b><br><span style="font-size:15px">Volte amanhã para a próxima rodada.</span></div></div>`}); }
-  else if(LX[h]){ const l=LX[h]; main.innerHTML=viewLesson(l); mountLesson(l); P.last=h; save(); }
+  disposeSims(); const h=location.hash.slice(1), main=$('#main'); let title='Física do Zero';
+  const chm=h.startsWith('desafio-')&&MODS.find(m=>'desafio-'+m.id===h);
+  if(h==='revisao'){ main.innerHTML=viewReview(); title='Revisão · Física do Zero'; const d=dueList(); if(d.length) Practice($('#rev'),d,{review:true,queue:shuffle(d),onChange:renderSide,onEmpty:()=>`<div class="mastered"><div style="font-size:30px" aria-hidden="true">★</div><div><b>Revisão concluída.</b><br><span style="font-size:15px">Volte amanhã para a próxima rodada.</span></div></div>`}); }
+  else if(h==='formulas'){ main.innerHTML=viewFormulas(); mountFormulas(); title='Formulário · Física do Zero'; }
+  else if(chm){ main.innerHTML=viewChallenge(chm); mountChallenge(chm); title=`Desafio: ${chm.t} · Física do Zero`; }
+  else if(own(LX,h)){ const l=LX[h]; main.innerHTML=viewLesson(l); mountLesson(l); P.last=h; save(); title=`${l.t} · Física do Zero`; }
   else { main.innerHTML=viewHome(); SIMNOW.push(SIMS.proj($('#herolab'),{hero:true})); }
-  renderSide(); closeSide(); window.scrollTo(0,0); document.title=LX[h]?`${LX[h].t} · Física do Zero`:'Física do Zero'; }
+  renderSide(); closeSide(); window.scrollTo(0,0); document.title=title; }
+/* quando o progresso da conta chega, atualiza sem atrapalhar quem está no meio de uma questão */
+function refreshAfterSync(){ const h=location.hash.slice(1); if(!h) return route(); renderSide(); if(own(LX,h)) updateHead(LX[h]); }
 function closeSide(){ $('#side').classList.remove('open'); const sc=$('.scrim'); if(sc) sc.remove(); }
 function boot(){
   document.body.insertAdjacentHTML('afterbegin',`<div class="app"><aside class="side" id="side" aria-label="Mapa do curso"></aside><div style="min-width:0"><div class="topbar"><a class="brand" href="#"><b>Física do Zero</b></a><button class="btn sm ghost" type="button" id="menu" aria-controls="side">Lições</button></div><main class="main" id="main"></main></div></div>`);
   $('#menu').addEventListener('click',()=>{ $('#side').classList.add('open'); document.body.insertAdjacentHTML('beforeend','<div class="scrim"></div>'); $('.scrim').addEventListener('click',closeSide); });
-  addEventListener('hashchange',route); route(); }
+  $('#side').addEventListener('input',e=>{ if(e.target.id==='sq'){ SQ=e.target.value; filterSide(); } });
+  addEventListener('hashchange',route); route(); initAI(); initSync(); }
 
 /* =====================================================================
    Laboratórios de fundamentos e mecânica (g = 10 m/s² em todo o curso)
@@ -1030,6 +1276,125 @@ SIMS.rel=(host)=>Sim(host,{alt:'Dois relógios de luz: um parado e um em movimen
   reads:s=>{ const gm=1/Math.sqrt(1-s.p.b**2); return [['Fator de Lorentz γ = 1/√(1 − v²/c²)',nt(gm)],['1 s no relógio que se move dura, para quem está parado',nt(gm)+' s'],['Uma régua de 1 m em movimento mede',nt(1/gm)+' m'],['A velocidade da luz','é a mesma para os dois observadores']]; }});
 
 /* =====================================================================
+   Laboratórios novos: condução de calor, MHS, ondas estacionárias,
+   espectro eletromagnético e campo magnético de um fio
+   ===================================================================== */
+
+/* condução de calor pela lei de Fourier */
+const MATS=[[400,'cobre'],[50,'aço'],[0.8,'vidro'],[0.15,'madeira'],[0.03,'isopor']];
+SIMS.conduc=(host)=>Sim(host,{alt:'Placa de um material entre um lado quente e um frio, com o calor atravessando por condução',anim:true,autoplay:true,h:300,
+  legend:[['force','lado quente'],['vel','lado frio'],['energy','calor atravessando a placa']],
+  ctrls:[{k:'k',l:'Material',opts:MATS.map(m=>[m[0],m[1]]),v:50,live:true},{k:'L',l:'Espessura L',min:1,max:20,step:1,v:5,u:'cm',live:true},{k:'A',l:'Área A',min:.5,max:4,step:.5,v:1,u:'m²',live:true},{k:'dT',l:'Diferença de temperatura ΔT',min:5,max:80,step:5,v:30,u:'°C',live:true}],
+  phi:s=>s.p.k*s.p.A*s.p.dT/(s.p.L/100),
+  inten:s=>clamp((Math.log10(s.def.phi(s))+1)/7,.03,1),
+  init(s){ s.q=[]; s.acc=0; },
+  step(s,dt){ const I=s.def.inten(s); s.acc+=dt*(.6+30*I); while(s.acc>=1){ s.acc--; s.q.push({x:0,y:.08+.84*Math.random()}); } const v=.12+.8*I; s.q.forEach(p=>p.x+=v*dt); s.q=s.q.filter(p=>p.x<1); },
+  geo(s){ const W=s.W, H=s.H, bw=Math.max(58,Math.min(90,W*.12)), sw=26+(s.p.L-1)/19*Math.max(40,W-2*bw-120), x0=(W-sw)/2, sh=(H-120)*(.4+.6*s.p.A/4), y0=58+(H-120-sh)/2; return {bw,sw,x0,sh,y0}; },
+  draw(g,s){ const {bw,sw,x0,sh,y0}=s.def.geo(s), phi=s.def.phi(s), I=s.def.inten(s), Tf=20, Tq=20+s.p.dT, name=MATS.find(m=>m[0]===s.p.k)[1];
+    g.rect(x0-bw,y0-14,bw,sh+28,COL.force+'30',COL.force,8,2); g.text(nt(Tq)+' °C',x0-bw/2,y0+sh/2+5,{size:14,bold:true,align:'center',c:COL.force});
+    g.rect(x0+sw,y0-14,bw,sh+28,COL.vel+'30',COL.vel,8,2); g.text(nt(Tf)+' °C',x0+sw+bw/2,y0+sh/2+5,{size:14,bold:true,align:'center',c:COL.vel});
+    const c=g.ctx, gr=c.createLinearGradient(x0,0,x0+sw,0); gr.addColorStop(0,COL.force); gr.addColorStop(1,COL.vel);
+    c.save(); c.globalAlpha=.45; g.rect(x0,y0,sw,sh,gr); c.restore(); g.rect(x0,y0,sw,sh,null,COL.ink,0,1.5);
+    s.q.forEach(p=>{ const x=x0-bw*.2+p.x*(sw+bw*.4), y=y0+p.y*sh; g.circle(x,y,3.2,COL.energy); });
+    const ay=34, aw=Math.max(sw+bw,120); g.arrow(g.W/2-aw/2,ay,g.W/2+aw/2,ay,COL.energy,null,2+7*I);
+    g.text('Φ = '+nt(phi)+' W',g.W/2,ay-14,{size:14,bold:true,align:'center',c:COL.energy});
+    g.text(name,x0+sw/2,y0+sh+34,{size:13,bold:true,align:'center'});
+    const yb=y0+sh+8; g.line(x0,yb,x0+sw,yb,COL.muted,1.2); g.line(x0,yb-4,x0,yb+4,COL.muted,1.2); g.line(x0+sw,yb-4,x0+sw,yb+4,COL.muted,1.2);
+    g.text('L = '+s.p.L+' cm',x0+sw/2,y0+sh+50,{size:11.5,align:'center',c:COL.muted,mono:true}); },
+  reads:s=>{ const phi=s.def.phi(s); return [['Fluxo de calor Φ = k·A·ΔT/L',nf(phi)+' W'],['Energia que atravessa em 1 hora',nf(phi*3600)+' J'],['Condutividade k do material',nsig(s.p.k,3)+' W/(m·K)'],['O material é',s.p.k<=.2?'isolante':s.p.k>=40?'bom condutor':'mau condutor']]; }});
+
+/* MHS: massa-mola e pêndulo lado a lado */
+SIMS.mhs=(host)=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando lado a lado, com o gráfico da posição de cada um no tempo',anim:true,autoplay:true,h:w=>w<560?440:400,
+  legend:[['vel','massa na mola'],['force','pêndulo']],
+  ctrls:[{k:'m',l:'Massa m (a mesma nos dois)',min:.1,max:2,step:.1,v:.5,u:'kg',live:true},{k:'k',l:'Constante da mola k',min:5,max:80,step:5,v:20,u:'N/m',live:true},{k:'L',l:'Comprimento do pêndulo L',min:.2,max:2.5,step:.1,v:1,u:'m',live:true},{k:'A',l:'Amplitude (mola · pêndulo)',min:.02,max:.1,step:.01,v:.06,f:v=>nsig(v*100,2)+' cm · '+nsig(v*150,2)+'°',live:true}],
+  step(){},
+  pos(s,t){ const ws=Math.sqrt(s.p.k/s.p.m), wp=Math.sqrt(GRAV/s.p.L); return [Math.cos(ws*t),Math.cos(wp*t)]; },
+  draw(g,s){ const W=g.W, H=g.H, top=18, gh=Math.min(130,H*.3), gy=H-gh-30, zone=gy-top-36, t=s.t, [xs,xp]=s.def.pos(s,t), sz=16+14*Math.cbrt(s.p.m);
+    g.line(14,top,W-14,top,COL.ink,3);
+    for(let x=18;x<W-14;x+=12) g.line(x,top,x+8,top-8,COL.line,1);
+    /* mola */
+    const cx=W*.27, yEq=top+zone*.55, sc=zone*.32/.1, yb=yEq+xs*s.p.A*sc, y1=top+2, y2=yb-sz/2, n=14, pts=[[cx,y1],[cx,y1+8]];
+    for(let i=1;i<n;i++) pts.push([cx+(i%2?11:-11),y1+8+(y2-y1-16)*i/n]); pts.push([cx,y2-8],[cx,y2]); g.poly(pts,COL.muted,2);
+    g.line(cx-sz,yEq,cx+sz,yEq,COL.line,1,[4,4]); g.rect(cx-sz/2,yb-sz/2,sz,sz,COL.vel,COL.ink,4,1.5);
+    g.text('T = '+nt(2*Math.PI*Math.sqrt(s.p.m/s.p.k))+' s',cx+20,top+24,{size:13,bold:true,c:COL.vel});
+    /* pêndulo */
+    const px=W*.68, lp=30+(zone-20)*(s.p.L/2.5), th=s.p.A*150*Math.PI/180*xp, bx=px+lp*Math.sin(th), by=top+lp*Math.cos(th);
+    g.line(px,top,px,top+lp+sz/2,COL.line,1,[4,4]); g.line(px,top,bx,by,COL.muted,2); g.circle(px,top,4,COL.ink); g.circle(bx,by,sz/2+1,COL.force,COL.ink,1.5);
+    g.text('T = '+nt(2*Math.PI*Math.sqrt(s.p.L/GRAV))+' s',px+16,top+24,{size:13,bold:true,c:COL.force});
+    /* gráfico */
+    const t0=Math.max(0,t-6), pv=[], pp=[]; for(let u=t0;u<=t+1e-9;u+=.02){ const [a,b]=s.def.pos(s,u); pv.push([u,a]); pp.push([u,b]); }
+    g.plot(42,gy,W-58,gh,{xr:[t0,t0+6],yr:[-1.2,1.2],series:[{pts:pv,c:COL.vel,dot:true},{pts:pp,c:COL.force,dot:true}],xl:'tempo (s)',yl:'posição ÷ amplitude'}); },
+  reads:s=>{ const Ts=2*Math.PI*Math.sqrt(s.p.m/s.p.k), Tp=2*Math.PI*Math.sqrt(s.p.L/GRAV); return [['Período da mola 2π√(m/k)',nt(Ts)+' s'],['Período do pêndulo 2π√(L/g)',nt(Tp)+' s'],['Frequências (mola · pêndulo)',nt(1/Ts)+' Hz · '+nt(1/Tp)+' Hz'],['Energia da mola k·A²/2',nt(.5*s.p.k*s.p.A**2)+' J']]; }});
+
+/* ondas estacionárias em cordas e tubos */
+SIMS.harm=(host)=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um tubo, com nós e ventres marcados',anim:true,autoplay:true,h:290,
+  legend:[['vel','onda agora'],['muted','limites da vibração'],['force','nós (pontos parados)']],
+  ctrls:[{k:'tipo',l:'Onde está a onda',opts:[['corda','corda presa'],['aberto','tubo aberto'],['fechado','tubo fechado']],v:'corda',live:true},{k:'n',l:'Modo de vibração',min:1,max:5,step:1,v:1,f:v=>v+'º modo',live:true},{k:'L',l:'Comprimento L',min:.2,max:2,step:.1,v:1,u:'m',live:true},{k:'v',l:'Velocidade da onda v',min:100,max:400,step:10,v:340,u:'m/s',live:true}],
+  mode(s){ const L=s.p.L, t=s.p.tipo, h=t==='fechado'?2*s.p.n-1:s.p.n, lam=t==='fechado'?4*L/h:2*L/h, f1=t==='fechado'?s.p.v/(4*L):s.p.v/(2*L);
+    const y=t==='corda'?u=>Math.sin(h*Math.PI*u):t==='aberto'?u=>Math.cos(h*Math.PI*u):u=>Math.sin(h*Math.PI*u/2);
+    const nodes=[]; for(let j=0;j<=2*h;j++){ const u=t==='corda'?j/h:t==='aberto'?(j+.5)/h:2*j/h; if(u<=1+1e-9) nodes.push(u); }
+    return {h,lam,f:s.p.v/lam,f1,y,nodes}; },
+  step(){},
+  draw(g,s){ const m=s.def.mode(s), x0=34, x1=g.W-34, cy=g.H/2-6, amp=Math.min(62,g.H*.24), X=u=>x0+u*(x1-x0), ph=Math.cos(2*Math.PI*.8*s.t);
+    if(s.p.tipo==='corda'){ g.rect(x0-10,cy-40,8,80,COL.muted,COL.ink,2,1); g.rect(x1+2,cy-40,8,80,COL.muted,COL.ink,2,1); }
+    else { const th=amp+16; g.line(x0,cy-th,x1,cy-th,COL.ink,3); g.line(x0,cy+th,x1,cy+th,COL.ink,3); if(s.p.tipo==='fechado') g.line(x0,cy-th,x0,cy+th,COL.ink,5);
+      g.text(s.p.tipo==='fechado'?'fechado':'aberto',x0,cy+th+18,{size:11.5,c:COL.muted,align:'center'}); g.text('aberto',x1,cy+th+18,{size:11.5,c:COL.muted,align:'center'}); }
+    const up=[],dn=[],now=[]; for(let i=0;i<=240;i++){ const u=i/240, y=m.y(u); up.push([X(u),cy-amp*y]); dn.push([X(u),cy+amp*y]); now.push([X(u),cy-amp*y*ph]); }
+    g.poly(up,COL.muted,1.2); g.poly(dn,COL.muted,1.2); g.poly(now,COL.vel,3);
+    m.nodes.forEach(u=>g.circle(X(u),cy,5,COL.force,COL.card,1.5));
+    g.text(`${m.h}º harmônico · λ = ${nt(m.lam)} m · f = ${nt(m.f)} Hz`,g.W/2,26,{size:14,bold:true,align:'center'});
+    g.text(s.p.tipo==='corda'?'nas pontas presas: nós':s.p.tipo==='aberto'?'nas pontas abertas: ventres':'ponta fechada: nó · ponta aberta: ventre',g.W/2,g.H-12,{size:12,align:'center',c:COL.muted}); },
+  reads:s=>{ const m=s.def.mode(s); return [['Harmônico',m.h+'º'+(s.p.tipo==='fechado'?' (só ímpares)':'')],['Comprimento de onda λ',nt(m.lam)+' m'],['Frequência f = v/λ',nt(m.f)+' Hz'],['Fundamental deste '+(s.p.tipo==='corda'?'fio':'tubo'),nt(m.f1)+' Hz'],['Nós (pontos parados)',String(m.nodes.length)]]; }});
+
+/* espectro eletromagnético */
+const BANDS=[[3,-.5,'ondas de rádio','rádio','rádio AM e FM, TV aberta, radioamador','energy'],[-.5,-3,'micro-ondas','micro-ondas','forno de micro-ondas, Wi-Fi, celular, radar','ok'],[-3,Math.log10(700e-9),'infravermelho','infraverm.','calor do Sol e do fogo, controle remoto, câmera térmica','force'],[Math.log10(700e-9),Math.log10(400e-9),'luz visível','visível','a única faixa que nossos olhos enxergam',''],[Math.log10(400e-9),-8,'ultravioleta','UV','bronzeado e queimadura de sol, lâmpada germicida','acc'],[-8,-11,'raios X','raios X','radiografia e tomografia','vel'],[-11,-13,'raios gama','gama','núcleos radioativos, radioterapia','muted']];
+function fmtLam(m){ const u=m>=1?[1,'m']:m>=1e-3?[1e-3,'mm']:m>=1e-6?[1e-6,'μm']:m>=1e-9?[1e-9,'nm']:[1e-12,'pm']; return nsig(m/u[0],3)+' '+u[1]; }
+function bandOf(x){ return BANDS.find(b=>x<=b[0]&&x>b[1])||(x>3?BANDS[0]:BANDS[BANDS.length-1]); }
+SIMS.spectrum=(host)=>{ const setX=(s,v)=>{ s.p.x=v; const inp=$(`#${host.id}-x`); if(inp){ inp.value=v; $(`#${host.id}-x-o`).textContent=fmtLam(10**v); } };
+  return Sim(host,{alt:'Régua do espectro eletromagnético, das ondas de rádio aos raios gama, com a onda escolhida desenhada acima',h:w=>w<560?300:270,
+  ctrls:[{k:'x',l:'Comprimento de onda λ (escala de potências de 10)',min:-12,max:3,step:.02,v:Math.log10(530e-9),f:v=>fmtLam(10**v),live:true}],
+  btns:[{l:'Rádio FM',f:s=>setX(s,Math.log10(3))},{l:'Micro-ondas',f:s=>setX(s,Math.log10(.122))},{l:'Luz verde',f:s=>setX(s,Math.log10(530e-9))},{l:'Ultravioleta',f:s=>setX(s,Math.log10(300e-9))},{l:'Raio X',f:s=>setX(s,Math.log10(.1e-9))}],
+  draw(g,s){ const W=g.W, x0=16, x1=W-16, X=v=>x0+(3-v)/15*(x1-x0), by=g.H*.52, bh=34, x=s.p.x, lam=10**x, b=bandOf(x), nm=lam*1e9;
+    const wc=nm>=380&&nm<=750?lamColor(nm):COL.ink, vis=clamp(8+(x+12)/15*230,8,238), cy=by-62, A=Math.min(24,g.H*.08);
+    const pts=[]; for(let px=x0;px<=x1;px+=1.5) pts.push([px,cy-A*Math.sin(2*Math.PI*(px-x0)/vis)]); g.poly(pts,wc,2.4);
+    BANDS.forEach(([a,c,,short,,col])=>{ const xa=X(Math.min(a,3)), xc=X(Math.max(c,-12)); if(!col){ const gr=g.ctx.createLinearGradient(xa,0,xc,0); [[700,0],[620,.25],[580,.42],[530,.58],[470,.78],[400,1]].forEach(([l,o])=>gr.addColorStop(o,lamColor(l))); g.rect(xa,by,xc-xa,bh,gr); }
+      else g.rect(xa,by,xc-xa,bh,COL[col]+'40'); });
+    g.rect(x0,by,x1-x0,bh,null,COL.line,0,1);
+    BANDS.forEach(([a,c,,short],i)=>{ const xm=(X(Math.min(a,3))+X(Math.max(c,-12)))/2; if(short==='visível'){ g.line(xm,by+bh,xm,by+bh+14,COL.muted,1); g.text(short,xm,by+bh+26,{size:11,align:'center',c:COL.muted}); } else g.text(W<500?({'micro-ondas':'micro','infraverm.':'IV','raios X':'X'}[short]||short):short,xm,by+bh/2+4,{size:W<500?10:11.5,align:'center',c:COL.ink,bold:true}); });
+    [[3,'1 km'],[0,'1 m'],[-3,'1 mm'],[-6,'1 μm'],[-9,'1 nm'],[-12,'1 pm']].forEach(([v,t])=>{ g.line(X(v),by-4,X(v),by,COL.muted,1); g.text(t,X(v),by-8,{size:10.5,align:v===3?'left':v===-12?'right':'center',c:COL.muted,mono:true}); });
+    const mx=X(x); g.line(mx,by-2,mx,by+bh+2,COL.ink,2.5); g.poly([[mx-7,by+bh+12],[mx+7,by+bh+12],[mx,by+bh+3]],null,0,COL.ink,true);
+    g.text(b[2],clamp(mx,x0+50,x1-50),by+bh+50,{size:14,bold:true,align:'center'});
+    g.text('frequência e energia do fóton aumentam →',x1,g.H-8,{size:11.5,align:'right',c:COL.muted}); },
+  reads:s=>{ const lam=10**s.p.x, b=bandOf(s.p.x), E=1240e-9/lam; return [['Faixa',b[2]],['Comprimento de onda λ',fmtLam(lam)],['Frequência f = c/λ',nf(3e8/lam)+' Hz'],['Energia de cada fóton',nf(E)+' eV'+(E>=10?' (ionizante)':'')],['Onde aparece',b[4]]]; }}); };
+
+/* campo magnético de um fio reto: linhas circulares, bússolas e uma sonda */
+SIMS.wireB=(host)=>Sim(host,{alt:'Fio com corrente visto de cima, com linhas de campo circulares, bússolas e uma sonda arrastável',h:w=>w<560?Math.round(w*.85+200):350,
+  legend:[['force','norte das bússolas'],['energy','sonda: campo naquele ponto'],['acc','B contra a distância']],
+  ctrls:[{k:'i',l:'Corrente i',min:1,max:20,step:1,v:10,u:'A',live:true},{k:'dir',l:'Sentido da corrente',opts:[['sai','saindo da tela'],['entra','entrando na tela']],v:'sai',live:true}],
+  init(s){ if(!s.pr) s.pr=[6,-4]; },
+  geo(s){ const W=s.W, H=s.H, narrow=W<560, rw=narrow?W:Math.min(W*.56,H), rh=narrow?Math.round(W*.85):H, cx=rw/2, cy=rh/2, k=(Math.min(rw,rh)/2-14)/20;
+    return {narrow,rw,rh,cx,cy,k,gx:narrow?46:rw+54,gy:narrow?rh+26:34,gw:narrow?W-64:W-rw-72,gh:narrow?H-rh-72:H-90}; },
+  B:(i,dcm)=>2e-7*i/(dcm/100),
+  drag:{ down(s,x,y){ const q=s.def.geo(s), px=q.cx+s.pr[0]*q.k, py=q.cy+s.pr[1]*q.k; return Math.hypot(px-x,py-y)<22; },
+    move(s,x,y){ const q=s.def.geo(s); let dx=(x-q.cx)/q.k, dy=(y-q.cy)/q.k; const d=Math.hypot(dx,dy); if(d<1){ dx=dx/(d||1); dy=d?dy/d:-1; } else if(d>20){ dx*=20/d; dy*=20/d; } s.pr=[dx,dy]; } },
+  draw(g,s){ const q=s.def.geo(s), sg=s.p.dir==='sai'?1:-1, tan=(dx,dy)=>{ const r=Math.hypot(dx,dy)||1; return [sg*dy/r,-sg*dx/r]; };
+    g.ctx.save(); g.ctx.beginPath(); g.ctx.rect(0,0,q.rw,q.rh); g.ctx.clip();
+    [2,4,7,11,16].forEach(r=>{ const R=r*q.k; g.circle(q.cx,q.cy,R,null,COL.acc+'66',1.4); [0,Math.PI].forEach(a0=>{ const a=a0+Math.PI/4, x=q.cx+R*Math.cos(a), y=q.cy+R*Math.sin(a), [tx,ty]=tan(x-q.cx,y-q.cy); g.arrow(x-tx*6,y-ty*6,x+tx*6,y+ty*6,COL.acc,null,1.6); }); });
+    const st=Math.max(30,q.rw/10); for(let x=st/2;x<q.rw;x+=st) for(let y=st/2;y<q.rh;y+=st){ const dx=x-q.cx, dy=y-q.cy; if(Math.hypot(dx,dy)<1.6*q.k+10) continue; const [tx,ty]=tan(dx,dy), L=Math.min(9,st*.3);
+      g.line(x,y,x+tx*L,y+ty*L,COL.force,3); g.line(x,y,x-tx*L,y-ty*L,COL.muted,3); g.circle(x,y,1.8,COL.ink); }
+    g.circle(q.cx,q.cy,13,COL.card,COL.ink,2.2); if(sg>0) g.circle(q.cx,q.cy,4,COL.ink); else { g.line(q.cx-6,q.cy-6,q.cx+6,q.cy+6,COL.ink,2.2); g.line(q.cx-6,q.cy+6,q.cx+6,q.cy-6,COL.ink,2.2); }
+    const px=q.cx+s.pr[0]*q.k, py=q.cy+s.pr[1]*q.k, d=Math.hypot(...s.pr), B=s.def.B(s.p.i,d), [tx,ty]=tan(s.pr[0],s.pr[1]), L=clamp(20+18*Math.log10(B/1e-6),14,70);
+    g.line(q.cx,q.cy,px,py,COL.muted,1,[3,4]); g.text('d = '+nt(d)+' cm',(q.cx+px)/2+8,(q.cy+py)/2-6,{size:12,mono:true,c:COL.muted});
+    g.circle(px,py,8,COL.energy,COL.ink,1.5); g.arrow(px,py,px+tx*L,py+ty*L,COL.energy,'B',3);
+    const cap=sg>0?'corrente saindo da tela: campo anti-horário':'corrente entrando na tela: campo horário'; g.font(11.5); g.rect(4,q.rh-24,g.ctx.measureText(cap).width+10,20,COL.paper+'e6',null,5); g.text(cap,9,q.rh-10,{size:11.5,c:COL.muted});
+    g.ctx.restore();
+    if(q.gw>80&&q.gh>60){ const top=20*s.p.i, pts=[]; for(let x=1;x<=20;x+=.1) pts.push([x,s.def.B(s.p.i,x)*1e6]);
+      const r=g.plot(q.gx,q.gy,q.gw,q.gh,{xr:[0,20],yr:[0,top*1.05],series:[{pts,c:COL.acc}],xl:'distância d (cm)',yl:'B (μT)'});
+      if(50<top) { g.line(r.X(0),r.Y(50),r.X(20),r.Y(50),COL.muted,1.2,[5,4]); g.text('Terra ≈ 50 μT',r.X(20)-4,r.Y(50)-6,{size:11,align:'right',c:COL.muted}); }
+      g.circle(r.X(d),r.Y(B*1e6),6,COL.energy,COL.ink,1.5); } },
+  reads:s=>{ const d=Math.hypot(...s.pr), B=s.def.B(s.p.i,d); return [['Distância da sonda d',nt(d)+' cm'],['Campo B = μ₀·i/(2π·d)',nf(B)+' T'],['Em microtesla',nt(B*1e6)+' μT'],['Comparado ao campo da Terra (≈ 50 μT)',nt(B/5e-5)+' vezes']]; }});
+
+/* =====================================================================
    Lições — Ferramentas, Cinemática e Dinâmica
    Geradores de exercício devolvem {q,a,u,sol,traps,hint} (numérico)
    ou {q,o,a:0,why,w} (múltipla escolha; a primeira opção é a correta)
@@ -1549,7 +1914,7 @@ mod('ter','Termologia','temperatura, calor, gases e máquinas térmicas',[
 /* =====================================================================
    Lições — Ondas, Óptica, Eletricidade, Magnetismo e Física moderna
    ===================================================================== */
-mod('ond','Ondas','o que é uma onda, e o som',[
+mod('ond','Oscilações e ondas','MHS, ondas, som e ressonância',[
 {id:'ondas',t:'Ondas e a equação v = λ·f',min:15,
  idea:`<p>Uma <b>onda</b> transporta energia de um lugar a outro <b>sem transportar matéria</b>. Numa "ola" no estádio, cada torcedor só levanta e senta; o que percorre a arquibancada é o movimento. Numa corda, cada ponto sobe e desce enquanto a forma da onda avança.</p>
  <p>Grandezas de uma onda: <b>amplitude</b> (altura da crista, ligada à energia), <b>comprimento de onda</b> λ (distância entre duas cristas), <b>frequência</b> f (oscilações por segundo, em Hz) e <b>período</b> T = 1/f. Em um período a onda avança um comprimento de onda, então <b>v = λ·f</b>.</p>
@@ -1585,7 +1950,7 @@ mod('ond','Ondas','o que é uma onda, e o som',[
  traps:['Confundir som "alto" (intenso) com som "alto" (agudo).','Esquecer de dividir por 2 no eco.','Achar que o Doppler muda o volume, e não a frequência.'],
  keep:['Altura: frequência. Intensidade: amplitude. Timbre: forma da onda.','Som no ar ≈ 340 m/s; não se propaga no vácuo.','Aproximação: mais agudo. Afastamento: mais grave.']}]);
 
-mod('opt','Óptica','espelhos, refração e lentes',[
+mod('opt','Luz e óptica','o espectro, espelhos, refração e lentes',[
 {id:'espelhos',t:'Reflexão e espelhos',min:16,
  idea:`<p>Na <b>reflexão</b>, a luz bate numa superfície e volta, com o ângulo de reflexão igual ao de incidência (medidos a partir da normal). Num <b>espelho plano</b>, a imagem é virtual (fica "atrás" do espelho), do mesmo tamanho e à mesma distância do espelho que o objeto.</p>
  <p>Espelhos esféricos são pedaços de uma esfera. O <b>côncavo</b> (a parte de dentro de uma colher) concentra os raios paralelos num ponto, o <b>foco</b> F. O <b>convexo</b> (a parte de fora) espalha os raios, que parecem sair de um foco atrás dele.</p>
@@ -1819,6 +2184,151 @@ mod('mod','Física moderna','luz em pacotes, núcleos instáveis e relatividade'
   POOL([['Um trem a 100 km/h acende o farol. A velocidade da luz medida por alguém parado na estação é:',['c, a mesma de sempre','c + 100 km/h','c − 100 km/h','depende do trem'],'É o segundo postulado de Einstein: c é igual para todos.'],['Por que não percebemos a dilatação do tempo no dia a dia?',['nossas velocidades são minúsculas perto de c, e γ ≈ 1','ela só acontece no espaço','ela não existe de verdade','os relógios são imprecisos'],'Mesmo num avião, γ − 1 é da ordem de 10⁻¹².'],['E = m·c² significa que:',['massa e energia são equivalentes','a energia é sempre igual à massa','a luz tem massa','nada pode ser mais rápido que a luz'],'Uma pequena massa corresponde a uma energia enorme, porque c² é gigantesco.']])],
  traps:['Achar que a dilatação do tempo é ilusão de óptica.','Inverter: quem observa o relógio em movimento vê ele atrasar (Δt = γΔt₀, com γ ≥ 1).','Esquecer de elevar c ao quadrado em E = mc².'],
  keep:['c é a mesma para todos os observadores.','Δt = γΔt₀; L = L₀/γ; γ = 1/√(1 − v²/c²).','E = mc².']}]);
+
+/* =====================================================================
+   Lições novas, encaixadas nos módulos existentes:
+   propagação do calor, MHS, ondas estacionárias, espectro
+   eletromagnético e campo magnético de correntes
+   ===================================================================== */
+addLessons('ter','calorimetria',[
+{id:'propagacao',t:'Propagação do calor',min:13,
+ idea:`<p>O calor sempre passa do corpo mais quente para o mais frio, e pode fazer isso de três jeitos.</p>
+ <p><b>Condução</b>: a agitação passa de partícula em partícula, por contato, sem que a matéria saia do lugar. Metais conduzem muito bem; ar, madeira, isopor e lã conduzem mal e são chamados de <b>isolantes</b>. Por isso, numa manhã fria, a maçaneta de metal parece mais gelada que a porta de madeira, mesmo estando as duas à mesma temperatura: o metal tira calor da sua mão mais depressa.</p>
+ <p><b>Convecção</b>: em líquidos e gases, a parte aquecida fica menos densa e sobe, e a parte fria desce, formando correntes. É por isso que o ar-condicionado fica no alto da parede, que a água da panela circula quando esquenta e que surgem as brisas do litoral.</p>
+ <p><b>Radiação</b>: todo corpo emite ondas eletromagnéticas (principalmente infravermelho), que viajam até no vácuo. É assim que o calor do Sol chega à Terra. Superfícies escuras absorvem e emitem mais; claras e espelhadas refletem. A garrafa térmica combate os três: vácuo entre as paredes (sem condução nem convecção) e paredes espelhadas (que refletem a radiação).</p>
+ <p>Na condução, o calor que atravessa uma placa por segundo segue a <b>lei de Fourier</b>: cresce com a área e com a diferença de temperatura, e diminui com a espessura.</p>`,
+ pred:{q:'De manhã, você toca uma maçaneta de metal e a porta de madeira, que estão no mesmo cômodo há horas. O metal parece mais frio porque:',o:['conduz calor melhor e tira calor da sua mão mais depressa','está a uma temperatura mais baixa que a madeira','guarda mais "frio" que a madeira','é mais denso e, por isso, mais gelado'],a:0,why:'Os dois estão à temperatura do cômodo. A sensação de frio é o calor saindo da sua mão, e o metal, bom condutor, leva esse calor muito mais rápido que a madeira.'},
+ lab:{sim:'conduc'},
+ tasks:['Troque o aço pelo isopor. Quantas vezes o fluxo de calor diminui?','Dobre a espessura da placa. O que acontece com o fluxo?','Descubra dois jeitos de reduzir o calor que atravessa à metade sem trocar o material.'],
+ f:[{f:'Φ = '+frac('Q','Δt')+' = '+frac('k·A·ΔT','L'),s:[['Φ','fluxo de calor (energia por segundo)','W'],['k','condutividade térmica do material','W/(m·K)'],['A','área da placa','m²'],['ΔT','diferença de temperatura entre as faces','°C ou K'],['L','espessura da placa','m']],n:'Cobre: k ≈ 400 · aço: 50 · vidro: 0,8 · madeira: 0,15 · isopor: 0,03 W/(m·K).'}],
+ ex:{q:'Uma janela de vidro (k = 0,8 W/m·K) tem 2 m² e 4 mm de espessura. Dentro faz 25 °C e fora, 15 °C. Quanto calor atravessa o vidro por segundo?',s:['Espessura em metros: L = 4 mm = 0,004 m.','Φ = k·A·ΔT/L = 0,8 × 2 × 10 / 0,004.','<b>Φ = 4000 W</b>. Por isso janelas de vidro duplo, com ar entre os vidros, economizam tanto ar-condicionado.']},
+ probs:[
+  ()=>{ const [k,m]=pick([[.8,'vidro'],[50,'aço'],[.15,'madeira'],[400,'cobre']]), A=pick([.5,1,2]), dT=R(10,50,10), L=pick([1,2,4,5,10]); const a=k*A*dT/(L/100);
+    return NUM(`Uma placa de <b>${m}</b> (k = ${F(k)} W/m·K) tem <b>${F(A)} m²</b> de área e <b>${L} cm</b> de espessura. Uma face está <b>${dT} °C</b> mais quente que a outra. Qual é o fluxo de calor através dela?`,a,'W',[`L = ${L} cm = ${F(L/100)} m`,`Φ = k·A·ΔT/L = ${F(k)} × ${F(A)} × ${dT} / ${F(L/100)}`,`Φ = ${F(a)} W`],[[k*A*dT/L,'Converta a espessura para metros antes de dividir.'],[k*A*dT*L/100,'A espessura <b>divide</b>: placa mais grossa deixa passar menos calor.']],'Φ = k·A·ΔT/L, com L em metros.'); },
+  ()=>{ const P0=pick([100,200,300,600]), Lk=pick([2,3,4]), Ak=pick([1,2,3].filter(x=>x!==Lk)); const a=P0*Ak/Lk;
+    return NUM(`Uma parede deixa passar <b>${P0} W</b> de calor. Outra parede do mesmo material, com a mesma diferença de temperatura, tem <b>${Ak===1?'a mesma área':Ak+' vezes a área'}</b> e <b>${Lk} vezes a espessura</b>. Quanto calor passa por ela?`,a,'W',[`Φ é proporcional a A e inversamente proporcional a L`,`Φ = ${P0} × ${Ak}/${Lk} = ${F(a)} W`],[[P0*Ak*Lk,'Espessura maior <b>reduz</b> o fluxo: divida pelo fator da espessura.'],[P0*Lk/Ak,'Área maior <b>aumenta</b> o fluxo.']]); },
+  ()=>{ const A=pick([1.5,2]), L=pick([2,3,5]), dT=R(5,20,5); const phi=.15*A*dT/(L/100), a=phi*3600/1000;
+    return NUM(`Uma porta de madeira (k = 0,15 W/m·K) tem <b>${F(A)} m²</b> e <b>${L} cm</b> de espessura. De um lado faz ${dT} °C a mais que do outro. Quanta energia atravessa a porta em <b>1 hora</b>, em quilojoules?`,a,'kJ',[`Φ = 0,15 × ${F(A)} × ${dT} / ${F(L/100)} = ${F(phi)} W`,`Em 1 h = 3600 s: Q = ${F(phi)} × 3600 = ${F(phi*3600)} J`,`Q = ${F(a)} kJ`],[[phi,'Esse é o fluxo em watts (joules por segundo). Multiplique por 3600 s.'],[phi*3600,'Resposta em joules; divida por 1000 para ter kJ.']]); },
+  ()=>{ const [k1,k2,m1,m2]=pick([[400,.8,'cobre','vidro'],[50,.15,'aço','madeira'],[.8,.04,'vidro','lã'],[400,50,'cobre','aço'],[.15,.03,'madeira','isopor']]);
+    return NUM(`Duas placas de mesmas medidas, uma de <b>${m1}</b> (k = ${F(k1)} W/m·K) e outra de <b>${m2}</b> (k = ${F(k2)} W/m·K), separam os mesmos ambientes. Quantas vezes mais calor passa pela de ${m1}?`,k1/k2,'vezes',[`Mesmas A, L e ΔT: Φ é proporcional a k`,`${F(k1)} / ${F(k2)} = ${F(k1/k2)}`],[[k2/k1,'Inverteu: o material de maior k deixa passar mais calor.']]); },
+  POOL([['Como o calor do Sol chega até a Terra?',['por radiação','por condução','por convecção','pelo ar que existe no espaço'],'Entre o Sol e a Terra há vácuo: só a radiação (ondas eletromagnéticas) atravessa.'],
+   ['O aparelho de ar-condicionado fica no alto da parede porque:',['o ar frio é mais denso, desce e cria correntes de convecção','o ar frio sobe','assim ele junta menos poeira','perto do chão faz mais calor'],'O ar resfriado desce e o ar quente sobe até o aparelho: o ar da sala inteira circula.'],
+   ['Numa garrafa térmica, o vácuo entre as paredes serve para impedir:',['a condução e a convecção','só a radiação','a entrada de luz','o vazamento pela tampa'],'Sem matéria entre as paredes não há condução nem convecção; as paredes espelhadas cuidam da radiação.'],
+   ['Um cobertor deixa você aquecido porque:',['é isolante e dificulta a saída do calor do seu corpo','produz calor','impede a entrada do frio','absorve o calor do ar do quarto'],'O cobertor não gera calor: ele segura o calor que o seu corpo produz, graças ao ar preso entre as fibras.'],
+   ['A brisa que sopra do mar para a terra durante o dia é um exemplo de:',['convecção','condução','radiação','dilatação'],'A terra esquenta mais rápido que o mar; o ar sobre ela sobe e o ar do mar vem ocupar o lugar.']])],
+ traps:['Achar que o metal está mais frio que a madeira no mesmo ambiente: ele só conduz melhor.','Dizer que o cobertor "produz calor" ou "barra o frio": ele isola o calor do corpo.','Esquecer de passar a espessura para metros na lei de Fourier.'],
+ keep:['Condução: por contato, sem transporte de matéria. Metais conduzem bem; ar e isopor, mal.','Convecção: correntes em líquidos e gases; o quente sobe e o frio desce.','Radiação: ondas eletromagnéticas, funciona até no vácuo.','Φ = k·A·ΔT/L.']}]);
+
+addLessons('ond',null,[
+{id:'mhs',t:'Oscilações: mola e pêndulo',min:15,
+ idea:`<p>Muita coisa na natureza vai e volta sempre no mesmo ritmo: um balanço, a corda de um violão, o pêndulo de um relógio. Quando a força que puxa de volta é proporcional ao afastamento, o movimento se chama <b>movimento harmônico simples</b> (MHS).</p>
+ <p>No sistema <b>massa-mola</b>, a mola puxa com F = −k·x (lei de Hooke): quanto mais você estica, mais forte ela puxa de volta. O tempo de uma ida e volta completa, o <b>período</b>, é <b>T = 2π·√(m/k)</b>. Massa maior oscila mais devagar; mola mais dura, mais depressa.</p>
+ <p>No <b>pêndulo simples</b>, para ângulos pequenos, <b>T = 2π·√(L/g)</b>. Repare no que falta: a massa! Uma bola de ferro e uma de isopor, penduradas em fios do mesmo comprimento, balançam no mesmo ritmo. Nos dois sistemas o período também não depende da amplitude, e foi por isso que o pêndulo serviu para marcar o tempo nos relógios.</p>
+ <p>Durante a oscilação a energia troca de forma: nos extremos ela é toda potencial (na mola, E = k·A²/2) e no centro é toda cinética.</p>`,
+ pred:{q:'Dois pêndulos têm o mesmo comprimento. Um tem uma bola de 1 kg e o outro, uma de 4 kg. Qual oscila mais rápido?',o:['os dois no mesmo ritmo','o de 4 kg','o de 1 kg','depende de qual foi solto primeiro'],a:0,why:'O período do pêndulo é T = 2π·√(L/g): só o comprimento e a gravidade importam. A massa se cancela, como na queda livre.'},
+ lab:{sim:'mhs'},
+ tasks:['Aumente a massa. Qual dos dois sistemas muda de ritmo?','Leve o pêndulo de 0,5 m para 2 m (4 vezes mais comprido). O período dobra?','Mude a amplitude. Algum dos períodos muda?'],
+ f:[{f:'T<sub class="up">mola</sub> = 2π·√(m/k)      T<sub class="up">pêndulo</sub> = 2π·√(L/g)',s:[['T','período: tempo de uma ida e volta','s'],['m','massa presa à mola','kg'],['k','constante elástica da mola','N/m'],['L','comprimento do pêndulo','m'],['g','aceleração da gravidade (10)','m/s²']],n:'Frequência: f = 1/T. A fórmula do pêndulo vale para ângulos pequenos (até uns 15°).'},
+  {f:'F = −k·x      E = '+frac('k·A²','2'),s:[['x','afastamento da posição de equilíbrio','m'],['A','amplitude (afastamento máximo)','m'],['E','energia da oscilação','J']],n:'O sinal de menos diz que a força aponta sempre de volta para o centro.'}],
+ ex:{q:'Um bloco de 0,4 kg preso a uma mola de k = 40 N/m oscila. Qual é o período? (π ≈ 3,14)',s:['T = 2π·√(m/k) = 2π·√(0,4/40).','0,4/40 = 0,01, e √0,01 = 0,1.','T = 2 × 3,14 × 0,1 ≈ <b>0,63 s</b>: cerca de 1,6 oscilação por segundo.']},
+ probs:[
+  ()=>{ const [m,k]=pick([[.1,10],[.4,10],[.9,10],[.2,20],[1,25],[.5,50],[2,50],[.25,100]]), r=Math.sqrt(m/k), a=2*Math.PI*r;
+    return NUM(`Um bloco de <b>${F(m)} kg</b> preso a uma mola de constante <b>${k} N/m</b> oscila. Qual é o período? (π ≈ 3,14)`,a,'s',[`T = 2π·√(m/k) = 2π·√(${F(m)}/${k})`,`√${F(m/k)} = ${F(r)}`,`T = 2 × 3,14 × ${F(r)} ≈ ${F(a)} s`],[[2*Math.PI*Math.sqrt(k/m),'Você inverteu: é √(m/k), com a massa em cima.'],[2*Math.PI*m/k,'Faltou tirar a raiz quadrada.']],'T = 2π·√(m/k).'); },
+  ()=>{ const L=pick([.1,.4,.9,1.6,2.5,3.6]), M=pick([.2,1,5]), r=Math.sqrt(L/10), a=2*Math.PI*r;
+    return NUM(`Um pêndulo simples tem fio de <b>${F(L)} m</b> e uma bola de <b>${F(M)} kg</b>. Qual é o período das pequenas oscilações? (g = 10 m/s²; π ≈ 3,14)`,a,'s',[`A massa não entra: T = 2π·√(L/g)`,`√(${F(L)}/10) = √${F(L/10)} = ${F(r)}`,`T = 2 × 3,14 × ${F(r)} ≈ ${F(a)} s`],[[2*Math.PI*Math.sqrt(10/L),'É √(L/g), com o comprimento em cima.'],[2*Math.PI*L/10,'Faltou tirar a raiz quadrada.']],'A massa da bola não aparece na fórmula.'); },
+  ()=>{ const K=pick([4,9,16]), [what,a,tr]=pick([['o comprimento de um pêndulo',Math.sqrt(K),[[K,'O período depende da <b>raiz</b> do comprimento.']]],['a massa presa a uma mola',Math.sqrt(K),[[K,'O período depende da <b>raiz</b> da massa.']]],['a constante de uma mola (mola mais dura)',1/Math.sqrt(K),[[Math.sqrt(K),'Mola mais dura oscila <b>mais rápido</b>: o período diminui.'],[1/K,'Lembre da raiz: T depende de 1/√k.']]]]);
+    return NUM(`Se ${what} for multiplicado(a) por <b>${K}</b>, o período fica multiplicado por quanto? (Responda o fator; por exemplo, 0,5 para a metade.)`,a,'',[`T é proporcional a √${what.includes('constante')?'(1/k)':what.includes('massa')?'m':'L'}`,`Fator = ${what.includes('constante')?'1/√'+K:'√'+K} = ${F(a)}`],tr); },
+  ()=>{ const N=pick([10,20,30,60]), t=pick([5,15,40,120]);
+    return NUM(`Um pêndulo completa <b>${N} oscilações</b> em <b>${t} s</b>. Qual é a frequência?`,N/t,'Hz',[`f = oscilações ÷ tempo = ${N}/${t} = ${F(N/t)} Hz`,`(O período é T = 1/f = ${F(t/N)} s.)`],[[t/N,'Esse é o período (tempo de uma oscilação). A frequência é o inverso.']]); },
+  ()=>{ const k=pick([100,200,400,800]), A=pick([5,10,20]), a=k*(A/100)**2/2;
+    return NUM(`Uma mola de constante <b>${k} N/m</b> é esticada <b>${A} cm</b> e solta. Qual é a energia da oscilação?`,a,'J',[`A = ${A} cm = ${F(A/100)} m`,`E = k·A²/2 = ${k} × ${F(A/100)}² / 2 = ${F(a)} J`],[[k*(A/100)**2,'Faltou dividir por 2.'],[k*A*A/2,'Converta a amplitude para metros.']]); },
+  POOL([['O período de um pêndulo simples (ângulos pequenos) NÃO depende:',['da massa nem da amplitude','do comprimento do fio','da gravidade do lugar','de nada: é sempre 1 s'],'T = 2π·√(L/g): só comprimento e gravidade.'],
+   ['Levado para a Lua (g ≈ 1,6 m/s²), um relógio de pêndulo:',['atrasa, porque o pêndulo oscila mais devagar','adianta','marca a hora certa','para de oscilar'],'g menor deixa o período maior: cada "tique" demora mais.'],
+   ['No ponto de maior afastamento de um MHS, a velocidade do corpo é:',['zero, e a energia é toda potencial','máxima','igual à que ele tem no centro','impossível de saber'],'Nos extremos o corpo para por um instante e volta.'],
+   ['Na posição de equilíbrio (centro) de um sistema massa-mola, a força da mola é:',['zero, e a velocidade é máxima','máxima','igual ao peso do bloco sempre','máxima e a velocidade é zero'],'F = −k·x com x = 0; é ali que o bloco passa mais rápido.']])],
+ traps:['Achar que a massa muda o período do pêndulo.','Esquecer a raiz quadrada: quadruplicar o comprimento só dobra o período.','Confundir período (tempo de uma oscilação) com frequência (oscilações por segundo).'],
+ keep:['Mola: T = 2π·√(m/k). Pêndulo: T = 2π·√(L/g).','O período não depende da amplitude; o do pêndulo também não depende da massa.','Nos extremos, v = 0 e a energia é potencial; no centro, v é máxima.']}]);
+
+addLessons('ond','som',[
+{id:'estacionarias',t:'Ondas estacionárias: cordas e tubos',min:15,
+ idea:`<p>Quando uma onda bate numa extremidade e volta, ela se soma à que está chegando. Em certas frequências as duas formam um padrão que não anda: a <b>onda estacionária</b>. Alguns pontos ficam sempre parados, os <b>nós</b>; outros vibram com a amplitude máxima, os <b>ventres</b>. De um nó ao seguinte há meio comprimento de onda.</p>
+ <p>Numa <b>corda presa nas duas pontas</b> (violão, piano) as pontas são nós, então cabem na corda 1, 2, 3… meias ondas: λ = 2L/n e <b>f = n·v/(2L)</b>. O modo n = 1 é o som <b>fundamental</b>; os outros são os <b>harmônicos</b>, e a mistura deles dá o timbre de cada instrumento. Apertar a corda num traste do violão encurta L e deixa a nota mais aguda.</p>
+ <p>Nos instrumentos de sopro vibra o ar dentro de um <b>tubo</b>. No <b>tubo aberto</b> as duas pontas são ventres e vale a mesma fórmula da corda. No <b>tubo fechado</b> numa ponta, ela é nó e a outra é ventre: cabem 1, 3, 5… quartos de onda, e só existem <b>harmônicos ímpares</b>, f = n·v/(4L).</p>
+ <p>Todo objeto tem frequências naturais como essas. Se for empurrado exatamente numa delas, a amplitude cresce muito: é a <b>ressonância</b>. É ela que faz uma taça estourar com a voz de um cantor, e é por causa dela que engenheiros calculam as frequências de pontes e prédios.</p>`,
+ pred:{q:'Você aperta a corda do violão bem no meio e toca. A frequência da nota:',o:['dobra (a nota sobe uma oitava)','cai pela metade','continua igual','quadruplica'],a:0,why:'A corda é a mesma, então a velocidade v da onda nela não muda. Com f = v/(2L), metade do comprimento dá o dobro da frequência: uma oitava acima.'},
+ lab:{sim:'harm'},
+ tasks:['Na corda, passe do 1º para o 3º modo. Conte os nós e compare as frequências.','Compare o tubo aberto com o fechado de mesmo comprimento: o que acontece com a frequência do 1º modo?','Diminua L. O som fica mais agudo ou mais grave?'],
+ f:[{f:'Corda e tubo aberto: f<sub class="up">n</sub> = n·'+frac('v','2L')+'   (n = 1, 2, 3…)',s:[['f<sub>n</sub>','frequência do n-ésimo harmônico','Hz'],['n','número do harmônico',''],['v','velocidade da onda (no tubo, a do som)','m/s'],['L','comprimento da corda ou do tubo','m']],n:'De um nó ao seguinte há meio comprimento de onda.'},
+  {f:'Tubo fechado: f<sub class="up">n</sub> = n·'+frac('v','4L')+'   (n = 1, 3, 5…)',n:'Só harmônicos ímpares. O fundamental tem a metade da frequência do de um tubo aberto de mesmo comprimento.'}],
+ ex:{q:'Uma corda de violão de 0,65 m vibra no modo fundamental, e as ondas nela viajam a 286 m/s. Qual é a frequência da nota?',s:['No fundamental (n = 1) cabe meia onda na corda: λ = 2L = 1,3 m.','f = v/λ = 286/1,3.','<b>f = 220 Hz</b>: a nota lá, uma oitava abaixo do lá de 440 Hz.']},
+ probs:[
+  ()=>{ const L=pick([.5,.6,.8,1,1.2]), v=pick([120,240,300,360,480]), n=pick([1,2,3]), a=n*v/(2*L), tr=[[n*v/L,'Na corda presa, o fundamental é meia onda: λ = 2L.']]; if(n>1) tr.push([v/(2*L),'Esse é o fundamental. Multiplique pelo número do harmônico.']);
+    return NUM(`Uma corda de <b>${F(L)} m</b>, presa nas duas pontas, vibra no <b>${n}º harmônico</b>. As ondas nela viajam a <b>${v} m/s</b>. Qual é a frequência?`,a,'Hz',[`f<sub>n</sub> = n·v/(2L) = ${n} × ${v} / (2 × ${F(L)})`,`f = ${F(a)} Hz`],tr); },
+  ()=>{ const L=pick([.34,.5,.85,1.7]), a=340/(2*L);
+    return NUM(`Qual é a frequência fundamental de um tubo <b>aberto nas duas pontas</b> com <b>${F(L)} m</b> de comprimento? (som: 340 m/s)`,a,'Hz',[`Tubo aberto, fundamental: λ = 2L = ${F(2*L)} m`,`f = v/λ = 340/${F(2*L)} = ${F(a)} Hz`],[[340/(4*L),'Esse seria o tubo fechado. No aberto, λ = 2L.'],[340/L,'No fundamental cabe meia onda no tubo: λ = 2L.']]); },
+  ()=>{ const L=pick([.17,.25,.34,.5,.85]), n=pick([1,3,5]), a=n*340/(4*L), tr=[[n*340/(2*L),'No tubo fechado, o fundamental tem λ = 4L: use f = n·v/(4L).']]; if(n>1) tr.push([340/(4*L),'Esse é o fundamental. Multiplique pelo número do harmônico.']);
+    return NUM(`Um tubo de <b>${F(L)} m</b>, fechado numa ponta, emite o <b>${n}º harmônico</b>. Qual é a frequência? (som: 340 m/s)`,a,'Hz',[`Tubo fechado: f<sub>n</sub> = n·v/(4L) = ${n} × 340 / (4 × ${F(L)})`,`f = ${F(a)} Hz`],tr); },
+  ()=>{ const n=pick([2,3,4,6]), L=pick([.6,1.2,1.8,2.4]), a=2*L/n;
+    return NUM(`Uma corda de <b>${F(L)} m</b>, presa nas pontas, vibra formando <b>${n} fusos</b> (${n} ventres). Qual é o comprimento de onda?`,a,'m',[`Cada fuso é meia onda: ${n} × λ/2 = ${F(L)}`,`λ = 2 × ${F(L)} / ${n} = ${F(a)} m`],[[L/n,'Cada fuso é <b>meia</b> onda, e não uma onda inteira: λ = 2L/n.']]); },
+  POOL([['Um tubo fechado numa ponta pode emitir quais harmônicos?',['só os ímpares (1º, 3º, 5º…)','só os pares','todos','só o fundamental'],'A ponta fechada é nó e a aberta é ventre: cabem 1, 3, 5… quartos de onda.'],
+   ['Uma cantora estoura uma taça de cristal com a voz. O fenômeno é:',['ressonância','refração','efeito Doppler','difração'],'A voz tem a frequência natural da taça: a amplitude cresce até o vidro quebrar.'],
+   ['Ao apertar a corda do violão num traste que deixa a parte que vibra mais curta, o som fica:',['mais agudo','mais grave','mais forte, com a mesma nota','igual'],'f = v/(2L): L menor, f maior.'],
+   ['Numa onda estacionária, a distância entre dois nós vizinhos é:',['meio comprimento de onda','um comprimento de onda','um quarto de comprimento de onda','dois comprimentos de onda'],'Cada fuso, de nó a nó, é meia onda.'],
+   ['Uma flauta e um violino tocam a mesma nota. O que faz os sons serem diferentes?',['a mistura de harmônicos, o timbre','a frequência fundamental','a velocidade do som no ar','o comprimento de onda da nota'],'A fundamental é a mesma; o que muda é quanto de cada harmônico aparece.']])],
+ traps:['Usar λ = L na corda: no fundamental cabe meia onda, λ = 2L.','Esquecer que o tubo fechado só tem harmônicos ímpares.','Confundir nó (ponto parado) com ventre (vibração máxima).'],
+ keep:['Corda e tubo aberto: f = n·v/(2L), n = 1, 2, 3…','Tubo fechado: f = n·v/(4L), só n ímpar.','Ressonância: um corpo excitado na sua frequência natural vibra cada vez mais.']}]);
+
+addLessons('opt',null,[
+{id:'espectro',t:'Luz e espectro eletromagnético',min:13,
+ idea:`<p>A luz é uma <b>onda eletromagnética</b>: um campo elétrico e um campo magnético que oscilam juntos e se sustentam, sem precisar de meio material. No vácuo, todas as ondas eletromagnéticas viajam à mesma velocidade, <b>c = 3×10⁸ m/s</b>, e por isso vale <b>c = λ·f</b>: comprimento de onda menor significa frequência maior.</p>
+ <p>O que muda de uma para outra é só a frequência, e essa família inteira forma o <b>espectro eletromagnético</b>: ondas de rádio, micro-ondas, infravermelho, luz visível, ultravioleta, raios X e raios gama. Nossos olhos percebem uma faixa estreitíssima, de cerca de 400 nm (violeta) a 700 nm (vermelho).</p>
+ <p>A energia chega em pacotes, os fótons, e cada fóton tem energia proporcional à frequência (você verá E = h·f em Física moderna). Por isso ultravioleta, raios X e raios gama, de frequência alta, conseguem danificar moléculas das células, enquanto ondas de rádio e micro-ondas, por mais intensas, apenas aquecem.</p>`,
+ pred:{q:'Qual destas ondas viaja mais rápido no vácuo?',o:['todas viajam à mesma velocidade','os raios X','as ondas de rádio','a luz visível'],a:0,why:'No vácuo, toda onda eletromagnética viaja a c = 3×10⁸ m/s. O que muda de uma para outra é a frequência, e com ela o comprimento de onda.'},
+ lab:{sim:'spectrum'},
+ tasks:['Vá das ondas de rádio aos raios gama. O que acontece com o comprimento de onda e com a energia de cada fóton?','Encontre a luz visível. Que pedaço da régua ela ocupa?','Qual é o comprimento de onda de um forno de micro-ondas? Compare com o tamanho do forno.'],
+ f:[{f:'c = λ·f',s:[['c','velocidade da luz no vácuo: 3×10<sup>8</sup>','m/s'],['λ','comprimento de onda','m'],['f','frequência','Hz']],n:'Em ordem de frequência crescente: rádio, micro-ondas, infravermelho, visível (do vermelho ao violeta), ultravioleta, raios X e gama. Prefixos: n = 10⁻⁹, M = 10⁶, G = 10⁹.'}],
+ ex:{q:'Um forno de micro-ondas funciona em 2,45 GHz. Qual é o comprimento dessas ondas?',s:['f = 2,45 GHz = 2,45×10⁹ Hz.','λ = c/f = 3×10⁸ / 2,45×10⁹.','<b>λ ≈ 0,12 m = 12 cm</b>.']},
+ probs:[
+  ()=>{ const [who,num,mul,un]=pick([['uma rádio FM',100,1e6,'MHz'],['uma rádio AM',1,1e6,'MHz'],['um roteador Wi-Fi',5,1e9,'GHz'],['um celular',1.5,1e9,'GHz'],['uma rádio FM',90,1e6,'MHz'],['um radar',10,1e9,'GHz']]), f=num*mul, a=3e8/f;
+    return NUM(`${who[0].toUpperCase()+who.slice(1)} transmite em <b>${F(num)} ${un}</b>. Qual é o comprimento de onda? (c = 3×10⁸ m/s)`,a,'m',[`f = ${F(num)} ${un} = ${F(f)} Hz`,`λ = c/f = 3×10⁸ / ${F(f)} = ${F(a)} m`],[[3e8/num,`Converta ${un} para hertz: ${un[0]} = 10<sup>${mul===1e6?6:9}</sup>.`],[f/3e8,'λ = c/f: a velocidade vai em cima.']]); },
+  ()=>{ const nm=pick([400,480,500,600,625]), a=3e8/(nm*1e-9);
+    return NUM(`Uma luz visível tem comprimento de onda de <b>${nm} nm</b>. Qual é a frequência dela? (c = 3×10⁸ m/s)`,a,'Hz',[`λ = ${nm} nm = ${nm}×10⁻⁹ m`,`f = c/λ = 3×10⁸ / ${nm}×10⁻⁹ = ${F(a)} Hz`],[[3e8/nm,'Converta nanômetros para metros (× 10⁻⁹).']],'Digite em notação científica, como 5e14.'); },
+  ()=>{ const [what,d]=pick([['do Sol até a Terra',1.5e11],['da Lua até a Terra',3.84e8],['de um satélite geoestacionário até a Terra',3.6e7],['de Marte até a Terra, no ponto mais próximo',5.4e10]]), a=d/3e8;
+    return NUM(`Quanto tempo a luz leva para ir <b>${what}</b>, uma distância de ${F(d)} m? (c = 3×10⁸ m/s)`,a,'s',[`t = d/c = ${F(d)} / 3×10⁸`,`t = ${F(a)} s`],[[d*3e8,'Tempo = distância ÷ velocidade.']]); },
+  POOL([['Em ordem crescente de frequência:',['rádio, micro-ondas, luz visível, raios X','raios X, luz visível, micro-ondas, rádio','luz visível, rádio, raios X, micro-ondas','micro-ondas, rádio, raios X, luz visível'],'A frequência cresce do rádio para o gama; o comprimento de onda faz o contrário.'],
+   ['Por que o protetor solar precisa barrar o ultravioleta, mas ninguém usa protetor contra o sinal do celular?',['cada fóton de UV tem energia suficiente para danificar células; os de micro-ondas não','o UV é mais rápido que as micro-ondas','o sinal do celular não é onda eletromagnética','o UV tem comprimento de onda maior'],'A energia de cada fóton cresce com a frequência, e o UV tem frequência muito maior.'],
+   ['Qual cor visível tem o maior comprimento de onda?',['vermelho','violeta','verde','azul'],'Vermelho fica perto de 700 nm; violeta, perto de 400 nm.'],
+   ['O calor que você sente no rosto perto de uma fogueira, sem tocar nela, chega principalmente como:',['radiação infravermelha','ultravioleta','ondas de rádio','raios X'],'Corpos quentes emitem sobretudo infravermelho.'],
+   ['A luz, ao contrário do som:',['propaga-se no vácuo','precisa de um meio material','é uma onda longitudinal','viaja a 340 m/s'],'Ondas eletromagnéticas não precisam de meio: é assim que a luz das estrelas chega até nós.']])],
+ traps:['Achar que raios X ou gama viajam mais rápido que a luz: no vácuo, todas as ondas eletromagnéticas viajam a c.','Esquecer de converter nm, MHz ou GHz para o SI.','Achar que toda radiação é perigosa: rádio e micro-ondas não danificam as células como o UV e os raios X.'],
+ keep:['c = λ·f = 3×10⁸ m/s para toda onda eletromagnética no vácuo.','Rádio → micro-ondas → infravermelho → visível → UV → raios X → gama: frequência e energia crescem.','Visível: de 400 nm (violeta) a 700 nm (vermelho).']}]);
+
+addLessons('mag','magnetismo',[
+{id:'campofio',t:'Campo magnético de correntes',min:14,
+ idea:`<p>Oersted viu que um fio com corrente desvia a agulha de uma bússola. O campo magnético de um <b>fio reto e longo</b> forma circunferências em volta dele, e o sentido é dado pela <b>regra da mão direita</b>: com o polegar no sentido da corrente, os outros dedos se curvam no sentido do campo.</p>
+ <p>A intensidade diminui com a distância: <b>B = μ₀·i/(2π·d)</b>, em que μ₀ = 4π×10⁻⁷ T·m/A é a permeabilidade magnética do vácuo. Dobrar a corrente dobra o campo; dobrar a distância reduz o campo à metade.</p>
+ <p>Enrolando o fio, os campos de cada volta se somam. No centro de uma <b>espira</b> circular de raio R, B = μ₀·i/(2R). Dentro de um <b>solenoide</b> (uma bobina comprida) com N espiras num comprimento ℓ, o campo é quase uniforme: B = μ₀·N·i/ℓ. Com um núcleo de ferro dentro, o campo fica centenas de vezes mais forte: é o <b>eletroímã</b> dos guindastes de ferro-velho, das campainhas, dos motores e dos aparelhos de ressonância magnética.</p>`,
+ pred:{q:'Uma bússola está perto de um fio com corrente. Você a afasta para o dobro da distância. O campo magnético do fio nesse ponto fica:',o:['com a metade da intensidade','com um quarto da intensidade','com o dobro da intensidade','igual'],a:0,why:'B = μ₀·i/(2π·d): o campo de um fio longo cai com 1/d, e não com 1/d². Dobro da distância, metade do campo.'},
+ lab:{sim:'wireB'},
+ tasks:['Arraste a sonda para o dobro da distância. O que acontece com B?','Inverta o sentido da corrente. O que muda nas bússolas?','A que distância de um fio com 10 A o campo fica igual ao da Terra (≈ 50 μT)?'],
+ f:[{f:'B = '+frac('μ₀·i','2π·d'),s:[['B','campo magnético','T (tesla)'],['μ₀','permeabilidade do vácuo: 4π×10<sup>−7</sup>','T·m/A'],['i','corrente elétrica','A'],['d','distância até o fio','m']],n:'Fio reto e longo. Atalho: μ₀/(2π) = 2×10⁻⁷, então B = 2×10⁻⁷·i/d.'},
+  {f:'Espira: B = '+frac('μ₀·i','2R')+'      Solenoide: B = '+frac('μ₀·N·i','ℓ'),n:'R: raio da espira. N: número de espiras do solenoide; ℓ: comprimento dele.'}],
+ ex:{q:'Um fio longo conduz 20 A. Qual é o campo magnético a 10 cm dele?',s:['d = 10 cm = 0,1 m.','B = 2×10⁻⁷ × 20 / 0,1.','<b>B = 4×10⁻⁵ T = 40 μT</b>, quase o valor do campo magnético da Terra: por isso uma bússola perto do fio desvia.']},
+ probs:[
+  ()=>{ const i=pick([2,5,10,20,50]), d=pick([1,2,4,5,10,20]), a=20*i/d;
+    return NUM(`Um fio reto e longo conduz <b>${i} A</b>. Qual é o campo magnético a <b>${d} cm</b> dele, em microtesla (μT)?`,a,'μT',[`d = ${d} cm = ${F(d/100)} m`,`B = 2×10⁻⁷ × ${i} / ${F(d/100)} = ${F(a*1e-6)} T`,`B = ${F(a)} μT`],[[.2*i/d,'Converta a distância para metros antes de dividir.'],[2e-7*i*(d/100)*1e6,'A distância <b>divide</b>: mais longe, campo menor.']],'B = 2×10⁻⁷·i/d, com d em metros. 1 μT = 10⁻⁶ T.'); },
+  ()=>{ const B0=pick([10,20,40,60]), K=pick([2,3,4]), M=pick([1,2,3]), a=B0*M/K;
+    return NUM(`A uma certa distância de um fio, o campo magnético vale <b>${B0} μT</b>. Qual será o campo a uma distância <b>${K} vezes maior</b>${M>1?`, com a corrente <b>${M} vezes maior</b>`:', com a mesma corrente'}?`,a,'μT',[`B é proporcional a i/d`,`B = ${B0} × ${M}/${K} = ${F(a)} μT`],[[B0*M/(K*K),'O campo de um fio cai com 1/d, e não com 1/d².'],[B0*M*K,'Mais longe, o campo <b>diminui</b>.']]); },
+  ()=>{ const N=pick([200,500,1000]), l=pick([.1,.2,.5]), i=pick([1,2,5]), a=4*Math.PI*1e-7*N*i/l*1000;
+    return NUM(`Um solenoide de <b>${F(l*100)} cm</b> de comprimento tem <b>${N} espiras</b> e conduz <b>${i} A</b>. Qual é o campo magnético dentro dele, em militesla (mT)? (μ₀ = 4π×10⁻⁷ T·m/A; π ≈ 3,14)`,a,'mT',[`B = μ₀·N·i/ℓ = 4π×10⁻⁷ × ${N} × ${i} / ${F(l)}`,`B = ${F(a/1000)} T = ${F(a)} mT`],[[4*Math.PI*1e-4*N*i,'Divida pelo comprimento do solenoide, em metros.']]); },
+  ()=>{ const R=pick([2,5,10]), i=pick([1,2,5,10]), a=4*Math.PI*1e-7*i/(2*R/100)*1e6;
+    return NUM(`Uma espira circular de raio <b>${R} cm</b> conduz <b>${i} A</b>. Qual é o campo no centro dela, em μT? (μ₀ = 4π×10⁻⁷ T·m/A; π ≈ 3,14)`,a,'μT',[`R = ${F(R/100)} m`,`B = μ₀·i/(2R) = 4π×10⁻⁷ × ${i} / (2 × ${F(R/100)})`,`B = ${F(a)} μT`],[[2*a,'No centro da espira, B = μ₀·i/(2R): faltou o 2 do denominador.'],[a/Math.PI,'Essa é a fórmula do fio reto. Na espira, B = μ₀·i/(2R).']]); },
+  POOL([['As linhas do campo magnético de um fio reto e longo com corrente são:',['circunferências em volta do fio','retas que saem do fio','retas paralelas ao fio','espirais que se afastam do fio'],'O campo "abraça" o fio, no sentido dado pela regra da mão direita.'],
+   ['Para deixar um eletroímã mais forte, podemos:',['aumentar a corrente ou o número de espiras, ou pôr um núcleo de ferro','diminuir a corrente','desenrolar a bobina','trocar o fio de cobre por um de plástico'],'B = μ₀·N·i/ℓ, e o ferro multiplica o campo.'],
+   ['Num fio vertical, a corrente sobe. Olhando de frente, num ponto à direita do fio, o campo magnético aponta:',['para dentro da tela','para fora da tela','para cima','para a direita'],'Polegar para cima: os dedos entram na tela do lado direito do fio e saem do lado esquerdo.'],
+   ['Dois fios paralelos com correntes no mesmo sentido:',['se atraem','se repelem','não interagem','giram um em volta do outro'],'Cada fio está no campo do outro e sofre força magnética: correntes de mesmo sentido se atraem.']])],
+ traps:['Achar que o campo do fio cai com 1/d², como na gravitação e na lei de Coulomb: cai com 1/d.','Esquecer de passar centímetros para metros.','Confundir as fórmulas do fio (2π·d), da espira (2R) e do solenoide (N/ℓ).'],
+ keep:['Fio reto: B = μ₀·i/(2π·d), linhas circulares, regra da mão direita.','Espira: B = μ₀·i/(2R). Solenoide: B = μ₀·N·i/ℓ.','μ₀ = 4π×10⁻⁷ T·m/A, e μ₀/(2π) = 2×10⁻⁷.']}]);
 
 if(document.body) boot(); else addEventListener('DOMContentLoaded',boot);
 </script>
