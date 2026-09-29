@@ -248,6 +248,75 @@ html:not(.has-ai) .ai{display:none!important}
 .symd summary{cursor:pointer;font-family:var(--display);font-size:13.5px;color:var(--muted);padding:2px 0}
 .symd[open] summary{margin-bottom:6px}
 
+/* jornada de descoberta */
+.jor{scroll-margin-top:76px}
+#jor{scroll-margin-top:76px}
+.jbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.jdots{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.jd{width:26px;height:8px;border-radius:5px;border:0;background:var(--line);cursor:pointer;padding:0}
+.jd.done{background:var(--ok)}
+.jd.on{background:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+.jd[disabled]{cursor:default;opacity:.6}
+.jcount{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.jcard{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 18px 20px;min-width:0}
+.jcard h3{font-size:22px;margin:0 0 10px}
+.jtag{font-family:var(--display);font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.jt-cena{border-top-color:var(--energy)} .jt-cena .jtag{color:var(--energy)}
+.jt-lab,.jt-medir{border-top-color:var(--vel)} .jt-lab .jtag,.jt-medir .jtag{color:var(--vel)}
+.jt-deduz{border-top-color:var(--acc)} .jt-deduz .jtag{color:var(--acc)}
+.jt-mundo{border-top-color:var(--ok)} .jt-mundo .jtag{color:var(--ok)}
+.jt-q .jtag,.jt-n .jtag,.jt-ordem .jtag,.jt-aposta .jtag{color:var(--force)} .jt-q,.jt-n,.jt-ordem,.jt-aposta{border-top-color:var(--force)}
+.jtext{font-size:18px;line-height:1.55;margin-bottom:14px}
+.jtext p{margin:0 0 10px}
+.jtext p:last-child{margin-bottom:0}
+.jlab{margin:4px -6px 10px}
+.jlab .lab{box-shadow:none}
+.jgoal{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--display);font-size:14.5px;font-weight:700;color:var(--muted)}
+.jgoal .gi{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--line)}
+.jgoal.won{color:var(--ok)}
+.jgoal.won .gi{background:var(--ok);border-color:var(--ok)}
+.jgoal .btn{margin-left:auto}
+.jrec{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.jneed{font-family:var(--display);font-size:14px;color:var(--muted)}
+.jtab{border-collapse:collapse;margin-top:12px;font-family:var(--mono);font-size:14px;min-width:220px}
+.jtab th{font-family:var(--display);font-size:13px;color:var(--muted);text-align:right;padding:5px 12px;border-bottom:2px solid var(--line)}
+.jtab td{text-align:right;padding:5px 12px;border-bottom:1px solid var(--line)}
+.jplot{margin-top:10px}
+.jplot canvas{display:block;width:100%}
+.jafter .jtext{margin-top:14px}
+.jder{list-style:none;padding:0;margin:0;display:grid;gap:12px;counter-reset:d}
+.jder li{counter-increment:d;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 10px;align-items:start}
+.jder li::before{content:counter(d);grid-row:span 3;font-family:var(--mono);font-size:13px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;margin-top:3px}
+.jl{font-size:18px;line-height:1.5}
+.blank{display:inline-block;min-width:54px;text-align:center;border-bottom:2.5px dashed var(--acc);color:var(--acc);font-family:var(--display);font-weight:800}
+.filled{display:inline-block;background:var(--ok-soft);border-radius:6px;padding:0 6px;font-weight:600}
+.jopts{display:flex;flex-wrap:wrap;gap:8px}
+.jopts .btn{font-family:var(--body);font-weight:600;font-size:16px}
+.jopts .btn.no{border-color:var(--bad);color:var(--bad);opacity:.6}
+.jwhy{font-size:15px;color:var(--muted)}
+.jwhy .bad{color:var(--bad)}
+.jresult{margin-top:16px;border:2px solid var(--acc);border-radius:var(--r);padding:10px 14px;background:var(--card)}
+.jresult .jtag{color:var(--acc);margin:0}
+.jworld{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.jworld div{background:var(--sunk);border-radius:11px;padding:12px 14px}
+.jworld b{font-family:var(--display);font-size:16px}
+.jworld p{margin:4px 0 0;font-size:15.5px;line-height:1.45}
+.jord{margin:0 0 12px;padding-left:24px;font-size:16.5px}
+.jord li{margin:4px 0;color:var(--ok);font-weight:600}
+.jpool{display:grid;gap:8px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.jnav{display:flex;align-items:center;gap:10px;margin-top:12px}
+.jnav [data-nav=next]{margin-left:auto}
+.jend{text-align:center;border-top-color:var(--ok)}
+.jend .jstar{font-size:40px;color:var(--energy);line-height:1}
+.jend p{color:var(--muted);margin:6px 0 14px}
+.jend .row{justify-content:center}
+details.fold{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:0 16px}
+details.fold>summary{cursor:pointer;padding:14px 0;font-family:var(--display);font-weight:700;font-size:16px;color:var(--accent)}
+details.fold[open]{padding-bottom:16px}
+details.fold #lab{margin-top:4px}
+
 /* revisão */
 .revlist{display:grid;gap:8px;margin:14px 0}
 .empty{color:var(--muted);font-size:16px}
@@ -272,6 +341,10 @@ html:not(.has-ai) .ai{display:none!important}
   .fml .gap{display:block;height:8px}
   .result{flex-direction:column;align-items:flex-start;gap:10px}
   .chatf{flex-direction:column;align-items:stretch}
+  .jcard{padding:14px 12px 16px}
+  .jtext,.jl{font-size:17px}
+  .jlab{margin:4px -4px 10px}
+  .jnav .ai{order:3;flex-basis:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -331,7 +404,7 @@ function mergeP(a,b){ const out=normP({...a}); out.l={};
   new Set([...Object.keys(a.l),...Object.keys(b.l)]).forEach(id=>{ const x=a.l[id], y=b.l[id];
     if(!x||!y){ out.l[id]={...(x||y)}; return; }
     const rx=rank(x), ry=rank(y); let win=x; for(let i=0;i<3;i++){ if(rx[i]!==ry[i]){ win=rx[i]>ry[i]?x:y; break; } }
-    const lose=win===x?y:x, w={...win}; ['pr','prr','lab','ex'].forEach(k=>{ if(w[k]==null&&lose[k]!=null) w[k]=lose[k]; }); out.l[id]=w; });
+    const lose=win===x?y:x, w={...win}; ['pr','prr','lab','ex','jd'].forEach(k=>{ if(w[k]==null&&lose[k]!=null) w[k]=lose[k]; }); if(lose.ji>(w.ji||0)) w.ji=lose.ji; out.l[id]=w; });
   out.mod={...b.mod}; Object.keys(a.mod).forEach(k=>{ out.mod[k]=Math.max(+a.mod[k]||0,+out.mod[k]||0); });
   out.days=[...new Set([...b.days,...a.days])].filter(d=>typeof d==='string').sort().slice(-400);
   return out; }
@@ -547,7 +620,7 @@ async function genQuestion(l,out,btn){
 /* ---------- telas ---------- */
 let SIMNOW=[], SQ='';
 const CHN=8;
-function disposeSims(){ SIMNOW.forEach(s=>s.dispose()); SIMNOW=[]; }
+function disposeSims(){ SIMNOW.forEach(s=>s.dispose()); SIMNOW=[]; if(JCLEAN){ JCLEAN(); JCLEAN=null; } }
 function srch(l){ return l.srch||(l.srch=normTxt(l.t+' '+l.mod.t+' '+plain((l.keep||[]).join(' ')))); }
 function sidebar(){ const cur=location.hash.slice(1), d=dueList().length;
   return `<a class="brand" href="#"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15.5" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M5 22 Q12 4 17 17 T29 12" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="17" r="2.6" fill="var(--force)"/></svg><span><b>Física do Zero</b><small>ensino médio, do começo</small></span></a>
@@ -569,18 +642,19 @@ function viewHome(){
     <p class="ai aihint">${AIPILL} <span>Tutor com IA ligado: em cada lição você pode pedir outra explicação, perguntar por que errou, tirar dúvidas e criar questões estilo ENEM.</span></p></div>
     <div class="herolab" id="herolab"></div></section>
   <h2 class="sech">Como cada lição funciona</h2>
-  <div class="method"><div><h3>1. Preveja</h3><p>Antes de ver a resposta, você aposta no que vai acontecer. Errar a previsão faz o cérebro prestar atenção.</p></div><div><h3>2. Experimente</h3><p>No laboratório, você muda os valores e vê o efeito na hora, com vetores e gráficos.</p></div><div><h3>3. Entenda</h3><p>A fórmula aparece com cada símbolo explicado e um exemplo resolvido passo a passo.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias. No fim de cada módulo, um desafio misturado.</p></div></div>
+  <div class="method"><div><h3>1. Veja no dia a dia</h3><p>Cada lição começa numa situação real: o ônibus que freia, a bola chutada, o elevador que sobe.</p></div><div><h3>2. Experimente e meça</h3><p>No laboratório você cumpre desafios, anota medidas e vê o gráfico se formar. O padrão aparece para você.</p></div><div><h3>3. Construa a fórmula</h3><p>Você monta a fórmula passo a passo a partir do que mediu. Ela vira uma conclusão sua, não algo para decorar.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias. No fim de cada módulo, um desafio misturado.</p></div></div>
   <h2 class="sech">Mapa do curso</h2>
   <div class="map">${MODS.map((mo,mi)=>{ const k=mo.lessons.filter(l=>(P.l[l.id]||{}).s===2).length, best=P.mod[mo.id]; return `<div class="mapcard"><p class="eyebrow" style="margin:0">Módulo ${mi+1}</p><h3>${mo.t}</h3><div class="bar" aria-label="${k} de ${mo.lessons.length} dominadas"><i style="width:${k/mo.lessons.length*100}%"></i></div>${mo.lessons.map(l=>`<a class="lk" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}<a class="lk chal" href="#desafio-${mo.id}"><span class="star" aria-hidden="true">★</span><span>Desafio do módulo${best!=null?` · melhor: ${best}/${CHN}`:''}</span></a></div>`; }).join('')}</div>
   <p class="syncnote home${SYNC.state==='cloud'?' cloud':''}">${syncText()}</p></div>`; }
 
 function chipCls(id){ const x=P.l[id]; return isDue(id)?'due':x&&x.s===2?'ok':''; }
 function stepsHTML(l){ const x=P.l[l.id]||{};
-  return [['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]].filter(s=>s[3])
+  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
     .map(([k,t,d])=>`<li><button type="button" class="${d?'done':''}" data-go="${k}"><span class="ck" aria-hidden="true">${d?'✓':''}</span>${t}${d?'<span class="sr"> (feito)</span>':''}</button></li>`).join(''); }
 function updateHead(l){ const s=$('#steps'); if(s) s.innerHTML=stepsHTML(l); const c=$('#lstat'); if(c){ c.textContent=statusText(l.id); c.className='chip '+chipCls(l.id); } }
 
 function viewLesson(l){
+  if(l.jor) return viewJourneyLesson(l);
   const mi=MODS.indexOf(l.mod), prev=LES[l.idx-1], next=LES[l.idx+1], endMod=!next||next.mod!==l.mod;
   let n=0; const H=t=>`<h2><span class="n">${String(++n).padStart(2,'0')}</span>${t}</h2>`;
   return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1} de ${LES.length}</p><h1>${l.t}</h1>
@@ -602,6 +676,26 @@ function viewLesson(l){
     <form class="chatf"><label class="sr" for="chatin">Sua pergunta</label><textarea id="chatin" rows="2" placeholder="Ex.: por que a massa não aparece nessa fórmula?"></textarea><button class="btn" type="submit">Perguntar</button></form></div></section>
   <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${endMod?`<a class="btn ghost" href="#desafio-${l.mod.id}">★ Desafio do módulo</a>`:''}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
 
+/* lição no formato jornada: descobrir primeiro, resumo depois */
+function viewJourneyLesson(l){
+  const mi=MODS.indexOf(l.mod), prev=LES[l.idx-1], next=LES[l.idx+1], endMod=!next||next.mod!==l.mod, x=P.l[l.id]||{};
+  let n=0; const H=t=>`<h2><span class="n">${String(++n).padStart(2,'0')}</span>${t}</h2>`;
+  return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1} de ${LES.length}</p><h1>${l.t}</h1>
+    <div class="chips"><span class="chip">${l.min||12} min</span><span class="chip ${chipCls(l.id)}" id="lstat">${statusText(l.id)}</span></div>
+    <ol class="steps" id="steps" aria-label="Etapas da lição">${stepsHTML(l)}</ol></header>
+  <section class="sec">${H('Descubra')}<p class="lead2">Nada de decorar: você vai ver a situação, mexer, medir e montar a fórmula. Cada passo libera o próximo.</p><div id="jor"></div></section>
+  <section class="sec">${H('Resumo da lição')}<details class="fold" id="resumo"${x.jd?' open':''}><summary>${x.jd?'O que você descobriu':'Abrir o resumo (melhor depois da jornada)'}</summary><div class="prose">${l.idea}${l.f.map(f=>formulaCard(f)).join('')}${l.fn?`<div>${l.fn}</div>`:''}${l.keep?`<div class="note"><b>Para lembrar</b><ul style="margin:6px 0 0">${l.keep.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</div>
+    <div class="ai aiask" id="aiidea"><span>Ainda confuso? Peça ao tutor:</span><button class="btn sm ghost" type="button" data-ai="simples">Explique mais simples</button><button class="btn sm ghost" type="button" data-ai="analogia">Dê uma analogia</button><button class="btn sm ghost" type="button" data-ai="fundo">Quero ir mais fundo</button></div><div class="aiout"></div></details></section>
+  <section class="sec">${H('Laboratório livre')}<details class="fold" id="livre"><summary>Abrir o laboratório para explorar à vontade</summary><div id="lab"></div>${l.tasks?`<div class="note" style="margin-top:12px"><b>Ideias para testar:</b><ul class="tasks">${l.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</details></section>
+  ${l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
+  <section class="sec">${H('Pratique')}<p class="lead2">Os números mudam a cada questão. Três acertos seguidos de primeira dominam a lição; se errar, você ganha uma pista e uma segunda chance.</p><div id="prac"></div>
+    <div class="ai aigen"><button class="btn sm ghost" type="button" id="aigen">${AIPILL} Criar uma questão estilo ENEM</button><span class="aitag">Treino extra; não conta para o domínio.</span></div><div id="aiq"></div></section>
+  ${l.traps?`<section class="sec prose">${H('Erros comuns')}<ul>${l.traps.map(t=>`<li>${t}</li>`).join('')}</ul></section>`:''}
+  <section class="sec ai" id="chat">${H('Tire sua dúvida')}<p class="lead2">Pergunte ao tutor qualquer coisa sobre esta lição. Ele é o Claude e usa o seu plano; na primeira pergunta, pede a sua permissão.</p>
+    <div class="chat"><div class="msgs"></div><div class="row sugg">${['Onde isso aparece no dia a dia?','Como esse assunto cai no ENEM?','Me passe um exercício parecido com o exemplo'].map(t=>`<button class="btn sm ghost" type="button" data-sug>${t}</button>`).join('')}</div>
+    <form class="chatf"><label class="sr" for="chatin">Sua pergunta</label><textarea id="chatin" rows="2" placeholder="Ex.: por que a massa não aparece nessa fórmula?"></textarea><button class="btn" type="submit">Perguntar</button></form></div></section>
+  <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${endMod?`<a class="btn ghost" href="#desafio-${l.mod.id}">★ Desafio do módulo</a>`:''}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
+
 const IDEA_ASK={simples:'Explique de novo a ideia central desta lição, de um jeito mais simples, para quem está vendo o assunto pela primeira vez. Use um exemplo concreto com números. No máximo 170 palavras.',
   analogia:'Explique a ideia central desta lição com uma analogia do dia a dia de um estudante brasileiro. Depois, em uma frase, diga onde a analogia deixa de funcionar. No máximo 170 palavras.',
   fundo:'Aprofunde esta lição para quem já entendeu o básico: de onde vem a fórmula principal (raciocínio curto) e uma aplicação ou pegadinha que costuma cair no ENEM ou em vestibulares. No máximo 220 palavras.'};
@@ -617,10 +711,12 @@ function mountChat(l){ const box=$('#chat'); if(!box) return; const msgs=$('.msg
   $$('[data-sug]',box).forEach(b=>b.addEventListener('click',()=>send(b.textContent))); }
 
 function mountLesson(l){
-  SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
   const x=()=>P.l[l.id]||{}, upd=()=>updateHead(l);
-  const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch));
-  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
+  if(l.jor){ Jornada($('#jor'),l,first=>{ upd(); renderSide(); const d=$('#resumo'); if(d&&first){ d.open=true; $('summary',d).textContent='O que você descobriu'; } });
+    const lv=$('#livre'); lv.addEventListener('toggle',()=>{ if(lv.open&&!lv.dataset.m){ lv.dataset.m=1; SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{})); } }); }
+  else { SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
+    const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch)); }
+  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
   const pr=$('#pred'); if(pr){
     const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x().pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x().pr===l.pred.a?'ok':'info'}"><b>${x().pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
     const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x().pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
@@ -678,6 +774,106 @@ function boot(){
   $('#menu').addEventListener('click',()=>{ $('#side').classList.add('open'); document.body.insertAdjacentHTML('beforeend','<div class="scrim"></div>'); $('.scrim').addEventListener('click',closeSide); });
   $('#side').addEventListener('input',e=>{ if(e.target.id==='sq'){ SQ=e.target.value; filterSide(); } });
   addEventListener('hashchange',route); route(); initAI(); initSync(); }
+
+/* =====================================================================
+   Jornada de descoberta: a lição vira uma sequência de telas curtas.
+   O aluno parte de uma situação do dia a dia, mexe no laboratório até
+   cumprir um desafio, mede, percebe o padrão e monta a fórmula sozinho.
+
+   Tipos de passo (l.jor = [...]):
+   cena    {p}                         situação do dia a dia
+   nota    {h,p}                       explicação curta
+   q       {q,o,a:0,why,w}             pergunta de raciocínio (a 1ª opção é a certa)
+   n       {q,a,u,tol,why,dica}        conta rápida
+   lab     {p,sim,cfg,goal(s),ok,dica} desafio: libera quando goal(s) for verdadeiro
+   medir   {p,sim,cfg,rec(s),cols,need,depois:{q...}}  anotar medidas, ver o gráfico
+   deduz   {p,linhas:[{txt:'… ___ …',o,why}],fim}      montar a fórmula
+   ordem   {q,itens,why}               tocar os itens na ordem certa
+   mundo   {h,itens:[[título,texto]]}  onde isso aparece na sua volta
+   ===================================================================== */
+const JTAG={aposta:'Aposte',cena:'Situação',nota:'Entenda',q:'Pense',n:'Faça a conta',lab:'Desafio no laboratório',medir:'Meça e descubra',deduz:'Construa a fórmula',ordem:'Coloque em ordem',mundo:'Na sua volta'};
+let JCLEAN=null, JORCTX=null;
+function jPlot(host,rows,cols){
+  host.innerHTML='<canvas role="img" aria-label="Gráfico das suas medidas"></canvas>'; const cv=$('canvas',host), w=cv.clientWidth||host.clientWidth||480, h=230, d=Math.min(2,window.devicePixelRatio||1);
+  cv.style.height=h+'px'; cv.width=Math.round(w*d); cv.height=Math.round(h*d); const ctx=cv.getContext('2d'); ctx.setTransform(d,0,0,d,0,0); const g=G(ctx,w,h);
+  const xs=rows.map(r=>r[0]), ys=rows.map(r=>r[1]), xr=[Math.min(0,...xs),Math.max(...xs,0)*1.12||1], yr=[Math.min(0,...ys),Math.max(...ys,0)*1.15||1];
+  const r=g.plot(52,18,w-72,h-66,{xr,yr,series:[],xl:cols[0],yl:cols[1]});
+  const srt=rows.slice().sort((a,b)=>a[0]-b[0]); if(srt.length>1) g.poly([[r.X(0),r.Y(0)],...srt.map(p=>[r.X(p[0]),r.Y(p[1])])].slice(srt[0][0]===0?1:0),COL.muted,1.5);
+  srt.forEach(p=>g.circle(r.X(p[0]),r.Y(p[1]),6,COL.force,COL.card,1.5)); }
+
+/* cada tipo de passo desenha o corpo e chama done() quando o aluno cumpriu */
+const JSTEP={
+  cena(b,st,done){ b.innerHTML=`<div class="jtext">${st.p}</div>`; done(); },
+  nota(b,st,done){ b.innerHTML=`<div class="jtext">${st.p}</div>`; done(); },
+  mundo(b,st,done){ b.innerHTML=`${st.p?`<div class="jtext">${st.p}</div>`:''}<div class="jworld">${st.itens.map(([t,d])=>`<div><b>${t}</b><p>${d}</p></div>`).join('')}</div>`; done(); },
+  q(b,st,done){ const order=shuffle(st.o.map((_,i)=>i)); let tries=0, over=false;
+    b.innerHTML=`<div class="jtext">${st.q}</div><div class="opts">${order.map((k,j)=>`<button class="opt" type="button" data-k="${k}"><span class="k">${'ABCDE'[j]}</span><span>${st.o[k]}</span></button>`).join('')}</div><div class="jfb" aria-live="polite"></div>`;
+    b.addEventListener('click',e=>{ const t=e.target.closest('.opt'); if(!t||over||t.disabled) return; const k=+t.dataset.k; tries++;
+      if(k===0){ over=true; t.classList.add('right'); $$('.opt',b).forEach(x=>x.disabled=true); $('.jfb',b).innerHTML=`<div class="fb ok"><b>${tries===1?'Isso!':'Agora sim.'}</b> ${st.why||''}</div>`; done(); return; }
+      t.classList.add('wrong'); t.disabled=true;
+      if(tries>=2){ over=true; $$('.opt',b).forEach(x=>{ x.disabled=true; if(+x.dataset.k===0) x.classList.add('right'); }); $('.jfb',b).innerHTML=`<div class="fb info"><b>A certa é a destacada em verde.</b> ${st.why||''}</div>`; done(); }
+      else $('.jfb',b).innerHTML=`<div class="fb bad"><b>Ainda não.</b> ${(st.w&&st.w[k-1])||'Pense de novo no que você viu até aqui.'}</div>`; }); },
+  aposta(b,st,done){ b.innerHTML=`<div class="jtext">${st.q}</div><div class="opts">${st.o.map((t,j)=>`<button class="opt" type="button" data-k="${j}"><span class="k">${'ABCDE'[j]}</span><span>${t}</span></button>`).join('')}</div><div class="jfb" aria-live="polite"></div>`;
+    b.addEventListener('click',e=>{ const t=e.target.closest('.opt'); if(!t||t.disabled) return; $$('.opt',b).forEach(x=>{ x.disabled=true; x.classList.toggle('pick',x===t); }); $('.jfb',b).innerHTML=`<div class="fb info"><b>Aposta anotada.</b> ${st.depois||'Continue para conferir no laboratório.'}</div>`; done(); }); },
+  n(b,st,done){ let tries=0, over=false;
+    b.innerHTML=`<div class="jtext">${st.q}</div><form class="ans" autocomplete="off"><input inputmode="decimal" placeholder="sua resposta" aria-label="Sua resposta"><span class="u">${st.u||''}</span><button class="btn" type="submit">Verificar</button></form><div class="jfb" aria-live="polite"></div>`;
+    $('form',b).addEventListener('submit',e=>{ e.preventDefault(); if(over) return; const v=parseNum($('input',b).value); if(isNaN(v)){ $('.jfb',b).innerHTML='<div class="fb info">Digite só o número. Exemplo: 12,5</div>'; return; }
+      tries++; const tol=st.tol||.02, ok=Math.abs(v-st.a)<=Math.max(tol*Math.abs(st.a),1e-9);
+      if(ok||tries>=2){ over=true; $$('input,button',b).forEach(x=>x.disabled=true); $('.jfb',b).innerHTML=`<div class="fb ${ok?'ok':'info'}"><b>${ok?'Isso!':'A resposta é '+nf(st.a)+' '+(st.u||'')+'.'}</b> ${st.why||''}</div>`; done(); }
+      else $('.jfb',b).innerHTML=`<div class="fb bad"><b>Ainda não.</b> ${st.dica||'Refaça a conta com calma.'}</div>`; }); },
+  lab(b,st,done,ctx){ b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jgoal"><span class="gi" aria-hidden="true"></span><span class="gt">Desafio em aberto</span><button class="btn sm ghost" type="button" data-hint>Preciso de uma dica</button></div><div class="jfb" aria-live="polite"></div>`;
+    const s=SIMS[st.sim]($(`#jl${ctx.i}`),st.cfg||{}); ctx.sims.push(s); let hints=0;
+    const win=()=>{ clearInterval(ctx.timer); const gl=$('.jgoal',b); gl.classList.add('won'); $('.gt',gl).textContent='Desafio cumprido'; $('[data-hint]',gl)?.remove(); $('.jfb',b).innerHTML=`<div class="fb ok"><b>Conseguiu!</b> ${st.ok||''}</div>`; done(); };
+    ctx.timer=setInterval(()=>{ try{ if(st.goal(s)) win(); }catch(e){} },250);
+    $('[data-hint]',b).addEventListener('click',e=>{ hints++; if(hints===1){ $('.jfb',b).innerHTML=`<div class="fb info hint"><b>Dica:</b> ${st.dica||'Mexa nos controles e observe o que muda.'}</div>`; e.target.textContent='Pular este desafio'; } else { $('.jfb',b).innerHTML=`<div class="fb info">${st.ok||''}</div>`; clearInterval(ctx.timer); done(); } }); },
+  medir(b,st,done,ctx){ const rows=[]; b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jrec"><button class="btn" type="button" data-rec>Anotar medida</button><span class="jneed">0 de ${st.need} medidas</span></div><div class="jfb" aria-live="polite"></div>
+    <div class="tblw"><table class="jtab"><thead><tr>${st.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody></tbody></table></div><div class="jplot"></div><div class="jafter"></div>`;
+    const s=SIMS[st.sim]($(`#jl${ctx.i}`),st.cfg||{}); ctx.sims.push(s);
+    $('[data-rec]',b).addEventListener('click',()=>{ const fb=$('.jfb',b); let r=null; try{ r=st.rec(s); }catch(e){}
+      if(!r){ fb.innerHTML=`<div class="fb info">${st.recMsg||'Ainda não dá para anotar: faça o experimento primeiro.'}</div>`; return; }
+      r=r.map(v=>+(+v).toFixed(st.dec??2)); if(rows.some(x=>x.every((v,j)=>v===r[j]))){ fb.innerHTML='<div class="fb info">Essa medida você já anotou. Mude alguma coisa e anote outra.</div>'; return; }
+      fb.innerHTML=''; rows.push(r); $('tbody',b).insertAdjacentHTML('beforeend',`<tr>${r.map(v=>`<td>${nsig(v,4)}</td>`).join('')}</tr>`); $('.jneed',b).textContent=`${rows.length} de ${st.need} medidas`;
+      if(rows.length===st.need){ $('[data-rec]',b).disabled=true; if(st.plot!==false) jPlot($('.jplot',b),rows.map(r=>[r[st.px||0],r[st.py??1]]),[st.cols[st.px||0],st.cols[st.py??1]]);
+        const a=document.createElement('div'); $('.jafter',b).append(a); JSTEP.q(a,st.depois,done); } }); },
+  deduz(b,st,done){ let k=0; b.innerHTML=`${st.p?`<div class="jtext">${st.p}</div>`:''}<ol class="jder"></ol><div class="jfim"></div>`; const ol=$('.jder',b);
+    const line=()=>{ const L=st.linhas[k], order=shuffle(L.o.map((_,i)=>i));
+      ol.insertAdjacentHTML('beforeend',`<li><div class="jl">${L.txt.replace('___','<span class="blank">?</span>')}</div><div class="jopts">${order.map(i=>`<button class="btn sm ghost" type="button" data-i="${i}">${L.o[i]}</button>`).join('')}</div><div class="jwhy"></div></li>`);
+      const li=ol.lastElementChild;
+      li.addEventListener('click',e=>{ const t=e.target.closest('[data-i]'); if(!t||t.disabled) return;
+        if(+t.dataset.i===0){ $('.blank',li).outerHTML=`<span class="filled">${L.o[0]}</span>`; $('.jopts',li).remove(); $('.jwhy',li).innerHTML=L.why?`<span>${L.why}</span>`:''; k++;
+          if(k<st.linhas.length) line(); else { if(st.fim) $('.jfim',b).innerHTML=`<div class="jresult"><p class="jtag">Você chegou em</p><div class="fml">${st.fim.replace(/ {3,}/g,'<span class="gap"></span>')}</div></div>`; done(); } }
+        else { t.classList.add('no'); t.disabled=true; $('.jwhy',li).innerHTML=`<span class="bad">${(L.w&&L.w[+t.dataset.i-1])||'Não encaixa. Tente outra.'}</span>`; } }); };
+    line(); },
+  ordem(b,st,done){ let k=0; const order=shuffle(st.itens.map((_,i)=>i));
+    b.innerHTML=`<div class="jtext">${st.q}</div><ol class="jord"></ol><div class="jpool">${order.map(i=>`<button class="opt" type="button" data-i="${i}"><span>${st.itens[i]}</span></button>`).join('')}</div><div class="jfb" aria-live="polite"></div>`;
+    b.addEventListener('click',e=>{ const t=e.target.closest('.jpool .opt'); if(!t) return; const i=+t.dataset.i;
+      if(i===k){ $('.jord',b).insertAdjacentHTML('beforeend',`<li>${st.itens[i]}</li>`); t.remove(); k++; $('.jfb',b).innerHTML='';
+        if(k===st.itens.length){ $('.jfb',b).innerHTML=`<div class="fb ok"><b>Isso!</b> ${st.why||''}</div>`; done(); } }
+      else { t.classList.add('shake'); setTimeout(()=>t.classList.remove('shake'),400); $('.jfb',b).innerHTML='<div class="fb bad">Esse não vem agora. Qual acontece antes?</div>'; } }); }
+};
+
+function Jornada(host,l,onDone){
+  const J=l.jor, st0=P.l[l.id]||{}; let reached=st0.jd?J.length:Math.min(st0.ji||0,J.length-1), i=st0.jd?0:reached, ctx=null;
+  function clean(){ if(!ctx) return; clearInterval(ctx.timer); ctx.sims.forEach(s=>s.dispose()); ctx=null; }
+  JCLEAN=clean;
+  function render(scroll){ clean(); const st=J[i]; ctx={i,sims:[],timer:0}; JORCTX=ctx;
+    host.innerHTML=`<div class="jor"><div class="jbar"><div class="jdots">${J.map((s,k)=>`<button type="button" class="jd${k<reached?' done':''}${k===i?' on':''}" data-go="${k}" ${k>reached?'disabled':''} aria-label="Passo ${k+1}: ${JTAG[s.t]}"></button>`).join('')}</div><span class="jcount">${i+1} de ${J.length}</span></div>
+      <div class="jcard jt-${st.t}"><p class="jtag">${JTAG[st.t]}</p>${st.h?`<h3>${st.h}</h3>`:''}<div class="jbody"></div></div>
+      <div class="jnav"><button class="btn ghost" type="button" data-nav="back" ${i?'':'disabled'}>← Voltar</button><button class="btn sm ghost ai" type="button" data-nav="ai">${AIPILL} Não entendi</button><button class="btn" type="button" data-nav="next" disabled>${i===J.length-1?'Concluir':'Continuar'} →</button></div><div class="aiout"></div></div>`;
+    JSTEP[st.t]($('.jbody',host),st,()=>{ const nb=$('[data-nav=next]',host); if(nb) nb.disabled=false; },ctx);
+    if(i<reached) $('[data-nav=next]',host).disabled=false;
+    if(scroll) host.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); }
+  function finish(scroll){ clean(); const x=ls(l.id); const first=!x.jd; if(first){ x.jd=1; x.ji=J.length; save(); } onDone&&onDone(first);
+    host.innerHTML=`<div class="jor"><div class="jcard jend"><div class="jstar" aria-hidden="true">★</div><h3>Você descobriu a física desta lição.</h3><p>Agora confira o resumo, veja um exemplo resolvido e pratique até dominar.</p><div class="row"><button class="btn" type="button" data-to="prac">Praticar agora</button><button class="btn ghost" type="button" data-to="resumo">Ver o resumo</button><button class="btn ghost" type="button" data-again>Refazer a jornada</button></div></div></div>`;
+    if(scroll) host.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); }
+  host.addEventListener('click',e=>{ const t=e.target.closest('button'); if(!t||!host.contains(t)) return;
+    if(t.dataset.go!=null&&!t.disabled){ i=+t.dataset.go; render(true); }
+    else if(t.dataset.nav==='back'&&i>0){ i--; render(true); }
+    else if(t.dataset.nav==='next'){ if(i+1>reached&&i<J.length-1){ reached=i+1; const x=ls(l.id); x.ji=Math.max(x.ji||0,reached); save(); } if(i===J.length-1) finish(true); else { i++; render(true); } }
+    else if(t.dataset.nav==='ai'){ t.disabled=true; const st=J[i]; aiAsk($('.aiout',host),TUTOR+'\n\n'+lessonCtx(l)+`\n\nO aluno está num passo da atividade guiada desta lição e não entendeu. Conteúdo do passo:\n${plain([st.h,st.p,st.q,(st.linhas||[]).map(x=>x.txt).join(' / ')].filter(Boolean).join('\n'))}\n\nExplique esse passo de outro jeito, com um exemplo do dia a dia, em no máximo 120 palavras. Se houver uma pergunta ou desafio, dê uma pista, mas não entregue a resposta.`); }
+    else if(t.dataset.to){ const el=$(t.dataset.to==='prac'?'#prac':'#resumo'); if(el){ if(el.tagName==='DETAILS') el.open=true; el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); } }
+    else if(t.dataset.again!=null){ i=0; render(true); } });
+  if(st0.jd) finish(false); else render(false); }
 
 /* =====================================================================
    Laboratórios de fundamentos e mecânica (g = 10 m/s² em todo o curso)
@@ -773,7 +969,7 @@ SIMS.fall=(host)=>Sim(host,{alt:'Duas bolas de massas diferentes caindo juntas n
 SIMS.proj=(host,cfg)=>{ const hero=!!cfg.hero; const angs=[30,45,60];
   return Sim(host,{alt:'Projéteis lançados em ângulos diferentes; 30° e 60° caem no mesmo lugar',anim:true,autoplay:hero,h:hero?250:320,speed:hero?1.4:1,
   legend:hero?[['force','30°'],['vel','45°'],['acc','60°']]:[['vel','vₓ (constante)'],['acc','v_y (muda por causa da gravidade)']],
-  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
+  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:cfg.th||45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
   init(s){ if(hero){ s.p.v0=18; s.p.g=10; s.k=s.k||0; s.p.th=angs[s.k%3]; s.done=s.done||[]; s.wait=0; } s.tr=[]; s.x=0; s.y=0; },
   step(s,dt){ if(hero&&s.wait>0){ s.wait-=dt; if(s.wait<=0){ s.k++; if(s.k%3===0) s.done=[]; s.t=0; s.def.init(s); } return; }
     const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th), T=2*vy/s.p.g, t=Math.min(T,s.t+dt);
@@ -830,9 +1026,9 @@ SIMS.block=(host,cfg)=>Sim(host,{alt:'Bloco empurrado sobre uma superfície com 
   reads:s=>{ const f=s.def.forces(s); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N',nt(f.N)+' N']].concat(cfg.fric?[['Atrito',nt(f.fat)+' N · '+f.kind],['Atrito máximo μₑ·N',nt(s.p.ue*f.N)+' N']]:[]).concat([['Força resultante',nt(s.p.F-f.fat)+' N'],['Aceleração a = F<sub>R</sub>/m',nt(f.a)+' m/s²'],['Velocidade',nt(s.v)+' m/s']]); }});
 
 /* elevador: normal, peso e ação e reação */
-SIMS.elev=(host)=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador acelerando',anim:true,h:330,
+SIMS.elev=(host,cfg={})=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador acelerando',anim:true,h:330,
   legend:[['force','peso (a Terra puxa a pessoa)'],['vel','normal (a balança empurra a pessoa)'],['muted','reação: a pessoa empurra a balança']],
-  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:2,u:'m/s²'}],
+  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:cfg.a??2,u:'m/s²'}],
   init(s){ s.y=0; s.v=0; },
   step(s,dt){ s.v+=s.p.a*dt; s.y+=s.v*dt; if(Math.abs(s.y)>9) s.play(false); },
   done:s=>Math.abs(s.y)>9,
@@ -2329,6 +2525,183 @@ addLessons('mag','magnetismo',[
    ['Dois fios paralelos com correntes no mesmo sentido:',['se atraem','se repelem','não interagem','giram um em volta do outro'],'Cada fio está no campo do outro e sofre força magnética: correntes de mesmo sentido se atraem.']])],
  traps:['Achar que o campo do fio cai com 1/d², como na gravitação e na lei de Coulomb: cai com 1/d.','Esquecer de passar centímetros para metros.','Confundir as fórmulas do fio (2π·d), da espira (2R) e do solenoide (N/ℓ).'],
  keep:['Fio reto: B = μ₀·i/(2π·d), linhas circulares, regra da mão direita.','Espira: B = μ₀·i/(2R). Solenoide: B = μ₀·N·i/ℓ.','μ₀ = 4π×10⁻⁷ T·m/A, e μ₀/(2π) = 2×10⁻⁷.']}]);
+
+/* =====================================================================
+   Jornadas de descoberta — Ferramentas, Cinemática e Dinâmica
+   ===================================================================== */
+const eq=(a,b,t=1e-6)=>Math.abs(a-b)<=t;
+
+LX.grandezas.jor=[
+ {t:'cena',h:'80 o quê?',p:`<p>Uma placa na estrada diz <b>"Velocidade máxima 80"</b>. Um turista americano pergunta: 80 o quê? Milhas por hora? Metros por segundo?</p><p>Na física, um número sozinho não diz nada. Toda medida precisa de duas partes: <b>o número e a unidade</b>.</p>`},
+ {t:'q',q:'Qual destas informações está completa?',o:['O carro anda a 20 m/s','O carro anda a 20','A distância até lá é grande','Moro a 5 da escola'],why:'"20 m/s" diz quanto e em que unidade: 20 metros a cada segundo.',w:['20 o quê? Pode ser 20 km/h, 20 m/s…','"Grande" não é uma medida: não tem número nem unidade.','5 o quê? Minutos? Quilômetros? Quarteirões?']},
+ {t:'lab',sim:'conv',p:'O carro percorre uma pista de 100 m, e uma marca aparece a cada segundo. <b>Desafio:</b> coloque a velocidade em <b>36 km/h</b>, dê play e veja quantos metros ele anda em cada segundo.',goal:s=>s.p.v===36&&s.marks.length>=1,ok:'A 36 km/h, o carro anda <b>10 metros a cada segundo</b>. Em m/s, 36 km/h são só 10.',dica:'Arraste o controle "Velocidade" até 36 e aperte "Iniciar".'},
+ {t:'medir',sim:'conv',p:'Faça o carro andar com <b>três velocidades diferentes</b>. Depois que aparecer a primeira marca de 1 s, aperte "Anotar medida".',rec:s=>s.marks.length>=1?[s.p.v,s.p.v/3.6]:null,recMsg:'Dê play e espere a primeira marca de 1 segundo aparecer.',cols:['km/h','metros por segundo'],need:3,dec:2,
+  depois:{q:'Compare as duas colunas. Para passar de km/h para metros por segundo, o que você faz com o número?',o:['divide por 3,6','divide por 60','multiplica por 3,6','divide por 1000'],why:'Em todas as linhas, a segunda coluna é a primeira dividida por 3,6. Por que 3,6? Vamos descobrir.',w:['Teste: 36 ÷ 60 = 0,6, mas a tabela diz 10.','Multiplicar deixaria o número maior, e a tabela mostra números menores.','36 ÷ 1000 = 0,036, e a tabela diz 10.']}},
+ {t:'deduz',p:'De onde vem o 3,6? Complete cada linha.',linhas:[
+   {txt:'1 km = ___ m',o:['1000','100','60'],why:'Quilo quer dizer mil.'},
+   {txt:'1 hora = ___ segundos',o:['3600','60','100'],why:'60 minutos × 60 segundos.'},
+   {txt:'Então 1 km/h = 1000 m em 3600 s = ___ m/s',o:['1000/3600','3600/1000','1000 × 3600'],why:'Metros divididos por segundos.'},
+   {txt:'E 1000/3600 = 1/___',o:['3,6','36','60'],why:'Divida em cima e embaixo por 1000.'}],fim:'v<sub class="up">(m/s)</sub> = v<sub class="up">(km/h)</sub> ÷ 3,6'},
+ {t:'n',q:'Um velocista olímpico corre 100 m em 10 s, ou seja, 10 m/s. Quanto é isso em km/h?',a:36,u:'km/h',why:'Para voltar de m/s para km/h, faça o caminho contrário: 10 × 3,6 = 36 km/h. É a velocidade de um carro na rua!',dica:'De m/s para km/h, o número tem de ficar maior.'},
+ {t:'mundo',h:'Unidades na sua volta',itens:[['Velocímetro','Os carros mostram km/h, mas as contas de física usam m/s. 72 km/h = 20 m/s.'],['Previsão do tempo','Vento de 36 km/h é o mesmo que 10 m/s. O ar em volta de você anda 10 metros por segundo.'],['Receita de bolo','"2 xícaras" é uma medida com unidade. "2" sozinho estragaria o bolo.'],['Conta de luz','Vem em kWh, uma unidade de energia que você vai conhecer mais adiante.']]}];
+
+LX.potencias.jor=[
+ {t:'cena',h:'Números grandes demais',p:`<p>Seu coração bate cerca de <b>3 000 000 000</b> de vezes numa vida. Um vírus mede <b>0,0000001</b> metro. Contar zeros assim é pedir para errar.</p><p>A saída é contar <b>quantas vezes multiplicamos por 10</b>.</p>`},
+ {t:'q',q:'Quantos zeros tem 3 bilhões (3 000 000 000)?',o:['9','6','12','3'],why:'3 bilhões = 3 × 1 000 000 000 = 3 × 10⁹. O expoente conta os zeros.',w:['6 zeros é um milhão.','12 zeros é um trilhão.','Conte de novo, de três em três.']},
+ {t:'lab',sim:'pow10',p:'Na régua, cada tracinho é <b>10 vezes</b> maior que o anterior. <b>Desafio:</b> ande até o <b>grão de areia</b>.',goal:s=>s.p.e===-3,ok:'O grão de areia tem cerca de 10⁻³ m, um milímetro. O expoente negativo quer dizer "dividido por 10 três vezes".',dica:'Os objetos pequenos ficam à esquerda, com expoentes negativos.'},
+ {t:'q',q:'Do grão de areia (10⁻³ m) até uma criança (10⁰ = 1 m) são 3 tracinhos. A criança é quantas vezes maior?',o:['1000 vezes','3 vezes','30 vezes','300 vezes'],why:'Cada tracinho multiplica por 10: 10 × 10 × 10 = 1000.',w:['Cada tracinho é "vezes 10", não "mais 1".','3 tracinhos multiplicam por 10 três vezes.','3 tracinhos multiplicam por 10 três vezes.']},
+ {t:'deduz',p:'Como multiplicar potências de 10 sem contar zero por zero?',linhas:[
+   {txt:'10² × 10³ = (10·10) × (10·10·10) = 10^___',o:['5','6','1'],why:'Juntou 2 + 3 fatores de 10.'},
+   {txt:'Então, para multiplicar potências de 10, ___ os expoentes.',o:['somamos','multiplicamos','subtraímos']},
+   {txt:'10⁵ ÷ 10² = (10·10·10·10·10) ÷ (10·10) = 10^___',o:['3','7','2,5'],why:'Dois 10 de cima cancelam com os de baixo.'},
+   {txt:'Para dividir, ___ os expoentes.',o:['subtraímos','dividimos','somamos']}],fim:'10<sup>m</sup> × 10<sup>n</sup> = 10<sup>m+n</sup>      10<sup>m</sup> ÷ 10<sup>n</sup> = 10<sup>m−n</sup>'},
+ {t:'n',q:'Estime quantos segundos há em um ano: 365 × 24 × 3600 ≈ 3,2 × 10^?. Responda o expoente.',a:7,why:'365 × 24 × 3600 = 31 536 000 ≈ 3,2 × 10⁷ segundos.',dica:'Faça a conta e conte as casas até sobrar um algarismo antes da vírgula.'},
+ {t:'mundo',h:'Potências de 10 na sua volta',itens:[['Celular de 128 GB','Guarda cerca de 1,28 × 10¹¹ bytes. "Giga" = 10⁹.'],['Fio de cabelo','Mede uns 10⁻⁴ m: um décimo de milímetro.'],['Distância até o Sol','1,5 × 10¹¹ m. A luz leva 8 minutos para chegar.'],['Remédio','Doses em mg: mili = 10⁻³ grama.']]}];
+
+LX.vetores.jor=[
+ {t:'cena',h:'Andou 7, está a 5',p:`<p>Você sai de casa e anda <b>3 quarteirões para leste</b> e depois <b>4 para o norte</b>. O aplicativo de mapa diz que você está a <b>5 quarteirões</b> de casa, em linha reta.</p><p>Mas você andou 7! Quem está certo?</p>`},
+ {t:'lab',sim:'vec',p:'Cada seta é um deslocamento. <b>Desafio:</b> arraste as pontas até A = (3, 0), 3 para leste, e B = (0, 4), 4 para o norte.',goal:s=>s.p.m==='s'&&eq(s.A[0],3)&&eq(s.A[1],0)&&eq(s.B[0],0)&&eq(s.B[1],4),ok:'A resultante R, do começo ao fim, mede <b>5</b>. O aplicativo estava certo.',dica:'Arraste a bolinha azul até x = 3 no eixo horizontal; depois a vermelha até ficar 4 quadrinhos acima dela.'},
+ {t:'q',q:'Por que a distância final é 5 e não 3 + 4 = 7?',o:['porque os dois deslocamentos são perpendiculares e formam um triângulo retângulo','porque o aplicativo arredonda','porque vetores nunca se somam','porque andar para o norte é subida'],why:'O caminho andado (7) é diferente da distância em linha reta (5). Os dois deslocamentos são os lados de um triângulo retângulo, e a resultante é a hipotenusa.'},
+ {t:'lab',sim:'vec',p:'<b>Desafio:</b> agora faça a resultante R ficar <b>zero</b>, com A diferente de zero.',goal:s=>{ const B=s.p.m==='s'?s.B:[-s.B[0],-s.B[1]]; return Math.hypot(s.A[0],s.A[1])>.1&&Math.hypot(s.A[0]+B[0],s.A[1]+B[1])<1e-6; },ok:'Dois vetores de mesmo tamanho e sentidos opostos se anulam. É o cabo de guerra empatado: muita força, nenhum movimento.',dica:'Faça B apontar exatamente para o lado contrário de A, com o mesmo tamanho: a ponta de B tem de voltar à origem.'},
+ {t:'deduz',p:'Com A e B perpendiculares, como calcular R sem desenhar?',linhas:[
+   {txt:'A e B são os catetos, e R é a ___ do triângulo.',o:['hipotenusa','altura','base']},
+   {txt:'Pelo teorema de Pitágoras, R² = ___',o:['3² + 4²','3 + 4','4² − 3²']},
+   {txt:'R² = 9 + 16 = 25, então R = ___',o:['5','25','12,5']}],fim:'|R| = √(R<sub class="up">x</sub>² + R<sub class="up">y</sub>²)'},
+ {t:'n',q:'Um barco atravessa um rio a 4 m/s para a frente enquanto a correnteza o leva a 3 m/s rio abaixo, perpendicularmente. Qual é a velocidade real do barco?',a:5,u:'m/s',why:'As velocidades também são vetores: √(4² + 3²) = 5 m/s.',dica:'Mesmo triângulo 3, 4, 5.'},
+ {t:'mundo',h:'Vetores na sua volta',itens:[['GPS','"Em linha reta" é o módulo da resultante; o trajeto pelas ruas é a soma dos caminhos.'],['Avião com vento lateral','O piloto aponta o nariz um pouco contra o vento para que a resultante siga a rota.'],['Cabo de guerra','Forças opostas se subtraem: ganha quem puxa mais.']]}];
+
+LX.mu.jor=[
+ {t:'cena',h:'O carro no piloto automático',p:`<p>Na estrada, o carro ao lado anda no <b>piloto automático</b>: o velocímetro não muda. Onde ele estará daqui a 1 minuto? E daqui a um tempo qualquer?</p><p>Vamos medir e descobrir a regra.</p>`},
+ {t:'medir',sim:'mov',cfg:{acc:false},p:'Deixe <b>s₀ = 0</b> e <b>v₀ = 8 m/s</b>. Dê play, <b>pause</b> em momentos diferentes e anote o tempo e a posição. Depois continue e anote de novo.',rec:s=>s.t>.2&&s.p.s0===0&&s.p.v0===8?[s.t,s.x]:null,recMsg:'Use s₀ = 0 e v₀ = 8 m/s, dê play e pause em algum momento.',cols:['tempo (s)','posição (m)'],need:4,dec:1,
+  depois:{q:'Olhe a tabela e o gráfico. O que acontece a cada segundo?',o:['o carro anda sempre os mesmos 8 metros','o carro anda cada vez mais','o carro anda cada vez menos'],why:'Os pontos formam uma <b>reta</b>: distâncias iguais em tempos iguais. Esse é o <b>movimento uniforme</b>.'}},
+ {t:'deduz',p:'Transforme o que você mediu numa regra.',linhas:[
+   {txt:'A cada 1 s, o carro anda v metros. Em 2 s, anda ___',o:['2·v','v²','v/2']},
+   {txt:'Em t segundos, anda ___',o:['v·t','v/t','v + t']},
+   {txt:'Se ele partiu da posição s₀, depois de t segundos está em s = ___',o:['s₀ + v·t','v·t − s₀','s₀·v·t']}],fim:'s = s₀ + v·t      v = '+frac('Δs','Δt')},
+ {t:'lab',sim:'mov',cfg:{acc:false},p:'<b>Desafio:</b> escolha s₀ e v₀ para o carro terminar <b>exatamente em 50 m</b> depois de 10 segundos. Dê play e deixe chegar ao fim.',goal:s=>s.t>=10&&eq(s.p.s0+s.p.v0*10,50),ok:'Qualquer escolha em que s₀ + 10·v = 50 funciona: 0 e 5 m/s, 20 e 3 m/s, −10 e 6 m/s… A fórmula prevê onde o carro vai estar.',dica:'Use a fórmula ao contrário. Com s₀ = 0, qual v faz v·10 = 50?'},
+ {t:'q',q:'No gráfico posição × tempo, o que a inclinação da reta mostra?',o:['a velocidade','a posição inicial','o tempo total'],why:'Reta mais inclinada = mais metros por segundo = mais velocidade. Reta deitada = carro parado.'},
+ {t:'n',q:'O carro do piloto automático anda a 20 m/s. Quantos metros ele percorre em 1 minuto?',a:1200,u:'m',why:'1 min = 60 s; Δs = v·t = 20 × 60 = 1200 m.',dica:'Passe o minuto para segundos antes.'},
+ {t:'mundo',h:'Movimento uniforme na sua volta',itens:[['Esteira do aeroporto','Anda sempre na mesma velocidade: você pode calcular quando chega ao fim.'],['Luz do Sol','Viaja a velocidade constante e leva cerca de 8 minutos para chegar até você.'],['Escada rolante','Velocidade constante. Se você andar em cima dela, as velocidades se somam.']]}];
+
+LX.muv.jor=[
+ {t:'cena',h:'O semáforo abriu',p:`<p>O semáforo abre e o carro arranca: o velocímetro vai subindo, <b>0, 7, 14, 21 km/h…</b> a cada segundo.</p><p>Agora a velocidade <b>muda</b>. Como prever onde o carro vai estar?</p>`},
+ {t:'medir',sim:'mov',cfg:{acc:true},p:'Coloque <b>v₀ = 0</b> e <b>a = 2 m/s²</b>. Dê play, pause em momentos diferentes e anote o tempo e a <b>velocidade</b>.',rec:s=>s.t>.2&&s.p.v0===0&&s.p.a===2?[s.t,s.v]:null,recMsg:'Use v₀ = 0 e a = 2 m/s², dê play e pause em algum momento.',cols:['tempo (s)','velocidade (m/s)'],need:4,dec:1,
+  depois:{q:'O que acontece com a velocidade a cada segundo?',o:['aumenta sempre os mesmos 2 m/s','dobra a cada segundo','fica constante'],why:'A velocidade cresce em linha reta: ganha 2 m/s por segundo. Esse "ganho por segundo" é a <b>aceleração</b>.'}},
+ {t:'deduz',p:'Primeiro, a velocidade.',linhas:[
+   {txt:'Em cada segundo o carro ganha a. Em t segundos, ganhou ___',o:['a·t','a/t','a + t']},
+   {txt:'Se já tinha v₀ no começo: v = ___',o:['v₀ + a·t','a·t − v₀','v₀·a·t']}],fim:'v = v₀ + a·t'},
+ {t:'nota',h:'E a distância?',p:`<p>Com velocidade constante, a distância era v·t: a <b>área de um retângulo</b> no gráfico velocidade × tempo (altura v, base t).</p><p>Essa ideia continua valendo: a distância percorrida é sempre a <b>área embaixo da linha</b> do gráfico v × t. Só que agora a linha é inclinada.</p>`},
+ {t:'deduz',p:'Partindo do repouso, a linha v × t forma um triângulo de base t e altura a·t.',linhas:[
+   {txt:'A área de um triângulo é base × altura ÷ 2 = ___',o:['a·t²/2','a·t','a·t²']},
+   {txt:'Se o carro já tinha v₀, soma-se um retângulo de área v₀·t. Então Δs = ___',o:['v₀·t + a·t²/2','v₀ + a·t','a·t²/2 − v₀']}],fim:'s = s₀ + v₀·t + '+frac('a·t²','2')},
+ {t:'q',q:'Partindo do repouso, se o tempo dobra, a distância percorrida…',o:['quadruplica','dobra','fica igual','triplica'],why:'O tempo aparece ao quadrado: (2t)² = 4t². Por isso, na freada, o dobro da velocidade exige muito mais espaço.'},
+ {t:'lab',sim:'mov',cfg:{acc:true},p:'<b>Desafio:</b> o carro começa a <b>10 m/s</b> e freia. Escolha a aceleração para ele <b>parar exatamente em t = 5 s</b>. Dê play e deixe passar dos 5 s.',goal:s=>s.p.v0===10&&s.p.a===-2&&s.t>=5,ok:'a = −2 m/s²: perde 2 m/s por segundo e zera em 5 s. Frear é acelerar no sentido contrário ao movimento. (Depois dos 5 s ele começaria a andar de ré, porque a aceleração continua.)',dica:'Use v = v₀ + a·t com v = 0: 0 = 10 + a·5.'},
+ {t:'n',q:'Um carro a 30 m/s freia com aceleração de −5 m/s². Em quantos segundos ele para?',a:6,u:'s',why:'0 = 30 − 5·t → t = 6 s.',dica:'Parar é v = 0. Use v = v₀ + a·t.'},
+ {t:'mundo',h:'Aceleração na sua volta',itens:[['Arrancada no semáforo','Um carro comum chega a 100 km/h em uns 10 s: a ≈ 2,8 m/s².'],['Freada de emergência','Com o dobro da velocidade, o carro precisa de quatro vezes mais distância para parar.'],['Decolagem','O avião acelera na pista até atingir a velocidade de voo.']]}];
+
+LX.queda.jor=[
+ {t:'cena',h:'O livro e a folha',p:`<p>Solte um livro e uma folha de papel da mesma altura: o livro chega bem antes. Agora <b>amasse a folha</b> numa bolinha e repita. Chegam quase juntos!</p><p>O que atrapalhava a folha era o <b>ar</b>. E sem ar nenhum?</p>`},
+ {t:'lab',sim:'fall',p:'Aqui as bolas caem no <b>vácuo</b>. Uma tem 10 kg e a outra, 0,1 kg: cem vezes menos. <b>Desafio:</b> solte as duas na Terra e veja quem chega primeiro.',goal:s=>s.t>=s.T,ok:'Chegaram <b>juntas</b>. Sem o ar, a massa não muda a queda. Galileu percebeu isso há 400 anos.',dica:'Aperte "Iniciar" e espere as bolas chegarem ao chão.'},
+ {t:'medir',sim:'fall',p:'Solte de novo e <b>pause</b> durante a queda, algumas vezes, anotando o tempo e a velocidade.',rec:s=>s.t>.1&&s.t<s.T&&s.p.g===9.8?[s.t,s.v]:null,recMsg:'Na Terra, dê play e pause durante a queda (antes de chegar ao chão).',cols:['tempo (s)','velocidade (m/s)'],need:3,dec:2,
+  depois:{q:'Quanto a velocidade aumenta a cada segundo?',o:['cerca de 10 m/s','cerca de 1 m/s','depende do tamanho da bola'],why:'Aumenta 9,8 m/s por segundo, que arredondamos para 10: é a <b>aceleração da gravidade g</b>. A velocidade cresce em linha reta, como no carro que arranca.'}},
+ {t:'q',q:'Então a queda livre é qual movimento que você já conhece?',o:['movimento uniformemente variado, com a = g','movimento uniforme','movimento circular'],why:'É um MUV que parte do repouso, com aceleração g. Todas as fórmulas do MUV valem, trocando a por g.'},
+ {t:'deduz',p:'Adapte as fórmulas do MUV para uma queda que parte do repouso.',linhas:[
+   {txt:'v = v₀ + a·t, com v₀ = 0 e a = g: v = ___',o:['g·t','g/t','g + t']},
+   {txt:'Δs = v₀·t + a·t²/2 vira a altura caída: h = ___',o:['g·t²/2','g·t','g·t²']}],fim:'v = g·t      h = '+frac('g·t²','2')},
+ {t:'lab',sim:'fall',p:'<b>Desafio:</b> leve a experiência para a <b>Lua</b> e solte da mesma altura.',goal:s=>s.p.g===1.6&&s.t>=s.T,ok:'Na Lua, g = 1,6 m/s², seis vezes menor: a queda demora bem mais. Em 1971 um astronauta soltou um martelo e uma pena lá, e eles chegaram juntos.',dica:'Em "Onde?", escolha Lua e aperte "Iniciar".'},
+ {t:'n',q:'Uma pedra cai de um prédio e leva 3 s para chegar ao chão. Qual é a altura do prédio? (g = 10 m/s²)',a:45,u:'m',why:'h = g·t²/2 = 10 × 9 / 2 = 45 m, mais ou menos um prédio de 15 andares.',dica:'h = g·t²/2. Lembre de elevar o tempo ao quadrado.'},
+ {t:'mundo',h:'Queda na sua volta',itens:[['Paraquedas','Aumenta muito a resistência do ar, e a queda deixa de ser livre.'],['Gota de chuva','Se caísse no vácuo, chegaria a mais de 300 km/h. O ar a freia para uns 30 km/h.'],['Salto na piscina','De uma plataforma de 10 m você chega à água a uns 14 m/s, cerca de 50 km/h.']]}];
+
+LX.lancamento.jor=[
+ {t:'cena',h:'O chute do goleiro',p:`<p>O goleiro chuta a bola para o meio de campo. Se chutar muito baixo, ela bate logo no chão. Muito alto, sobe e cai perto.</p><p>Existe um <b>ângulo ideal</b> para ir mais longe?</p>`},
+ {t:'lab',sim:'proj',cfg:{th:30},p:'<b>Desafio:</b> com 20 m/s, encontre o ângulo que faz a bola ir <b>mais longe</b>. Teste vários ângulos e lance cada um até o fim.',goal:s=>s.p.th===45&&s.p.g===10&&s.tr.length>2&&s.y<=0,ok:'<b>45°</b> dá o maior alcance: 40 m. Menos que isso a bola fica pouco tempo no ar; mais que isso ela sobe demais e anda pouco para a frente.',dica:'Compare o alcance nos números à direita. Experimente valores entre 30° e 60°.'},
+ {t:'q',q:'Observe as setas durante o voo. O que acontece com a seta vₓ (horizontal)?',o:['não muda: nada empurra a bola para o lado','diminui até zerar no topo','aumenta na descida'],why:'Sem resistência do ar, nenhuma força age na horizontal. Então, na horizontal, a bola faz <b>movimento uniforme</b>. Só a vertical sente a gravidade.'},
+ {t:'nota',h:'Dois movimentos ao mesmo tempo',p:'<p>O truque do lançamento é separar a velocidade em duas partes que não se atrapalham: na <b>horizontal</b>, movimento uniforme; na <b>vertical</b>, a mesma queda livre da lição anterior, só que começando para cima.</p>'},
+ {t:'deduz',p:'Monte as regras de cada direção.',linhas:[
+   {txt:'Horizontal, velocidade constante: x = ___',o:['vₓ·t','vₓ·t²/2','g·t']},
+   {txt:'Vertical, a gravidade freia a subida: v<sub>y</sub> = ___',o:['v₀<sub>y</sub> − g·t','v₀<sub>y</sub> + g·t','g·t']},
+   {txt:'No ponto mais alto, v<sub>y</sub> = 0. O tempo de subida é t = ___',o:['v₀<sub>y</sub>/g','g/v₀<sub>y</sub>','v₀<sub>y</sub>·g']},
+   {txt:'A descida demora o mesmo que a subida. Tempo total no ar = ___',o:['2·v₀<sub>y</sub>/g','v₀<sub>y</sub>/g','v₀<sub>y</sub>/(2g)']}],fim:'x = vₓ·t      t<sub class="up">voo</sub> = '+frac('2·v₀<sub class="up">y</sub>','g')},
+ {t:'q',q:'Com a mesma velocidade de lançamento, 30° e 60° dão alcances…',o:['iguais','30° vai mais longe','60° vai mais longe'],why:'Ângulos que somam 90° dão o mesmo alcance: um fica menos tempo no ar mas corre mais na horizontal, o outro o contrário. Confira no laboratório livre.'},
+ {t:'n',q:'Uma bola sai com vₓ = 15 m/s e v₀<sub>y</sub> = 20 m/s. A que distância ela cai? (g = 10 m/s²)',a:60,u:'m',why:'Tempo no ar = 2 × 20/10 = 4 s. Alcance = 15 × 4 = 60 m.',dica:'Primeiro o tempo de voo (2·v₀<sub>y</sub>/g), depois x = vₓ·t.'},
+ {t:'mundo',h:'Lançamentos na sua volta',itens:[['Arremesso de basquete','Os bons arremessadores lançam num ângulo alto, perto de 50°, para a bola cair "por cima" do aro.'],['Chafariz','Cada jato de água desenha uma parábola.'],['Salto em distância','Os atletas saem a uns 20°: correr rápido rende mais que subir muito.']]}];
+
+LX.mcu.jor=[
+ {t:'cena',h:'Acelerando sem acelerar?',p:`<p>Na roda-gigante você gira com velocidade sempre do mesmo tamanho. Mesmo assim, a física diz que você está <b>acelerando</b> o tempo todo.</p><p>Como pode?</p>`},
+ {t:'lab',sim:'mcu',cfg:{force:false},p:'Observe a seta azul, a velocidade. <b>Desafio:</b> faça a bola dar <b>uma volta por segundo</b> (período T = 1 s) e dê play.',goal:s=>eq(s.p.T,1)&&s.playing,ok:'Veja a seta azul: ela tem sempre o mesmo tamanho, mas <b>muda de direção</b> a cada instante.',dica:'Arraste "Período T" até 1 s e aperte "Iniciar".'},
+ {t:'q',q:'Velocidade é um vetor. Se a direção dela muda o tempo todo, então…',o:['existe aceleração, mesmo com a velocidade do mesmo tamanho','não existe aceleração, porque o velocímetro não muda','a bola está freando'],why:'Aceleração é qualquer mudança da velocidade, no tamanho <b>ou na direção</b>. No círculo, essa aceleração aponta para o centro: é a <b>aceleração centrípeta</b> (seta roxa).'},
+ {t:'deduz',p:'Quanto vale a velocidade na volta?',linhas:[
+   {txt:'Numa volta, a bola percorre o comprimento da circunferência: ___',o:['2πR','πR²','R']},
+   {txt:'Ela gasta um período T nessa volta. Então v = ___',o:['2πR/T','T/(2πR)','2πR·T']}],fim:'v = '+frac('2πR','T')+'      f = '+frac('1','T')},
+ {t:'lab',sim:'mcu',cfg:{force:false},p:'Anote a aceleração centrípeta com R = 1,5 m e T = 2 s. <b>Desafio:</b> depois, mantenha o raio e faça a bola girar com o <b>dobro da velocidade</b>.',goal:s=>eq(s.p.R,1.5)&&eq(s.p.T,1),ok:'Com o dobro da velocidade (T de 2 s para 1 s), a aceleração ficou <b>4 vezes maior</b>: cerca de 59 contra 15 m/s².',dica:'Dobrar a velocidade é dar a volta na metade do tempo.'},
+ {t:'q',q:'Dobrar a velocidade quadruplicou a aceleração. Então a aceleração depende de…',o:['v² (a velocidade ao quadrado)','v','da massa da bola'],why:'Com geometria dá para mostrar que a = v²/R. Curva mais fechada (R menor) ou mais rápida pede mais aceleração.'},
+ {t:'n',q:'Uma roda-gigante de raio 20 m dá uma volta em 2 minutos (120 s). Qual é a velocidade de quem está nela? (π ≈ 3,14)',a:2*Math.PI*20/120,u:'m/s',why:'v = 2πR/T = 2 × 3,14 × 20 / 120 ≈ 1,05 m/s, um passo lento.',dica:'v = 2πR/T, com T em segundos.'},
+ {t:'mundo',h:'Círculos na sua volta',itens:[['Máquina de lavar','Na centrifugação o tambor gira muito rápido; a roupa fica, a água escapa pelos furos.'],['Curva de carro','Numa curva fechada em alta velocidade, a aceleração exigida cresce com v².'],['Relógio de ponteiros','O ponteiro dos segundos tem período de 60 s.']]}];
+
+LX.newton.jor=[
+ {t:'cena',h:'O ônibus freou',p:`<p>O ônibus freia de repente e seu corpo vai <b>para a frente</b>. Ninguém empurrou você.</p><p>O que aconteceu?</p>`},
+ {t:'q',q:'Por que seu corpo foi para a frente?',o:['ele tendia a continuar andando, e o ônibus parou','o ônibus empurrou você para a frente','o motorista acelerou para trás'],why:'É a <b>inércia</b>: sem força, um corpo mantém o movimento que tinha. O ônibus parou, mas você continuou. Quem faz você parar é o cinto ou a barra onde você se segura.'},
+ {t:'medir',sim:'block',cfg:{fric:false},p:'Um bloco sem atrito. Deixe a <b>massa em 5 kg</b>, escolha uma força, dê play e anote. Repita com <b>outras forças</b>.',rec:s=>s.t>.3&&s.p.m===5?[s.p.F,s.p.F/5]:null,recMsg:'Use massa de 5 kg e dê play.',cols:['força (N)','aceleração (m/s²)'],need:3,dec:2,
+  depois:{q:'Com a massa fixa, se você dobra a força, a aceleração…',o:['dobra','cai pela metade','não muda'],why:'Os pontos formam uma reta que passa pela origem: aceleração <b>proporcional</b> à força.'}},
+ {t:'medir',sim:'block',cfg:{fric:false},p:'Agora deixe a <b>força em 40 N</b> e mude a <b>massa</b>. Dê play e anote a cada massa.',rec:s=>s.t>.3&&s.p.F===40?[s.p.m,40/s.p.m]:null,recMsg:'Use força de 40 N e dê play.',cols:['massa (kg)','aceleração (m/s²)'],need:3,dec:2,
+  depois:{q:'Com a força fixa, se você dobra a massa, a aceleração…',o:['cai pela metade','dobra','não muda'],why:'Mais massa, mais difícil de acelerar: a aceleração é <b>inversamente proporcional</b> à massa. Massa mede a inércia.'}},
+ {t:'deduz',p:'Junte as duas descobertas.',linhas:[
+   {txt:'a cresce com F e diminui com m. Então a = ___',o:['F/m','F·m','m/F']},
+   {txt:'Multiplicando os dois lados por m: F = ___',o:['m·a','a/m','m + a']},
+   {txt:'Com m em kg e a em m/s², a força sai em newtons: 1 N = 1 kg·___',o:['m/s²','m/s','m']}],fim:'F<sub class="up">R</sub> = m·a'},
+ {t:'lab',sim:'block',cfg:{fric:false},p:'<b>Desafio:</b> faça um bloco de <b>10 kg</b> ter aceleração de <b>3 m/s²</b> e dê play.',goal:s=>s.p.m===10&&s.p.F===30&&s.t>.3,ok:'F = m·a = 10 × 3 = 30 N. A fórmula que você montou funciona.',dica:'Use F = m·a para descobrir a força.'},
+ {t:'n',q:'Você empurra um carrinho de supermercado de 20 kg com 30 N, sem atrito. Qual é a aceleração?',a:1.5,u:'m/s²',why:'a = F/m = 30/20 = 1,5 m/s².'},
+ {t:'mundo',h:'Newton na sua volta',itens:[['Cinto de segurança','Numa batida o carro para, mas você continua: o cinto aplica a força que te freia.'],['Toalha puxada da mesa','Puxando rápido, os pratos quase não se mexem: a inércia os mantém no lugar.'],['Carro cheio x vazio','Com a mesma força do motor, o carro lotado acelera menos: mais massa.']]}];
+
+LX.forcas.jor=[
+ {t:'cena',h:'Mais pesado no elevador?',p:`<p>Quando o elevador começa a subir, você sente as pernas mais "pesadas". Quando começa a descer, sente um frio na barriga, como se ficasse mais leve.</p><p>Seu peso mudou mesmo?</p>`},
+ {t:'lab',sim:'elev',p:'A pessoa de 60 kg está numa balança dentro do elevador. <b>Desafio:</b> coloque a aceleração em <b>zero</b> (elevador parado ou em velocidade constante).',goal:s=>s.p.a===0,ok:'Com aceleração zero, a balança marca <b>60 kg</b>. A balança mede a força com que empurra você, a <b>normal N</b>, que aqui é igual ao peso.',dica:'Arraste o controle de aceleração até 0.'},
+ {t:'lab',sim:'elev',cfg:{a:0},p:'<b>Desafio:</b> faça a balança marcar <b>mais</b> que 60 kg.',goal:s=>s.p.a>0&&s.p.m===60,ok:'Acelerando para cima, a balança empurra você com mais força que o peso. O peso (a Terra puxando) continua o mesmo; o que muda é a normal.',dica:'Tente uma aceleração positiva (para cima).'},
+ {t:'q',q:'Quando a balança marca mais que o peso, a força resultante na pessoa aponta…',o:['para cima, porque N é maior que P','para baixo','para lugar nenhum: é zero'],why:'N − P é a resultante. Se N > P, ela aponta para cima, e é isso que acelera a pessoa para cima.'},
+ {t:'lab',sim:'elev',cfg:{a:0},p:'<b>Desafio:</b> faça a balança marcar <b>zero</b>.',goal:s=>s.p.a<=-10,ok:'Com aceleração de −10 m/s² o elevador está em <b>queda livre</b>: você e a balança caem juntos e ela não empurra nada. Os astronautas em órbita "flutuam" pelo mesmo motivo.',dica:'Qual aceleração tem um corpo em queda livre?'},
+ {t:'deduz',p:'Monte a fórmula da balança.',linhas:[
+   {txt:'Na pessoa agem N (para cima) e P (para baixo). A resultante é ___',o:['N − P','N + P','P']},
+   {txt:'Pela 2ª lei: N − P = ___',o:['m·a','0','m·g']},
+   {txt:'Como P = m·g: N = ___',o:['m·(g + a)','m·g − a','m·a']}],fim:'N = m·(g + a)'},
+ {t:'q',q:'A Terra puxa você com 600 N. Pela 3ª lei (ação e reação), você puxa a Terra com…',o:['600 N, para cima','0 N','bem menos que 600 N, porque a Terra é enorme'],why:'Ação e reação têm sempre o <b>mesmo tamanho</b> e sentidos opostos, e agem em corpos diferentes. A Terra quase não se mexe porque a massa dela é gigantesca, não porque a força seja menor.'},
+ {t:'n',q:'Uma pessoa de 50 kg está num elevador que acelera para cima a 2 m/s². Quanto a balança marca, em kg? (g = 10 m/s²)',a:60,u:'kg',why:'N = m·(g + a) = 50 × 12 = 600 N. A balança divide por 10 e mostra 60 kg.',dica:'Calcule N = m·(g + a) e divida por g.'},
+ {t:'mundo',h:'Ação e reação na sua volta',itens:[['Andar','Seu pé empurra o chão para trás; o chão empurra você para a frente.'],['Foguete','Empurra os gases para baixo; os gases empurram o foguete para cima.'],['Montanha-russa','O "frio na barriga" na descida é a normal diminuindo.']]}];
+
+LX.atrito.jor=[
+ {t:'cena',h:'O armário pesado',p:`<p>Você empurra um armário e ele <b>não se mexe</b>. Empurra mais forte, mais forte… e de repente ele "desgruda". Depois disso, fica mais fácil mantê-lo andando.</p><p>Quem estava segurando o armário?</p>`},
+ {t:'lab',sim:'block',cfg:{fric:true},p:'<b>Desafio:</b> com a massa de 5 kg e μₑ = 0,5, aumente a força <b>aos poucos</b> até o bloco começar a andar. Deixe o play ligado.',goal:s=>s.p.m===5&&eq(s.p.ue,.5)&&s.v>.01,ok:'Ele só andou quando a força passou de <b>25 N</b>. Antes disso, o atrito cresceu junto com a sua força e o segurou.',dica:'Dê play e vá subindo a força devagar, olhando a seta do atrito.'},
+ {t:'q',q:'Com o bloco parado e uma força de 10 N empurrando, quanto vale o atrito?',o:['10 N, igual à força','25 N, o máximo','0 N, porque nada se mexe'],why:'O atrito estático é "esperto": vale exatamente o necessário para impedir o movimento, até um limite máximo. Passou do limite, o bloco escorrega.'},
+ {t:'deduz',p:'De que depende esse limite?',linhas:[
+   {txt:'Superfícies mais apertadas uma contra a outra "grudam" mais. O atrito máximo cresce com a ___',o:['normal N','velocidade','área de contato']},
+   {txt:'Cada par de superfícies tem seu coeficiente μ. O atrito máximo parado é ___',o:['μₑ·N','N/μₑ','μₑ + N']},
+   {txt:'Andando, o atrito é o cinético: Fat = ___',o:['μ<sub>c</sub>·N','μₑ·N','zero']}],fim:'Fat<sub class="up">máx</sub> = μₑ·N      Fat<sub class="up">c</sub> = μ<sub class="up">c</sub>·N'},
+ {t:'q',q:'Por que é mais fácil manter o armário andando do que tirá-lo do lugar?',o:['porque μ cinético é menor que μ estático','porque a normal diminui','porque a massa diminui'],why:'Parado, as superfícies se "encaixam" melhor. Em movimento, o atrito cai para μ<sub>c</sub>·N, que é menor.'},
+ {t:'n',q:'Uma caixa de 40 kg está num piso com μₑ = 0,5. Qual é a menor força horizontal que a coloca em movimento? (g = 10 m/s²)',a:200,u:'N',why:'N = P = 400 N; Fat máx = 0,5 × 400 = 200 N. Qualquer força acima disso a tira do lugar.',dica:'Primeiro a normal (igual ao peso aqui), depois μₑ·N.'},
+ {t:'mundo',h:'Atrito na sua volta',itens:[['Freio ABS','Evita que a roda trave: rolando, o pneu usa o atrito estático, que é maior.'],['Tênis de basquete','A sola de borracha tem μ alto, para não escorregar nas mudanças de direção.'],['Andar no gelo','μ muito baixo: não há atrito suficiente para empurrar o chão para trás.']]}];
+
+LX.plano.jor=[
+ {t:'cena',h:'A ladeira',p:`<p>Numa rua muito íngreme, uma caixa solta escorrega; numa rampa suave, ela fica parada.</p><p>O que muda quando a rampa fica mais inclinada?</p>`},
+ {t:'q',q:'Aumentando a inclinação, a parte do peso que puxa a caixa ladeira abaixo…',o:['aumenta','diminui','não muda'],why:'Numa rampa deitada, o peso só aperta a caixa contra o chão. Numa parede vertical, o peso inteiro puxa para baixo. Entre os dois, a parte "ladeira abaixo" vai crescendo.'},
+ {t:'lab',sim:'incl',p:'<b>Desafio:</b> com μ = 0,5, encontre o <b>menor ângulo</b> em que o bloco escorrega.',goal:s=>eq(s.p.mu,.5)&&s.p.th===27&&s.def.phys(s).slides,ok:'Começa a escorregar em 27°. Nesse ângulo, a parte do peso ladeira abaixo passa a ser maior que o atrito máximo.',dica:'Coloque μ em 0,5 e vá aumentando o ângulo de grau em grau, olhando a mensagem no canto do desenho.'},
+ {t:'deduz',p:'O peso se divide em duas partes, como um vetor com componentes.',linhas:[
+   {txt:'Ao longo da rampa: P·sen θ. Contra a rampa: ___',o:['P·cos θ','P·tg θ','P']},
+   {txt:'A rampa empurra de volta a parte que a aperta: N = ___',o:['P·cos θ','P','P·sen θ']},
+   {txt:'Sem atrito, a força que acelera é m·g·sen θ. Então a = ___',o:['g·sen θ','g','g·cos θ']}],fim:'a = g·sen θ   (sem atrito)      N = P·cos θ'},
+ {t:'q',q:'Sem atrito, um bloco de 2 kg e um de 10 kg descem a mesma rampa. Qual acelera mais?',o:['os dois igual','o de 10 kg','o de 2 kg'],why:'a = g·sen θ não tem massa. É o mesmo motivo pelo qual a queda livre não depende da massa: a rampa é uma "queda livre diluída".'},
+ {t:'n',q:'Uma rampa de 30° não tem atrito. Qual é a aceleração de um bloco que desce por ela? (sen 30° = 0,5; g = 10 m/s²)',a:5,u:'m/s²',why:'a = g·sen θ = 10 × 0,5 = 5 m/s², metade da queda livre.'},
+ {t:'mundo',h:'Rampas na sua volta',itens:[['Rampa de acessibilidade','A norma limita a inclinação a cerca de 5° para a cadeira de rodas subir e descer com segurança.'],['Estrada de serra','O zigue-zague diminui a inclinação: a subida fica mais longa, mas exige menos força.'],['Escorregador','Mais inclinado, mais rápido: a = g·(sen θ − μ·cos θ).']]}];
+
+LX.centripeta.jor=[
+ {t:'cena',h:'A corda arrebentou',p:`<p>Você gira uma bolinha presa num barbante, em círculo. De repente o barbante arrebenta.</p><p>Para onde a bolinha vai?</p>`},
+ {t:'aposta',q:'Faça sua aposta: a bolinha sai…',o:['em linha reta, na direção em que estava indo (tangente ao círculo)','em linha reta para fora, afastando-se do centro','continuando a curva por um tempo']},
+ {t:'lab',sim:'mcu',cfg:{force:true},p:'<b>Desafio:</b> dê play e <b>corte a corda</b>.',goal:s=>s.free,ok:'A bolinha sai pela <b>tangente</b>, em linha reta: inércia. Sem a corda, nada muda a direção dela.',dica:'Aperte "Iniciar" e depois o botão "Cortar a corda".'},
+ {t:'q',q:'Então, enquanto girava, quem mudava a direção da bolinha o tempo todo?',o:['a corda, puxando para o centro','uma força para fora, a "centrífuga"','a própria velocidade'],why:'Só existe uma força horizontal: a tração da corda, apontando para o <b>centro</b>. É ela a <b>força centrípeta</b>. A sensação de ser jogado para fora é só a sua inércia.'},
+ {t:'deduz',p:'Use a 2ª lei com a aceleração do círculo.',linhas:[
+   {txt:'Da lição anterior, a aceleração no círculo é a = ___',o:['v²/R','v·R','R/v²']},
+   {txt:'Pela 2ª lei, F = m·a. Então a força centrípeta é F = ___',o:['m·v²/R','m·v·R','m·R/v']}],fim:'F<sub class="up">c</sub> = '+frac('m·v²','R')},
+ {t:'q',q:'Numa curva, o carro dobra a velocidade. A força de atrito que os pneus precisam fazer…',o:['quadruplica','dobra','fica igual'],why:'F cresce com v². É por isso que curvas fechadas têm placa de velocidade máxima.'},
+ {t:'n',q:'Um carro de 1000 kg faz uma curva de raio 50 m a 10 m/s. Qual força centrípeta os pneus fazem?',a:2000,u:'N',why:'F = m·v²/R = 1000 × 100 / 50 = 2000 N, feita pelo atrito entre os pneus e o asfalto.'},
+ {t:'mundo',h:'Força centrípeta na sua volta',itens:[['Curva de carro','Quem segura o carro na curva é o atrito dos pneus. Na pista molhada ele diminui, e o carro "sai pela tangente".'],['Satélites e a Lua','A gravidade da Terra é a força centrípeta que os mantém em órbita.'],['Globo da morte','A moto fica "grudada" na parede porque a parede faz a força centrípeta.']]}];
 
 if(document.body) boot(); else addEventListener('DOMContentLoaded',boot);
 </script>

@@ -248,6 +248,75 @@ html:not(.has-ai) .ai{display:none!important}
 .symd summary{cursor:pointer;font-family:var(--display);font-size:13.5px;color:var(--muted);padding:2px 0}
 .symd[open] summary{margin-bottom:6px}
 
+/* jornada de descoberta */
+.jor{scroll-margin-top:76px}
+#jor{scroll-margin-top:76px}
+.jbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.jdots{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.jd{width:26px;height:8px;border-radius:5px;border:0;background:var(--line);cursor:pointer;padding:0}
+.jd.done{background:var(--ok)}
+.jd.on{background:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+.jd[disabled]{cursor:default;opacity:.6}
+.jcount{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+.jcard{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 18px 20px;min-width:0}
+.jcard h3{font-size:22px;margin:0 0 10px}
+.jtag{font-family:var(--display);font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.jt-cena{border-top-color:var(--energy)} .jt-cena .jtag{color:var(--energy)}
+.jt-lab,.jt-medir{border-top-color:var(--vel)} .jt-lab .jtag,.jt-medir .jtag{color:var(--vel)}
+.jt-deduz{border-top-color:var(--acc)} .jt-deduz .jtag{color:var(--acc)}
+.jt-mundo{border-top-color:var(--ok)} .jt-mundo .jtag{color:var(--ok)}
+.jt-q .jtag,.jt-n .jtag,.jt-ordem .jtag,.jt-aposta .jtag{color:var(--force)} .jt-q,.jt-n,.jt-ordem,.jt-aposta{border-top-color:var(--force)}
+.jtext{font-size:18px;line-height:1.55;margin-bottom:14px}
+.jtext p{margin:0 0 10px}
+.jtext p:last-child{margin-bottom:0}
+.jlab{margin:4px -6px 10px}
+.jlab .lab{box-shadow:none}
+.jgoal{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--display);font-size:14.5px;font-weight:700;color:var(--muted)}
+.jgoal .gi{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--line)}
+.jgoal.won{color:var(--ok)}
+.jgoal.won .gi{background:var(--ok);border-color:var(--ok)}
+.jgoal .btn{margin-left:auto}
+.jrec{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.jneed{font-family:var(--display);font-size:14px;color:var(--muted)}
+.jtab{border-collapse:collapse;margin-top:12px;font-family:var(--mono);font-size:14px;min-width:220px}
+.jtab th{font-family:var(--display);font-size:13px;color:var(--muted);text-align:right;padding:5px 12px;border-bottom:2px solid var(--line)}
+.jtab td{text-align:right;padding:5px 12px;border-bottom:1px solid var(--line)}
+.jplot{margin-top:10px}
+.jplot canvas{display:block;width:100%}
+.jafter .jtext{margin-top:14px}
+.jder{list-style:none;padding:0;margin:0;display:grid;gap:12px;counter-reset:d}
+.jder li{counter-increment:d;display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 10px;align-items:start}
+.jder li::before{content:counter(d);grid-row:span 3;font-family:var(--mono);font-size:13px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;margin-top:3px}
+.jl{font-size:18px;line-height:1.5}
+.blank{display:inline-block;min-width:54px;text-align:center;border-bottom:2.5px dashed var(--acc);color:var(--acc);font-family:var(--display);font-weight:800}
+.filled{display:inline-block;background:var(--ok-soft);border-radius:6px;padding:0 6px;font-weight:600}
+.jopts{display:flex;flex-wrap:wrap;gap:8px}
+.jopts .btn{font-family:var(--body);font-weight:600;font-size:16px}
+.jopts .btn.no{border-color:var(--bad);color:var(--bad);opacity:.6}
+.jwhy{font-size:15px;color:var(--muted)}
+.jwhy .bad{color:var(--bad)}
+.jresult{margin-top:16px;border:2px solid var(--acc);border-radius:var(--r);padding:10px 14px;background:var(--card)}
+.jresult .jtag{color:var(--acc);margin:0}
+.jworld{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.jworld div{background:var(--sunk);border-radius:11px;padding:12px 14px}
+.jworld b{font-family:var(--display);font-size:16px}
+.jworld p{margin:4px 0 0;font-size:15.5px;line-height:1.45}
+.jord{margin:0 0 12px;padding-left:24px;font-size:16.5px}
+.jord li{margin:4px 0;color:var(--ok);font-weight:600}
+.jpool{display:grid;gap:8px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.jnav{display:flex;align-items:center;gap:10px;margin-top:12px}
+.jnav [data-nav=next]{margin-left:auto}
+.jend{text-align:center;border-top-color:var(--ok)}
+.jend .jstar{font-size:40px;color:var(--energy);line-height:1}
+.jend p{color:var(--muted);margin:6px 0 14px}
+.jend .row{justify-content:center}
+details.fold{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:0 16px}
+details.fold>summary{cursor:pointer;padding:14px 0;font-family:var(--display);font-weight:700;font-size:16px;color:var(--accent)}
+details.fold[open]{padding-bottom:16px}
+details.fold #lab{margin-top:4px}
+
 /* revisão */
 .revlist{display:grid;gap:8px;margin:14px 0}
 .empty{color:var(--muted);font-size:16px}
@@ -272,6 +341,10 @@ html:not(.has-ai) .ai{display:none!important}
   .fml .gap{display:block;height:8px}
   .result{flex-direction:column;align-items:flex-start;gap:10px}
   .chatf{flex-direction:column;align-items:stretch}
+  .jcard{padding:14px 12px 16px}
+  .jtext,.jl{font-size:17px}
+  .jlab{margin:4px -4px 10px}
+  .jnav .ai{order:3;flex-basis:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>

@@ -92,7 +92,7 @@ SIMS.fall=(host)=>Sim(host,{alt:'Duas bolas de massas diferentes caindo juntas n
 SIMS.proj=(host,cfg)=>{ const hero=!!cfg.hero; const angs=[30,45,60];
   return Sim(host,{alt:'Projéteis lançados em ângulos diferentes; 30° e 60° caem no mesmo lugar',anim:true,autoplay:hero,h:hero?250:320,speed:hero?1.4:1,
   legend:hero?[['force','30°'],['vel','45°'],['acc','60°']]:[['vel','vₓ (constante)'],['acc','v_y (muda por causa da gravidade)']],
-  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
+  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:cfg.th||45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
   init(s){ if(hero){ s.p.v0=18; s.p.g=10; s.k=s.k||0; s.p.th=angs[s.k%3]; s.done=s.done||[]; s.wait=0; } s.tr=[]; s.x=0; s.y=0; },
   step(s,dt){ if(hero&&s.wait>0){ s.wait-=dt; if(s.wait<=0){ s.k++; if(s.k%3===0) s.done=[]; s.t=0; s.def.init(s); } return; }
     const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th), T=2*vy/s.p.g, t=Math.min(T,s.t+dt);
@@ -149,9 +149,9 @@ SIMS.block=(host,cfg)=>Sim(host,{alt:'Bloco empurrado sobre uma superfície com 
   reads:s=>{ const f=s.def.forces(s); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N',nt(f.N)+' N']].concat(cfg.fric?[['Atrito',nt(f.fat)+' N · '+f.kind],['Atrito máximo μₑ·N',nt(s.p.ue*f.N)+' N']]:[]).concat([['Força resultante',nt(s.p.F-f.fat)+' N'],['Aceleração a = F<sub>R</sub>/m',nt(f.a)+' m/s²'],['Velocidade',nt(s.v)+' m/s']]); }});
 
 /* elevador: normal, peso e ação e reação */
-SIMS.elev=(host)=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador acelerando',anim:true,h:330,
+SIMS.elev=(host,cfg={})=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador acelerando',anim:true,h:330,
   legend:[['force','peso (a Terra puxa a pessoa)'],['vel','normal (a balança empurra a pessoa)'],['muted','reação: a pessoa empurra a balança']],
-  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:2,u:'m/s²'}],
+  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:cfg.a??2,u:'m/s²'}],
   init(s){ s.y=0; s.v=0; },
   step(s,dt){ s.v+=s.p.a*dt; s.y+=s.v*dt; if(Math.abs(s.y)>9) s.play(false); },
   done:s=>Math.abs(s.y)>9,

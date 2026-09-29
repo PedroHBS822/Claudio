@@ -51,7 +51,7 @@ function mergeP(a,b){ const out=normP({...a}); out.l={};
   new Set([...Object.keys(a.l),...Object.keys(b.l)]).forEach(id=>{ const x=a.l[id], y=b.l[id];
     if(!x||!y){ out.l[id]={...(x||y)}; return; }
     const rx=rank(x), ry=rank(y); let win=x; for(let i=0;i<3;i++){ if(rx[i]!==ry[i]){ win=rx[i]>ry[i]?x:y; break; } }
-    const lose=win===x?y:x, w={...win}; ['pr','prr','lab','ex'].forEach(k=>{ if(w[k]==null&&lose[k]!=null) w[k]=lose[k]; }); out.l[id]=w; });
+    const lose=win===x?y:x, w={...win}; ['pr','prr','lab','ex','jd'].forEach(k=>{ if(w[k]==null&&lose[k]!=null) w[k]=lose[k]; }); if(lose.ji>(w.ji||0)) w.ji=lose.ji; out.l[id]=w; });
   out.mod={...b.mod}; Object.keys(a.mod).forEach(k=>{ out.mod[k]=Math.max(+a.mod[k]||0,+out.mod[k]||0); });
   out.days=[...new Set([...b.days,...a.days])].filter(d=>typeof d==='string').sort().slice(-400);
   return out; }
@@ -267,7 +267,7 @@ async function genQuestion(l,out,btn){
 /* ---------- telas ---------- */
 let SIMNOW=[], SQ='';
 const CHN=8;
-function disposeSims(){ SIMNOW.forEach(s=>s.dispose()); SIMNOW=[]; }
+function disposeSims(){ SIMNOW.forEach(s=>s.dispose()); SIMNOW=[]; if(JCLEAN){ JCLEAN(); JCLEAN=null; } }
 function srch(l){ return l.srch||(l.srch=normTxt(l.t+' '+l.mod.t+' '+plain((l.keep||[]).join(' ')))); }
 function sidebar(){ const cur=location.hash.slice(1), d=dueList().length;
   return `<a class="brand" href="#"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15.5" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M5 22 Q12 4 17 17 T29 12" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/><circle cx="17" cy="17" r="2.6" fill="var(--force)"/></svg><span><b>Física do Zero</b><small>ensino médio, do começo</small></span></a>
@@ -289,18 +289,19 @@ function viewHome(){
     <p class="ai aihint">${AIPILL} <span>Tutor com IA ligado: em cada lição você pode pedir outra explicação, perguntar por que errou, tirar dúvidas e criar questões estilo ENEM.</span></p></div>
     <div class="herolab" id="herolab"></div></section>
   <h2 class="sech">Como cada lição funciona</h2>
-  <div class="method"><div><h3>1. Preveja</h3><p>Antes de ver a resposta, você aposta no que vai acontecer. Errar a previsão faz o cérebro prestar atenção.</p></div><div><h3>2. Experimente</h3><p>No laboratório, você muda os valores e vê o efeito na hora, com vetores e gráficos.</p></div><div><h3>3. Entenda</h3><p>A fórmula aparece com cada símbolo explicado e um exemplo resolvido passo a passo.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias. No fim de cada módulo, um desafio misturado.</p></div></div>
+  <div class="method"><div><h3>1. Veja no dia a dia</h3><p>Cada lição começa numa situação real: o ônibus que freia, a bola chutada, o elevador que sobe.</p></div><div><h3>2. Experimente e meça</h3><p>No laboratório você cumpre desafios, anota medidas e vê o gráfico se formar. O padrão aparece para você.</p></div><div><h3>3. Construa a fórmula</h3><p>Você monta a fórmula passo a passo a partir do que mediu. Ela vira uma conclusão sua, não algo para decorar.</p></div><div><h3>4. Pratique e revise</h3><p>Três acertos seguidos dominam a lição. Depois ela volta em 1, 3, 7, 16 e 35 dias. No fim de cada módulo, um desafio misturado.</p></div></div>
   <h2 class="sech">Mapa do curso</h2>
   <div class="map">${MODS.map((mo,mi)=>{ const k=mo.lessons.filter(l=>(P.l[l.id]||{}).s===2).length, best=P.mod[mo.id]; return `<div class="mapcard"><p class="eyebrow" style="margin:0">Módulo ${mi+1}</p><h3>${mo.t}</h3><div class="bar" aria-label="${k} de ${mo.lessons.length} dominadas"><i style="width:${k/mo.lessons.length*100}%"></i></div>${mo.lessons.map(l=>`<a class="lk" href="#${l.id}">${statusDot(l.id)}<span>${l.t}</span></a>`).join('')}<a class="lk chal" href="#desafio-${mo.id}"><span class="star" aria-hidden="true">★</span><span>Desafio do módulo${best!=null?` · melhor: ${best}/${CHN}`:''}</span></a></div>`; }).join('')}</div>
   <p class="syncnote home${SYNC.state==='cloud'?' cloud':''}">${syncText()}</p></div>`; }
 
 function chipCls(id){ const x=P.l[id]; return isDue(id)?'due':x&&x.s===2?'ok':''; }
 function stepsHTML(l){ const x=P.l[l.id]||{};
-  return [['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]].filter(s=>s[3])
+  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
     .map(([k,t,d])=>`<li><button type="button" class="${d?'done':''}" data-go="${k}"><span class="ck" aria-hidden="true">${d?'✓':''}</span>${t}${d?'<span class="sr"> (feito)</span>':''}</button></li>`).join(''); }
 function updateHead(l){ const s=$('#steps'); if(s) s.innerHTML=stepsHTML(l); const c=$('#lstat'); if(c){ c.textContent=statusText(l.id); c.className='chip '+chipCls(l.id); } }
 
 function viewLesson(l){
+  if(l.jor) return viewJourneyLesson(l);
   const mi=MODS.indexOf(l.mod), prev=LES[l.idx-1], next=LES[l.idx+1], endMod=!next||next.mod!==l.mod;
   let n=0; const H=t=>`<h2><span class="n">${String(++n).padStart(2,'0')}</span>${t}</h2>`;
   return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1} de ${LES.length}</p><h1>${l.t}</h1>
@@ -322,6 +323,26 @@ function viewLesson(l){
     <form class="chatf"><label class="sr" for="chatin">Sua pergunta</label><textarea id="chatin" rows="2" placeholder="Ex.: por que a massa não aparece nessa fórmula?"></textarea><button class="btn" type="submit">Perguntar</button></form></div></section>
   <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${endMod?`<a class="btn ghost" href="#desafio-${l.mod.id}">★ Desafio do módulo</a>`:''}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
 
+/* lição no formato jornada: descobrir primeiro, resumo depois */
+function viewJourneyLesson(l){
+  const mi=MODS.indexOf(l.mod), prev=LES[l.idx-1], next=LES[l.idx+1], endMod=!next||next.mod!==l.mod, x=P.l[l.id]||{};
+  let n=0; const H=t=>`<h2><span class="n">${String(++n).padStart(2,'0')}</span>${t}</h2>`;
+  return `<article class="col"><header class="lhead"><p class="eyebrow">Módulo ${mi+1} · ${esc(l.mod.t)} · Lição ${l.idx+1} de ${LES.length}</p><h1>${l.t}</h1>
+    <div class="chips"><span class="chip">${l.min||12} min</span><span class="chip ${chipCls(l.id)}" id="lstat">${statusText(l.id)}</span></div>
+    <ol class="steps" id="steps" aria-label="Etapas da lição">${stepsHTML(l)}</ol></header>
+  <section class="sec">${H('Descubra')}<p class="lead2">Nada de decorar: você vai ver a situação, mexer, medir e montar a fórmula. Cada passo libera o próximo.</p><div id="jor"></div></section>
+  <section class="sec">${H('Resumo da lição')}<details class="fold" id="resumo"${x.jd?' open':''}><summary>${x.jd?'O que você descobriu':'Abrir o resumo (melhor depois da jornada)'}</summary><div class="prose">${l.idea}${l.f.map(f=>formulaCard(f)).join('')}${l.fn?`<div>${l.fn}</div>`:''}${l.keep?`<div class="note"><b>Para lembrar</b><ul style="margin:6px 0 0">${l.keep.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</div>
+    <div class="ai aiask" id="aiidea"><span>Ainda confuso? Peça ao tutor:</span><button class="btn sm ghost" type="button" data-ai="simples">Explique mais simples</button><button class="btn sm ghost" type="button" data-ai="analogia">Dê uma analogia</button><button class="btn sm ghost" type="button" data-ai="fundo">Quero ir mais fundo</button></div><div class="aiout"></div></details></section>
+  <section class="sec">${H('Laboratório livre')}<details class="fold" id="livre"><summary>Abrir o laboratório para explorar à vontade</summary><div id="lab"></div>${l.tasks?`<div class="note" style="margin-top:12px"><b>Ideias para testar:</b><ul class="tasks">${l.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</details></section>
+  ${l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
+  <section class="sec">${H('Pratique')}<p class="lead2">Os números mudam a cada questão. Três acertos seguidos de primeira dominam a lição; se errar, você ganha uma pista e uma segunda chance.</p><div id="prac"></div>
+    <div class="ai aigen"><button class="btn sm ghost" type="button" id="aigen">${AIPILL} Criar uma questão estilo ENEM</button><span class="aitag">Treino extra; não conta para o domínio.</span></div><div id="aiq"></div></section>
+  ${l.traps?`<section class="sec prose">${H('Erros comuns')}<ul>${l.traps.map(t=>`<li>${t}</li>`).join('')}</ul></section>`:''}
+  <section class="sec ai" id="chat">${H('Tire sua dúvida')}<p class="lead2">Pergunte ao tutor qualquer coisa sobre esta lição. Ele é o Claude e usa o seu plano; na primeira pergunta, pede a sua permissão.</p>
+    <div class="chat"><div class="msgs"></div><div class="row sugg">${['Onde isso aparece no dia a dia?','Como esse assunto cai no ENEM?','Me passe um exercício parecido com o exemplo'].map(t=>`<button class="btn sm ghost" type="button" data-sug>${t}</button>`).join('')}</div>
+    <form class="chatf"><label class="sr" for="chatin">Sua pergunta</label><textarea id="chatin" rows="2" placeholder="Ex.: por que a massa não aparece nessa fórmula?"></textarea><button class="btn" type="submit">Perguntar</button></form></div></section>
+  <nav class="navrow" aria-label="Navegação entre lições">${prev?`<a class="btn ghost" href="#${prev.id}">← ${esc(prev.t)}</a>`:'<span></span>'}${endMod?`<a class="btn ghost" href="#desafio-${l.mod.id}">★ Desafio do módulo</a>`:''}${next?`<a class="btn" href="#${next.id}">${esc(next.t)} →</a>`:`<a class="btn" href="#">Voltar ao início</a>`}</nav></article>`; }
+
 const IDEA_ASK={simples:'Explique de novo a ideia central desta lição, de um jeito mais simples, para quem está vendo o assunto pela primeira vez. Use um exemplo concreto com números. No máximo 170 palavras.',
   analogia:'Explique a ideia central desta lição com uma analogia do dia a dia de um estudante brasileiro. Depois, em uma frase, diga onde a analogia deixa de funcionar. No máximo 170 palavras.',
   fundo:'Aprofunde esta lição para quem já entendeu o básico: de onde vem a fórmula principal (raciocínio curto) e uma aplicação ou pegadinha que costuma cair no ENEM ou em vestibulares. No máximo 220 palavras.'};
@@ -337,10 +358,12 @@ function mountChat(l){ const box=$('#chat'); if(!box) return; const msgs=$('.msg
   $$('[data-sug]',box).forEach(b=>b.addEventListener('click',()=>send(b.textContent))); }
 
 function mountLesson(l){
-  SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
   const x=()=>P.l[l.id]||{}, upd=()=>updateHead(l);
-  const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch));
-  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
+  if(l.jor){ Jornada($('#jor'),l,first=>{ upd(); renderSide(); const d=$('#resumo'); if(d&&first){ d.open=true; $('summary',d).textContent='O que você descobriu'; } });
+    const lv=$('#livre'); lv.addEventListener('toggle',()=>{ if(lv.open&&!lv.dataset.m){ lv.dataset.m=1; SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{})); } }); }
+  else { SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
+    const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch)); }
+  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
   const pr=$('#pred'); if(pr){
     const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x().pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x().pr===l.pred.a?'ok':'info'}"><b>${x().pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
     const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x().pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
