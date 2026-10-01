@@ -85,7 +85,8 @@ function Jornada(host,l,onDone){
       <div class="jnav"><button class="btn ghost" type="button" data-nav="back" ${i?'':'disabled'}>← Voltar</button><button class="btn sm ghost ai" type="button" data-nav="ai">${AIPILL} Não entendi</button><button class="btn" type="button" data-nav="next" disabled>${i===J.length-1?'Concluir':'Continuar'} →</button></div><div class="aiout"></div></div>`;
     JSTEP[st.t]($('.jbody',host),st,()=>{ const nb=$('[data-nav=next]',host); if(nb) nb.disabled=false; },ctx);
     if(i<reached) $('[data-nav=next]',host).disabled=false;
-    if(scroll) host.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); }
+    const card=$('.jcard',host); card.tabIndex=-1; card.setAttribute('aria-label',`Passo ${i+1} de ${J.length}: ${JTAG[st.t]}`);
+    if(scroll){ host.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); card.focus({preventScroll:true}); } }
   function finish(scroll){ clean(); const x=ls(l.id); const first=!x.jd; if(first){ x.jd=1; x.ji=J.length; save(); } onDone&&onDone(first);
     host.innerHTML=`<div class="jor"><div class="jcard jend"><div class="jstar" aria-hidden="true">★</div><h3>Você descobriu a física desta lição.</h3><p>Agora confira o resumo, veja um exemplo resolvido e pratique até dominar.</p><div class="row"><button class="btn" type="button" data-to="prac">Praticar agora</button><button class="btn ghost" type="button" data-to="resumo">Ver o resumo</button><button class="btn ghost" type="button" data-again>Refazer a jornada</button></div></div></div>`;
     if(scroll) host.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); }

@@ -61,7 +61,7 @@ SIMS.impulse=(host)=>Sim(host,{alt:'Chute numa bola: gráfico da força durante 
 
 /* colisões em uma dimensão: carrinhos num trilho */
 function cart(g,x,y,w,col,label){ const h=26; SK.shadow(g,x,y+2,w); g.rect(x-w/2,y-h-6,w,h,col,mix(col,'#000',.35),7,1.5); g.rect(x-w/2+6,y-h,w-12,8,alpha('#ffffff',.25),null,3); g.circle(x-w*.3,y-4,5,'#1c1f24'); g.circle(x+w*.3,y-4,5,'#1c1f24'); g.circle(x-w*.3,y-4,2,'#9aa3ad'); g.circle(x+w*.3,y-4,2,'#9aa3ad'); g.text(label,x,y-h/2-2,{size:12,bold:true,align:'center',c:'#fff'}); }
-SIMS.coll=(host,cfg={})=>Sim(host,{alt:'Dois carrinhos num trilho que colidem, com barras de quantidade de movimento e de energia',anim:true,h:330,
+SIMS.coll=(host,cfg={})=>Sim(host,{alt:'Dois carrinhos num trilho que colidem, com barras de quantidade de movimento e de energia',anim:true,h:w=>w<560?400:330,
   legend:[['vel','carrinho 1'],['force','carrinho 2'],['acc','total']],
   ctrls:[{k:'m1',l:'Massa 1',min:1,max:5,step:.5,v:cfg.m1??2,u:'kg'},{k:'v1',l:'Velocidade 1',min:-4,max:8,step:1,v:cfg.v1??5,u:'m/s'},{k:'m2',l:'Massa 2',min:1,max:5,step:.5,v:cfg.m2??2,u:'kg'},{k:'v2',l:'Velocidade 2',min:-6,max:4,step:1,v:cfg.v2??0,u:'m/s'},{k:'e',l:'Coeficiente de restituição e',min:0,max:1,step:.1,v:cfg.e??1,f:v=>nsig(v,2)+(v===1?' (elástica)':v===0?' (grudam)':'')}],
   init(s){ s.x1=-5; s.x2=1.5; s.u1=s.p.v1; s.u2=s.p.v2; s.hit=false; s.hitT=-9; },
@@ -75,11 +75,11 @@ SIMS.coll=(host,cfg={})=>Sim(host,{alt:'Dois carrinhos num trilho que colidem, c
     const flash=s.t-s.hitT; if(flash>=0&&flash<.35){ const r=10+flash*90; g.ctx.save(); g.ctx.globalAlpha=1-flash/.35; g.circle(X(s.hx),y-18,r,null,COL.energy,4); g.ctx.restore(); }
     cart(g,X(s.x1),y,Math.max(36,w1),COL.vel,nt(s.p.m1)+' kg'); cart(g,X(s.x2),y,Math.max(36,w2),COL.force,nt(s.p.m2)+' kg');
     [[s.x1,s.u1,COL.vel],[s.x2,s.u2,COL.force]].forEach(([x,u,c])=>{ if(Math.abs(u)>.05) g.arrow(X(x),y-46,X(x)+u*9,y-46,c,nt(u)+' m/s',2.5); });
-    const Q=[s.p.m1*s.u1,s.p.m2*s.u2], Q0=[s.p.m1*s.p.v1,s.p.m2*s.p.v2], E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2, top=y+50, mid=g.W/2, qs=Math.max(1,Math.abs(Q0[0])+Math.abs(Q0[1]),Math.abs(Q[0])+Math.abs(Q[1]));
+    const Q=[s.p.m1*s.u1,s.p.m2*s.u2], Q0=[s.p.m1*s.p.v1,s.p.m2*s.p.v2], E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2, top=y+50, mid=g.W<560?g.W:g.W/2, qs=Math.max(1,Math.abs(Q0[0])+Math.abs(Q0[1]),Math.abs(Q[0])+Math.abs(Q[1]));
     g.text('quantidade de movimento Q = m·v',16,top,{size:12.5,c:COL.ink,bold:true}); const zx=mid*.5; g.line(zx,top+8,zx,top+84,COL.muted,1);
-    [[Q[0],COL.vel,'carrinho 1'],[Q[1],COL.force,'carrinho 2'],[Q[0]+Q[1],COL.acc,'total']].forEach(([q,c,l],i)=>{ const yy=top+14+i*24, ww=q/qs*mid*.42; g.rect(Math.min(zx,zx+ww),yy,Math.abs(ww),16,c,null,4); g.text(nt(q)+' kg·m/s',zx+(ww>=0?Math.max(ww,0)+6:6),yy+12,{size:10.5,mono:true,c:COL.ink}); });
-    g.text('energia cinética',mid+16,top,{size:12.5,c:COL.ink,bold:true}); const es=Math.max(E0,1), bw=g.W-mid-40;
-    g.rect(mid+16,top+14,bw*E0/es,16,COL.line,null,4); g.rect(mid+16,top+38,bw*E/es,16,COL.energy,null,4); g.text('antes: '+nt(E0)+' J',mid+20,top+26,{size:10.5,c:COL.ink}); g.text('agora: '+nt(E)+' J',mid+20,top+50,{size:10.5,c:COL.ink}); },
+    [[Q[0],COL.vel,'carrinho 1'],[Q[1],COL.force,'carrinho 2'],[Q[0]+Q[1],COL.acc,'total']].forEach(([q,c,l],i)=>{ const yy=top+14+i*24, ww=q/qs*mid*(g.W<560?.3:.42); g.rect(Math.min(zx,zx+ww),yy,Math.abs(ww),16,c,null,4); g.text(nt(q)+' kg·m/s',zx+(ww>=0?Math.max(ww,0)+6:6),yy+12,{size:10.5,mono:true,c:COL.ink}); });
+    const narrow=g.W<560, ex0=narrow?16:mid+16, et=narrow?top+100:top; g.text('energia cinética',ex0,et,{size:12.5,c:COL.ink,bold:true}); const es=Math.max(E0,1), bw=(narrow?g.W-32:g.W-mid-40);
+    g.rect(ex0,et+14,bw*E0/es,16,COL.line,null,4); g.rect(ex0,et+38,bw*E/es,16,COL.energy,null,4); g.text('antes: '+nt(E0)+' J',ex0+4,et+26,{size:10.5,c:COL.ink}); g.text('agora: '+nt(E)+' J',ex0+4,et+50,{size:10.5,c:COL.ink}); },
   reads:s=>{ const Q0=s.p.m1*s.p.v1+s.p.m2*s.p.v2, Q=s.p.m1*s.u1+s.p.m2*s.u2, E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2;
     return [['Q total antes',nt(Q0)+' kg·m/s'],['Q total agora',nt(Q)+' kg·m/s'],['Energia cinética antes → agora',nt(E0)+' → '+nt(E)+' J'],['Velocidades agora',nt(s.u1)+' e '+nt(s.u2)+' m/s'],['Colisão',s.p.v1<=s.p.v2?'não acontece (o 1 não alcança o 2)':s.p.e===1?'elástica: conserva a energia':s.p.e===0?'perfeitamente inelástica: saem juntos':'parcialmente elástica']]; }});
 

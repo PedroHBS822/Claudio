@@ -71,9 +71,10 @@ function ls(id){ return P.l[id]||(P.l[id]={s:0,st:0,n:0,c:0,box:0,due:0}); }
 const isDue=id=>{ const x=P.l[id]; return !!x&&x.s===2&&x.due<=Date.now(); };
 const dueList=()=>LES.filter(l=>isDue(l.id));
 const mastered=()=>LES.filter(l=>(P.l[l.id]||{}).s===2).length;
-function statusDot(id){ const x=P.l[id]; return `<span class="dot ${isDue(id)?'due':x&&x.s===2?'s2':x&&x.s===1?'s1':''}" aria-hidden="true"></span>`; }
-function statusText(id){ const x=P.l[id]; return isDue(id)?'revisão pendente':x&&x.s===2?'dominada':x&&x.s===1?'em andamento':'não iniciada'; }
-function nextLesson(){ return LES.find(l=>(P.l[l.id]||{}).s!==2)||LES[0]; }
+const begun=x=>!!x&&(x.s===1||(x.s!==2&&(x.ji>0||x.jd)));
+function statusDot(id){ const x=P.l[id]; return `<span class="dot ${isDue(id)?'due':x&&x.s===2?'s2':begun(x)?'s1':''}" aria-hidden="true"></span>`; }
+function statusText(id){ const x=P.l[id]; return isDue(id)?'revisão pendente':x&&x.s===2?'dominada':begun(x)?'em andamento':'não iniciada'; }
+function nextLesson(){ const last=P.last&&LX[P.last]; if(last&&(P.l[last.id]||{}).s!==2) return last; return LES.find(l=>(P.l[l.id]||{}).s!==2)||LES[0]; }
 
 /* dias de estudo seguidos */
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -301,10 +302,10 @@ function filterSide(){ const q=normTxt(SQ.trim()); let any=false;
 function renderSide(){ $('#side').innerHTML=sidebar(); filterSide(); }
 
 function viewHome(){
-  const nx=nextLesson(), m=mastered(), d=dueList().length, started=LES.some(l=>(P.l[l.id]||{}).s>0), sd=streakDays();
+  const nx=nextLesson(), m=mastered(), d=dueList().length, started=LES.some(l=>begun(P.l[l.id])||(P.l[l.id]||{}).s>0), sd=streakDays(), nxs=P.l[nx.id]||{}, where=nxs.jd?'falta praticar':nxs.ji>0&&nx.jor?`jornada: passo ${nxs.ji+1} de ${nx.jor.length}`:'';
   return `<div class="wide"><section class="hero"><div><p class="eyebrow">Física do ensino médio · ${LES.length} lições</p><h1>Física do Zero, <span>entendida de verdade</span></h1>
-    <p class="lead">Cada ideia aparece primeiro num experimento que você controla, depois na fórmula e por fim em exercícios com números sempre novos, até você acertar sozinho.</p>
-    <div class="row"><a class="btn" href="#${nx.id}">${started?'Continuar':'Começar'}: ${esc(nx.t)} →</a>${d?`<a class="btn ghost" href="#revisao">Revisar ${d} lição${d>1?'ões':''}</a>`:''}</div>
+    <p class="lead">Cada lição começa numa situação do dia a dia. Você experimenta no laboratório, mede, monta a fórmula com as próprias mãos e só então pratica, com números sempre novos.</p>
+    <div class="row"><a class="btn" href="#${nx.id}">${started?'Continuar':'Começar'}: ${esc(nx.t)}${where?` <small class="btnsub">(${where})</small>`:''} →</a>${d?`<a class="btn ghost" href="#revisao">Revisar ${d} lição${d>1?'ões':''}</a>`:''}</div>
     <div class="stats"><div><b>${m}/${LES.length}</b><span>lições dominadas</span></div><div><b>${d}</b><span>revisões para hoje</span></div><div><b>${sd}</b><span>${sd===1?'dia seguido':'dias seguidos'} estudando</span></div></div>
     <p class="ai aihint">${AIPILL} <span>Tutor com IA ligado: em cada lição você pode pedir outra explicação, perguntar por que errou, tirar dúvidas e criar questões estilo ENEM.</span></p></div>
     <div class="herolab" id="herolab"></div></section>
