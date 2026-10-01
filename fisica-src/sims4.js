@@ -27,9 +27,9 @@ SIMS.conduc=(host)=>Sim(host,{alt:'Placa de um material entre um lado quente e u
   reads:s=>{ const phi=s.def.phi(s); return [['Fluxo de calor Φ = k·A·ΔT/L',nf(phi)+' W'],['Energia que atravessa em 1 hora',nf(phi*3600)+' J'],['Condutividade k do material',nsig(s.p.k,3)+' W/(m·K)'],['O material é',s.p.k<=.2?'isolante':s.p.k>=40?'bom condutor':'mau condutor']]; }});
 
 /* MHS: massa-mola e pêndulo lado a lado */
-SIMS.mhs=(host)=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando lado a lado, com o gráfico da posição de cada um no tempo',anim:true,autoplay:true,h:w=>w<560?440:400,
+SIMS.mhs=(host,cfg={})=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando lado a lado, com o gráfico da posição de cada um no tempo',anim:true,autoplay:true,h:w=>w<560?440:400,
   legend:[['vel','massa na mola'],['force','pêndulo']],
-  ctrls:[{k:'m',l:'Massa m (a mesma nos dois)',min:.1,max:2,step:.1,v:.5,u:'kg',live:true},{k:'k',l:'Constante da mola k',min:5,max:80,step:5,v:20,u:'N/m',live:true},{k:'L',l:'Comprimento do pêndulo L',min:.2,max:2.5,step:.1,v:1,u:'m',live:true},{k:'A',l:'Amplitude (mola · pêndulo)',min:.02,max:.1,step:.01,v:.06,f:v=>nsig(v*100,2)+' cm · '+nsig(v*150,2)+'°',live:true}],
+  ctrls:[{k:'m',l:'Massa m (a mesma nos dois)',min:.1,max:2,step:.1,v:cfg.m??.5,u:'kg',live:true},{k:'k',l:'Constante da mola k',min:5,max:80,step:5,v:cfg.k??20,u:'N/m',live:true},{k:'L',l:'Comprimento do pêndulo L',min:.2,max:2.5,step:.1,v:cfg.L??1,u:'m',live:true},{k:'A',l:'Amplitude (mola · pêndulo)',min:.02,max:.1,step:.01,v:.06,f:v=>nsig(v*100,2)+' cm · '+nsig(v*150,2)+'°',live:true}],
   step(){},
   pos(s,t){ const ws=Math.sqrt(s.p.k/s.p.m), wp=Math.sqrt(GRAV/s.p.L); return [Math.cos(ws*t),Math.cos(wp*t)]; },
   draw(g,s){ const W=g.W, H=g.H, top=18, gh=Math.min(130,H*.3), gy=H-gh-30, zone=gy-top-36, t=s.t, [xs,xp]=s.def.pos(s,t), sz=16+14*Math.cbrt(s.p.m);
@@ -50,9 +50,9 @@ SIMS.mhs=(host)=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando l
   reads:s=>{ const Ts=2*Math.PI*Math.sqrt(s.p.m/s.p.k), Tp=2*Math.PI*Math.sqrt(s.p.L/GRAV); return [['Período da mola 2π√(m/k)',nt(Ts)+' s'],['Período do pêndulo 2π√(L/g)',nt(Tp)+' s'],['Frequências (mola · pêndulo)',nt(1/Ts)+' Hz · '+nt(1/Tp)+' Hz'],['Energia da mola k·A²/2',nt(.5*s.p.k*s.p.A**2)+' J']]; }});
 
 /* ondas estacionárias em cordas e tubos */
-SIMS.harm=(host)=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um tubo, com nós e ventres marcados',anim:true,autoplay:true,h:290,
+SIMS.harm=(host,cfg={})=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um tubo, com nós e ventres marcados',anim:true,autoplay:true,h:290,
   legend:[['vel','onda agora'],['muted','limites da vibração'],['force','nós (pontos parados)']],
-  ctrls:[{k:'tipo',l:'Onde está a onda',opts:[['corda','corda presa'],['aberto','tubo aberto'],['fechado','tubo fechado']],v:'corda',live:true},{k:'n',l:'Modo de vibração',min:1,max:5,step:1,v:1,f:v=>v+'º modo',live:true},{k:'L',l:'Comprimento L',min:.2,max:2,step:.1,v:1,u:'m',live:true},{k:'v',l:'Velocidade da onda v',min:100,max:400,step:10,v:340,u:'m/s',live:true}],
+  ctrls:[{k:'tipo',l:'Onde está a onda',opts:[['corda','corda presa'],['aberto','tubo aberto'],['fechado','tubo fechado']],v:cfg.tipo??'corda',live:true},{k:'n',l:'Modo de vibração',min:1,max:5,step:1,v:cfg.n??1,f:v=>v+'º modo',live:true},{k:'L',l:'Comprimento L',min:.2,max:2,step:.1,v:cfg.L??1,u:'m',live:true},{k:'v',l:'Velocidade da onda v',min:100,max:400,step:10,v:cfg.v??340,u:'m/s',live:true}],
   mode(s){ const L=s.p.L, t=s.p.tipo, h=t==='fechado'?2*s.p.n-1:s.p.n, lam=t==='fechado'?4*L/h:2*L/h, f1=t==='fechado'?s.p.v/(4*L):s.p.v/(2*L);
     const y=t==='corda'?u=>Math.sin(h*Math.PI*u):t==='aberto'?u=>Math.cos(h*Math.PI*u):u=>Math.sin(h*Math.PI*u/2);
     const nodes=[]; for(let j=0;j<=2*h;j++){ const u=t==='corda'?j/h:t==='aberto'?(j+.5)/h:2*j/h; if(u<=1+1e-9) nodes.push(u); }
@@ -73,9 +73,9 @@ SIMS.harm=(host)=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um t
 const BANDS=[[3,-.5,'ondas de rádio','rádio','rádio AM e FM, TV aberta, radioamador','energy'],[-.5,-3,'micro-ondas','micro-ondas','forno de micro-ondas, Wi-Fi, celular, radar','ok'],[-3,Math.log10(700e-9),'infravermelho','infraverm.','calor do Sol e do fogo, controle remoto, câmera térmica','force'],[Math.log10(700e-9),Math.log10(400e-9),'luz visível','visível','a única faixa que nossos olhos enxergam',''],[Math.log10(400e-9),-8,'ultravioleta','UV','bronzeado e queimadura de sol, lâmpada germicida','acc'],[-8,-11,'raios X','raios X','radiografia e tomografia','vel'],[-11,-13,'raios gama','gama','núcleos radioativos, radioterapia','muted']];
 function fmtLam(m){ const u=m>=1?[1,'m']:m>=1e-3?[1e-3,'mm']:m>=1e-6?[1e-6,'μm']:m>=1e-9?[1e-9,'nm']:[1e-12,'pm']; return nsig(m/u[0],3)+' '+u[1]; }
 function bandOf(x){ return BANDS.find(b=>x<=b[0]&&x>b[1])||(x>3?BANDS[0]:BANDS[BANDS.length-1]); }
-SIMS.spectrum=(host)=>{ const setX=(s,v)=>{ s.p.x=v; const inp=$(`#${host.id}-x`); if(inp){ inp.value=v; $(`#${host.id}-x-o`).textContent=fmtLam(10**v); } };
+SIMS.spectrum=(host,cfg={})=>{ const setX=(s,v)=>{ s.p.x=v; const inp=$(`#${host.id}-x`); if(inp){ inp.value=v; $(`#${host.id}-x-o`).textContent=fmtLam(10**v); } };
   return Sim(host,{alt:'Régua do espectro eletromagnético, das ondas de rádio aos raios gama, com a onda escolhida desenhada acima',h:w=>w<560?300:270,
-  ctrls:[{k:'x',l:'Comprimento de onda λ (escala de potências de 10)',min:-12,max:3,step:.02,v:Math.log10(530e-9),f:v=>fmtLam(10**v),live:true}],
+  ctrls:[{k:'x',l:'Comprimento de onda λ (escala de potências de 10)',min:-12,max:3,step:.02,v:cfg.x??Math.log10(530e-9),f:v=>fmtLam(10**v),live:true}],
   btns:[{l:'Rádio FM',f:s=>setX(s,Math.log10(3))},{l:'Micro-ondas',f:s=>setX(s,Math.log10(.122))},{l:'Luz verde',f:s=>setX(s,Math.log10(530e-9))},{l:'Ultravioleta',f:s=>setX(s,Math.log10(300e-9))},{l:'Raio X',f:s=>setX(s,Math.log10(.1e-9))}],
   draw(g,s){ const W=g.W, x0=16, x1=W-16, X=v=>x0+(3-v)/15*(x1-x0), by=g.H*.52, bh=34, x=s.p.x, lam=10**x, b=bandOf(x), nm=lam*1e9;
     const wc=nm>=380&&nm<=750?lamColor(nm):COL.ink, vis=clamp(8+(x+12)/15*230,8,238), cy=by-62, A=Math.min(24,g.H*.08);

@@ -410,7 +410,7 @@ function nf(x,sig=3){ if(!isFinite(x)) return '—'; if(x===0) return '0'; const
 function nt(x,sig=3){ return nf(x,sig).replace(/<sup>(-?\d+)<\/sup>/,(m,e)=>'^'+e).replace(/\^(-?\d+)/,(m,e)=>[...e].map(c=>SUP[c]).join('')); }
 function parseNum(str){ let t=String(str).trim().replace(/\s+/g,'').replace(/[−–]/g,'-');
   if(!t) return NaN;
-  if(/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t=t.replace(/\./g,'');
+  if(/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(t)) t=t.replace(/\./g,'');
   t=t.replace(',','.').replace(/[x×*·]10\^?\(?(-?\d+)\)?$/i,'e$1').replace(/^10\^\(?(-?\d+)\)?$/,'1e$1');
   return /^-?(\d+\.?\d*|\.\d+)(e-?\d+)?$/i.test(t)?Number(t):NaN; }
 const frac=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
@@ -1543,79 +1543,100 @@ SIMS.engine=(host,cfg={})=>Sim(host,{alt:'Máquina térmica: caldeira quente, mo
   reads:s=>{ const ec=1-s.p.Tf/s.p.Tq, eta=ec*s.p.k, W=eta*s.p.Q1; return [['Rendimento de Carnot 1 − T<sub>f</sub>/T<sub>q</sub>',nt(ec*100,3)+' %'],['Rendimento desta máquina',nt(eta*100,3)+' %'],['Trabalho W = η·Q₁',nt(W)+' J'],['Calor rejeitado Q₂ = Q₁ − W',nt(s.p.Q1-W)+' J']]; }});
 
 /* =====================================================================
-   Laboratórios de estática, fluidos, termologia e ondas
+   Laboratórios com cenário: ondas, som e óptica
    ===================================================================== */
 
-/* ondas numa corda */
-SIMS.wave=(host)=>Sim(host,{alt:'Onda viajando numa corda com o comprimento de onda marcado',anim:true,autoplay:true,h:260,
-  legend:[['vel','onda'],['force','um ponto da corda (só sobe e desce)'],['energy','comprimento de onda λ']],
-  ctrls:[{k:'f',l:'Frequência f',min:.5,max:4,step:.25,v:1,u:'Hz',live:true},{k:'v',l:'Velocidade na corda v',min:1,max:8,step:.5,v:4,u:'m/s',live:true},{k:'A',l:'Amplitude',min:.2,max:1,step:.1,v:.6,u:'m',live:true}],
+/* onda numa corda: uma pessoa balança a ponta */
+SIMS.wave=(host,cfg={})=>Sim(host,{alt:'Pessoa balançando a ponta de uma corda; a onda viaja e uma fita marca um ponto que só sobe e desce',anim:true,autoplay:true,h:280,
+  legend:[['vel','onda'],['force','fita num ponto da corda (só sobe e desce)'],['energy','comprimento de onda λ']],
+  ctrls:[{k:'f',l:'Frequência f',min:.5,max:4,step:.25,v:cfg.f??1,u:'Hz',live:true},{k:'v',l:'Velocidade na corda v',min:1,max:8,step:.5,v:cfg.v??4,u:'m/s',live:true},{k:'A',l:'Amplitude',min:.2,max:1,step:.1,v:cfg.A??.6,u:'m',live:true}],
   step(){},
-  draw(g,s){ const lam=s.p.v/s.p.f, x0=20, W=g.W-40, k=W/10, cy=g.H/2+6, amp=s.p.A*45, Y=x=>cy-amp*Math.sin(2*Math.PI*(x/lam-s.p.f*s.t));
-    for(let m=0;m<=10;m++){ g.line(x0+m*k,g.H-22,x0+m*k,g.H-16,COL.muted,1); g.text(m+'',x0+m*k,g.H-4,{size:10.5,c:COL.muted,align:'center',mono:true}); } g.text('m',g.W-12,g.H-4,{size:10.5,c:COL.muted});
-    g.line(x0,cy,x0+W,cy,COL.line,1,[4,4]); const pts=[]; for(let x=0;x<=10;x+=.04) pts.push([x0+x*k,Y(x)]); g.poly(pts,COL.vel,3);
-    const px=3; g.circle(x0+px*k,Y(px),7,COL.force); g.line(x0+px*k,cy-amp-6,x0+px*k,cy+amp+6,COL.force,1,[2,3]);
-    let c1=(s.p.f*s.t+.25)*lam; c1=((c1%lam)+lam)%lam; if(c1+lam<=10){ const y=cy-amp-18; g.line(x0+c1*k,y,x0+(c1+lam)*k,y,COL.energy,2); g.line(x0+c1*k,y-6,x0+c1*k,y+6,COL.energy,2); g.line(x0+(c1+lam)*k,y-6,x0+(c1+lam)*k,y+6,COL.energy,2); g.text('λ = '+nt(lam)+' m',x0+(c1+lam/2)*k,y-8,{size:13,bold:true,align:'center',c:COL.energy}); } },
+  draw(g,s){ const lam=s.p.v/s.p.f, x0=58, W=g.W-80, k=W/10, base=g.H-34, cy=base-80, amp=Math.min(s.p.A*45,60), Y=x=>cy-amp*Math.sin(2*Math.PI*(x/lam-s.p.f*s.t));
+    SK.sky(g,base); SK.grass(g,base,g.H-base); g.rect(x0+W-4,cy-80,10,base-cy+80,isDark()?'#6b4f33':'#8a6a45',null,2);
+    for(let m=0;m<=10;m++){ g.line(x0+m*k,base,x0+m*k,base+6,COL.ink,1); g.text(m+'',x0+m*k,base+18,{size:10.5,c:COL.ink,align:'center',mono:true}); } g.text('m',g.W-14,base+18,{size:10.5,c:COL.ink});
+    g.line(x0,cy,x0+W,cy,alpha(COL.ink,.25),1,[4,4]);
+    const pts=[]; for(let x=0;x<=10;x+=.04) pts.push([x0+x*k,Y(x)]); g.poly(pts,isDark()?'#d9b77a':'#8a5a2b',5); g.poly(pts,alpha('#ffffff',.25),1.5);
+    SK.person(g,x0-26,base,78,isDark()?'#d0d6df':'#2b3340','push'); g.line(x0-8,base-62,x0,Y(0),isDark()?'#d0d6df':'#2b3340',4);
+    const px=3; g.line(x0+px*k,cy-amp-8,x0+px*k,cy+amp+8,COL.force,1,[2,3]); g.rect(x0+px*k-4,Y(px)-2,8,16,COL.force,null,2);
+    let c1=(s.p.f*s.t+.25)*lam; c1=((c1%lam)+lam)%lam; if(c1+lam<=10){ const y=cy-amp-22; SK.dim(g,x0+c1*k,y,x0+(c1+lam)*k,y,'λ = '+nt(lam)+' m',COL.energy); } },
   reads:s=>[['Comprimento de onda λ = v/f',nt(s.p.v/s.p.f)+' m'],['Período T = 1/f',nt(1/s.p.f)+' s'],['Conferindo v = λ·f',nt(s.p.v/s.p.f*s.p.f)+' m/s'],['O que muda a velocidade','o meio (a corda), não a fonte']]});
 
-/* efeito Doppler */
-SIMS.doppler=(host)=>Sim(host,{alt:'Fonte sonora em movimento emitindo frentes de onda circulares',anim:true,autoplay:true,h:300,
-  ctrls:[{k:'M',l:'Velocidade da fonte (em relação ao som)',min:0,max:1.3,step:.05,v:.5,f:v=>nsig(v*340,3)+' m/s ('+nsig(v,2)+'× o som)'}],
+/* efeito Doppler: ambulância (ou jato) passando entre dois ouvintes */
+SIMS.doppler=(host,cfg={})=>Sim(host,{alt:'Ambulância passando por uma rua e emitindo frentes de onda; ouvintes à frente e atrás',anim:true,autoplay:true,h:320,
+  ctrls:[{k:'M',l:'Velocidade da fonte (em relação ao som)',min:0,max:1.3,step:.05,v:cfg.M??.5,f:v=>nsig(v*340,3)+' m/s ('+nsig(v,2)+'× o som)'}],
   init(s){ s.x=-.8; s.fr=[]; s.acc=0; },
   step(s,dt){ const c=.25; s.x+=s.p.M*c*dt; s.acc+=dt; if(s.acc>=.35){ s.acc=0; s.fr.push({x:s.x,t:s.t}); } if(s.fr.length>30) s.fr.shift(); if(s.x>.9){ s.x=-.8; s.fr=[]; } },
-  draw(g,s){ const k=g.W/2.1, X=x=>g.W/2+x*k, cy=g.H/2, c=.25;
-    s.fr.forEach(f=>{ const r=(s.t-f.t)*c*k; g.circle(X(f.x),cy,r,null,COL.vel,1.5); });
-    g.circle(X(s.x),cy,9,COL.force); g.text('ouvinte atrás',30,g.H-14,{size:12,c:COL.muted}); g.text('ouvinte à frente',g.W-30,g.H-14,{size:12,c:COL.muted,align:'right'});
-    g.circle(22,cy,7,COL.ink); g.circle(g.W-22,cy,7,COL.ink); if(s.p.M>=1) g.text('a fonte passa o próprio som: cone de choque (estrondo sônico)',g.W/2,22,{size:13,bold:true,align:'center',c:COL.force}); },
+  draw(g,s){ const k=g.W/2.1, X=x=>g.W/2+x*k, ry=g.H/2+10, c=.25, M=s.p.M, f0=440;
+    SK.sky(g,ry-30); SK.grass(g,ry+30,g.H-ry-30); SK.road(g,ry-30,60,0);
+    g.ctx.save(); g.ctx.beginPath(); g.ctx.rect(0,0,g.W,g.H); g.ctx.clip();
+    s.fr.forEach(f=>{ const r=(s.t-f.t)*c*k; g.ctx.globalAlpha=clamp(1-r/(g.W*.9),.15,1); g.circle(X(f.x),ry,r,null,isDark()?'#7cc4ff':'#1c6fd1',2); }); g.ctx.restore();
+    const sx=X(s.x); if(M>=1){ g.poly([[sx+26,ry],[sx-20,ry-9],[sx-26,ry-22],[sx-14,ry-9],[sx-24,ry],[sx-14,ry+9],[sx-26,ry+22],[sx-20,ry+9]],COL.ink,1.5,'#9aa3ad',true); }
+    else { g.rect(sx-24,ry-14,48,24,'#f4f6f8','#c03',6,2); g.rect(sx-8,ry-10,16,4,'#e5484d',null,1); g.rect(sx-2,ry-14,4,12,'#e5484d',null,1); g.rect(sx-6,ry-20,12,6,(Math.floor(s.t*6)%2)?'#e5484d':'#1c6fd1',null,2); g.circle(sx-14,ry+11,5,'#1c1f24'); g.circle(sx+14,ry+11,5,'#1c1f24'); }
+    SK.person(g,22,ry+44,46,isDark()?'#d0d6df':'#2b3340'); SK.person(g,g.W-22,ry+44,46,isDark()?'#d0d6df':'#2b3340');
+    g.tag('ouve '+nt(f0/(1+M))+' Hz (grave)',26,ry+66,COL.force,'left',12); g.tag(M<1?'ouve '+nt(f0/(1-M))+' Hz (agudo)':'estrondo sônico!',g.W-26,ry+66,M<1?COL.vel:COL.force,'right',12);
+    g.tag('a fonte emite 440 Hz',g.W/2,22,COL.ink,'center',12.5); if(M>=1) g.tag('mais rápida que o som: cone de choque',g.W/2,48,COL.force,'center',12.5); },
   reads:s=>{ const f0=440, M=s.p.M; return [['Frequência emitida','440 Hz (lá)'],['Ouvinte à frente f·v/(v − v<sub>f</sub>)',M<1?nt(f0/(1-M))+' Hz (mais agudo)':'—'],['Ouvinte atrás f·v/(v + v<sub>f</sub>)',nt(f0/(1+M))+' Hz (mais grave)'],['Velocidade do som no ar','340 m/s']]; }});
+
+/* diagrama de raios com uma vela como objeto (espelhos esféricos e lentes) */
+function candle(g,x,base,h,col,alphaV=1,flip=false){ if(Math.abs(h)<2) return; const c=g.ctx, w=Math.max(6,Math.abs(h)*.28), sg=h>0?1:-1, H=Math.abs(h)*.78;
+  c.save(); c.globalAlpha=alphaV; g.rect(x-w/2,sg>0?base-H:base,w,H,col,mix(col,'#000',.35),3,1.2);
+  const fy=sg>0?base-H:base+H, fh=Math.abs(h)*.22*sg; c.fillStyle='#ffcc4d'; c.beginPath(); c.moveTo(x-w*.35,fy); c.quadraticCurveTo(x,fy-fh*2.2,x+w*.35,fy); c.closePath(); c.fill(); c.fillStyle='#ff7a1a'; c.beginPath(); c.moveTo(x-w*.18,fy); c.quadraticCurveTo(x,fy-fh*1.3,x+w*.18,fy); c.closePath(); c.fill(); c.restore(); }
+function rayDiagram(g,s,kind){
+  const mirror=kind==='mirror', conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9, pi=inf?Infinity:1/(1/f-1/p), A=inf?Infinity:-pi/p;
+  const xm=mirror?g.W*.66:g.W*.5, cy=g.H*.56, span=Math.max(p,Math.min(Math.abs(pi),60),2*s.p.f)*1.08, k=(xm-20)/span, ho=Math.min(54,g.H*.22);
+  const side=mirror?-1:1, xo=xm-p*k, ix=inf?null:(mirror?xm-pi*k:xm+pi*k), hi=inf?0:A*ho;
+  g.rect(0,0,g.W,g.H,isDark()?'#0e1522':'#eef3f9'); g.rect(0,cy+ho+18,g.W,g.H-cy-ho-18,isDark()?'#2a2f37':'#dde3ea');
+  g.line(0,cy,g.W,cy,alpha(COL.ink,.4),1.2,[6,4]);
+  if(mirror){ const bulge=conv?16:-16, top=cy-g.H*.42, bot=cy+g.H*.42; g.ctx.save(); g.ctx.lineCap='round'; g.ctx.strokeStyle=isDark()?'#c7cfdb':'#46505f'; g.ctx.lineWidth=7; g.ctx.beginPath(); g.ctx.moveTo(xm-bulge,top); g.ctx.quadraticCurveTo(xm+bulge,cy,xm-bulge,bot); g.ctx.stroke(); g.ctx.strokeStyle=isDark()?'#e6f2ff':'#b8d8f5'; g.ctx.lineWidth=3; g.ctx.beginPath(); g.ctx.moveTo(xm-bulge-3,top); g.ctx.quadraticCurveTo(xm+bulge-3,cy,xm-bulge-3,bot); g.ctx.stroke(); g.ctx.restore(); }
+  else { const lw=conv?16:6; g.ctx.save(); g.ctx.fillStyle=alpha('#7cc4ff',.35); g.ctx.strokeStyle=isDark()?'#9fc3ea':'#3d6f9e'; g.ctx.lineWidth=2; g.ctx.beginPath(); const top=cy-g.H*.42, bot=cy+g.H*.42;
+    if(conv){ g.ctx.moveTo(xm,top); g.ctx.quadraticCurveTo(xm+lw*2,cy,xm,bot); g.ctx.quadraticCurveTo(xm-lw*2,cy,xm,top); } else { g.ctx.moveTo(xm-10,top); g.ctx.lineTo(xm+10,top); g.ctx.quadraticCurveTo(xm+2,cy,xm+10,bot); g.ctx.lineTo(xm-10,bot); g.ctx.quadraticCurveTo(xm-2,cy,xm-10,top); }
+    g.ctx.fill(); g.ctx.stroke(); g.ctx.restore(); }
+  const lab=(x,t)=>{ g.circle(x,cy,3.5,COL.ink); g.text(t,x,cy+18,{size:12,align:'center',c:COL.ink,bold:true}); };
+  if(mirror){ lab(xm-f*k,'F'); lab(xm-2*f*k,'C'); } else { lab(xm-s.p.f*k,conv?'F':'F\''); lab(xm+s.p.f*k,conv?'F\'':'F'); }
+  candle(g,xo,cy,ho,'#e9e4d8');
+  const O=[xo,cy-ho*.95], rays=[[xm,cy-ho*.95],[xm,cy]], cols=['#ff5a4e','#b794ff'];
+  const out=(H,dir,c,dash)=>{ const L=2000/Math.hypot(dir[0],dir[1]); g.ctx.save(); g.ctx.shadowColor=c; g.ctx.shadowBlur=isDark()?8:0; g.line(H[0],H[1],H[0]+dir[0]*L,H[1]+dir[1]*L,c,2.2,dash); g.ctx.restore(); };
+  rays.forEach((H,i)=>{ g.ctx.save(); g.ctx.shadowColor=cols[i]; g.ctx.shadowBlur=isDark()?8:0; g.line(O[0],O[1],H[0],H[1],cols[i],2.2); g.ctx.restore();
+    if(inf){ const v=[xm-O[0],cy-O[1]]; out(H,mirror?[-v[0],v[1]]:v,cols[i]); return; }
+    const I=[ix,cy-hi*.95], real=pi>0; if(real) out(H,[I[0]-H[0],I[1]-H[1]],cols[i]); else { out(H,[H[0]-I[0],H[1]-I[1]],cols[i]); g.line(H[0],H[1],I[0],I[1],cols[i],1.5,[5,5]); } });
+  if(!inf&&Math.abs(pi)<400){ const real=pi>0; candle(g,ix,cy,hi,'#ffd98a',real?1:.45); g.tag(real?'imagem real':'imagem virtual',ix,hi>0?cy+40:cy+Math.abs(hi)+18,COL.energy,'center',11.5); }
+  g.tag('objeto',xo,cy+26,COL.ink,'center',11.5);
+  return {pi,A,inf}; }
+function rayReads(s,kind){ const conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9; if(inf) return [['Posição da imagem p\'','no infinito (imagem imprópria)'],['Por quê?','o objeto está exatamente no foco']];
+  const pi=1/(1/f-1/p), A=-pi/p, real=pi>0; return [['Posição da imagem p\'',nt(pi)+' cm'+(kind==='mirror'?(real?' (na frente do espelho)':' (atrás do espelho)'):(real?' (do outro lado da lente)':' (do mesmo lado do objeto)'))],['Aumento A = −p\'/p',nt(A)],['Natureza',`${real?'real':'virtual'}, ${A<0?'invertida':'direita'}, ${Math.abs(A)>1.001?'maior':Math.abs(A)<.999?'menor':'do mesmo tamanho'}`],['Vergência V = 1/f (f em metros)',nt(1/(f/100))+' di']]; }
+SIMS.mirror=(host,cfg={})=>Sim(host,{alt:'Espelho esférico com raios de luz formando a imagem de uma vela',h:w=>Math.min(380,Math.max(300,w*.5)),
+  legend:[['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio que bate no vértice']],
+  ctrls:[{k:'t',l:'Espelho',opts:[['c','côncavo'],['v','convexo']],v:cfg.t??'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:cfg.f??10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:cfg.p??25,u:'cm',live:true}],
+  draw(g,s){ rayDiagram(g,s,'mirror'); }, reads:s=>rayReads(s,'mirror')});
+SIMS.lens=(host,cfg={})=>Sim(host,{alt:'Lente com raios de luz formando a imagem de uma vela',h:w=>Math.min(380,Math.max(300,w*.5)),
+  legend:[['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio pelo centro óptico']],
+  ctrls:[{k:'t',l:'Lente',opts:[['c','convergente'],['v','divergente']],v:cfg.t??'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:cfg.f??10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:cfg.p??25,u:'cm',live:true}],
+  draw(g,s){ rayDiagram(g,s,'lens'); }, reads:s=>rayReads(s,'lens')});
+
+/* refração: laser entrando num aquário */
+const NS=[[1,'ar (1,00)'],[1.33,'água (1,33)'],[1.5,'vidro (1,50)'],[2.42,'diamante (2,42)']];
+SIMS.refr=(host,cfg={})=>Sim(host,{alt:'Laser apontado para a superfície entre dois meios; o raio muda de direção ao passar',h:340,
+  legend:[['force','raio incidente'],['vel','raio refratado'],['muted','raio refletido']],
+  ctrls:[{k:'n1',l:'Meio de cima',opts:NS.map(x=>[x[0],x[1]]),v:cfg.n1??1,live:true},{k:'n2',l:'Meio de baixo',opts:NS.map(x=>[x[0],x[1]]),v:cfg.n2??1.33,live:true},{k:'a',l:'Ângulo de incidência θ₁',min:0,max:89,step:1,v:cfg.a??40,u:'°',live:true}],
+  draw(g,s){ const cx=g.W/2, cy=g.H/2, L=Math.min(g.W*.45,g.H*.46), a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2, tir=sn>1;
+    const fill=n=>n>2?alpha('#b9d4ff',.55):n>1.4?alpha('#9fd8ff',.45):n>1?alpha('#3f8fd8',.35):(isDark()?'#0e1522':'#f1f5fb');
+    g.rect(0,0,g.W,cy,fill(s.p.n1)); g.rect(0,cy,g.W,g.H-cy,fill(s.p.n2));
+    if(s.p.n2>1&&s.p.n2<1.4){ g.ctx.save(); g.ctx.strokeStyle='rgba(255,255,255,.7)'; g.ctx.lineWidth=2; g.ctx.beginPath(); for(let x=0;x<=g.W;x+=6) g.ctx.lineTo(x,cy+2*Math.sin(x/16)); g.ctx.stroke(); g.ctx.restore(); }
+    g.line(0,cy,g.W,cy,COL.ink,1.5); g.line(cx,cy-L,cx,cy+L,COL.muted,1,[5,5]); g.text('normal',cx+6,cy-L+12,{size:11,c:COL.muted});
+    const glow=(x1,y1,x2,y2,c,w)=>{ g.ctx.save(); g.ctx.shadowColor=c; g.ctx.shadowBlur=10; g.line(x1,y1,x2,y2,c,w); g.ctx.restore(); };
+    const si=[cx-Math.sin(a)*L,cy-Math.cos(a)*L]; glow(si[0],si[1],cx,cy,'#ff3b30',3.2);
+    const c=g.ctx; c.save(); c.translate(si[0],si[1]); c.rotate(Math.atan2(cy-si[1],cx-si[0])); g.rect(-40,-7,40,14,'#2b3340',null,4); g.rect(-6,-4,6,8,'#ff3b30',null,2); c.restore();
+    if(tir) glow(cx,cy,cx+Math.sin(a)*L,cy-Math.cos(a)*L,'#ff3b30',3); else g.line(cx,cy,cx+Math.sin(a)*L*.7,cy-Math.cos(a)*L*.7,alpha('#ff3b30',.35),1.5);
+    if(!tir){ const b=Math.asin(sn); glow(cx,cy,cx+Math.sin(b)*L,cy+Math.cos(b)*L,'#ff3b30',3); g.tag('θ₂ = '+nt(b*180/Math.PI,3)+'°',cx+Math.sin(b)*L*.6+10,cy+Math.cos(b)*L*.6,COL.vel,'left',12); }
+    else g.tag('reflexão total!',cx+Math.sin(a)*L*.6+10,cy-Math.cos(a)*L*.6,COL.force,'left',12.5);
+    if(a>.02){ c.save(); c.strokeStyle=COL.force; c.lineWidth=1.5; c.beginPath(); c.arc(cx,cy,34,-Math.PI/2-a,-Math.PI/2); c.stroke(); c.restore(); }
+    g.tag(NS.find(x=>x[0]===s.p.n1)[1],12,20,COL.ink,'left',12); g.tag(NS.find(x=>x[0]===s.p.n2)[1],12,g.H-16,COL.ink,'left',12);
+    g.tag('θ₁ = '+s.p.a+'°',cx-50,cy-52,COL.force,'right',12); },
+  reads:s=>{ const a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2; return [['n₁·sen θ₁',nt(s.p.n1*Math.sin(a),3)],['θ₂ (Snell: n₁ sen θ₁ = n₂ sen θ₂)',sn>1?'não existe: reflexão total':nt(Math.asin(sn)*180/Math.PI,3)+'°'],['Ângulo limite',s.p.n1>s.p.n2?nt(Math.asin(s.p.n2/s.p.n1)*180/Math.PI,3)+'°':'não há (a luz vai para um meio mais refringente)'],['Velocidade da luz embaixo c/n₂',nf(3e8/s.p.n2)+' m/s']]; }});
 
 /* =====================================================================
    Laboratórios de óptica, eletricidade, magnetismo e física moderna
    ===================================================================== */
-
-/* diagrama de raios para espelhos esféricos e lentes (aproximação de raios paraxiais) */
-function rayDiagram(g,s,kind){
-  const mirror=kind==='mirror', conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9, pi=inf?Infinity:1/(1/f-1/p), A=inf?Infinity:-pi/p;
-  const xm=mirror?g.W*.66:g.W*.5, cy=g.H*.55, span=Math.max(p,Math.min(Math.abs(pi),60),2*s.p.f)*1.08, k=(mirror?xm-20:xm-20)/span, ho=Math.min(46,g.H*.2);
-  const side=mirror?-1:1, xo=xm-p*k, ix=inf?null:(mirror?xm-pi*k:xm+pi*k), hi=inf?0:A*ho;
-  g.line(0,cy,g.W,cy,COL.muted,1.2);
-  if(mirror){ const bulge=conv?14:-14; g.ctx.save(); g.ctx.strokeStyle=COL.ink; g.ctx.lineWidth=3; g.ctx.beginPath(); g.ctx.moveTo(xm-bulge,cy-g.H*.42); g.ctx.quadraticCurveTo(xm+bulge,cy,xm-bulge,cy+g.H*.42); g.ctx.stroke(); g.ctx.restore(); g.text(conv?'lado refletor ←':'lado refletor ←',xm-4,cy-g.H*.42-6,{size:11,c:COL.muted,align:'right'}); }
-  else { g.line(xm,cy-g.H*.42,xm,cy+g.H*.42,COL.ink,2.5); const tip=(y,d)=>{ g.line(xm,y,xm-8,y+d*8*(conv?1:-1),COL.ink,2.5); g.line(xm,y,xm+8,y+d*8*(conv?1:-1),COL.ink,2.5); }; tip(cy-g.H*.42,1); tip(cy+g.H*.42,-1); }
-  const fx=xm+side*f*k, lab=(x,t)=>{ g.line(x,cy-5,x,cy+5,COL.ink,2); g.text(t,x,cy+20,{size:12,align:'center',c:COL.muted,bold:true}); };
-  if(mirror){ lab(xm-f*k,'F'); lab(xm-2*f*k,'C'); } else { lab(xm-s.p.f*k,conv?'F':'F\''); lab(xm+s.p.f*k,conv?'F\'':'F'); }
-  const O=[xo,cy-ho]; g.arrow(xo,cy,xo,cy-ho,COL.vel,'objeto',3);
-  const rays=[[xm,cy-ho],mirror?[xm,cy]:[xm,cy]], out=(H,dir,c,dash)=>{ const L=2000/Math.hypot(dir[0],dir[1]); g.line(H[0],H[1],H[0]+dir[0]*L,H[1]+dir[1]*L,c,2,dash); };
-  const cols=[COL.force,COL.acc];
-  rays.forEach((H,i)=>{ g.line(O[0],O[1],H[0],H[1],cols[i],2);
-    if(inf){ const v=[xm-O[0],cy-O[1]]; out(H,mirror?[-v[0],v[1]]:v,cols[i]); return; }
-    const I=[ix,cy-hi], real=pi>0; if(real) out(H,[I[0]-H[0],I[1]-H[1]],cols[i]); else { out(H,[H[0]-I[0],H[1]-I[1]],cols[i]); g.line(H[0],H[1],I[0],I[1],cols[i],1.5,[5,5]); } });
-  if(!inf&&Math.abs(pi)<400) g.arrow(ix,cy,ix,cy-hi,COL.energy,'imagem',3);
-  return {pi,A,inf}; }
-function rayReads(s,kind){ const conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9; if(inf) return [['Posição da imagem p\'','no infinito (imagem imprópria)'],['Por quê?','o objeto está exatamente no foco']];
-  const pi=1/(1/f-1/p), A=-pi/p, real=pi>0; return [['Posição da imagem p\'',nt(pi)+' cm'+(kind==='mirror'?(real?' (na frente do espelho)':' (atrás do espelho)'):(real?' (do outro lado da lente)':' (do mesmo lado do objeto)'))],['Aumento A = −p\'/p',nt(A)],['Natureza',`${real?'real':'virtual'}, ${A<0?'invertida':'direita'}, ${Math.abs(A)>1.001?'maior':Math.abs(A)<.999?'menor':'do mesmo tamanho'}`],['Vergência V = 1/f (f em metros)',nt(1/(f/100))+' di']]; }
-SIMS.mirror=(host)=>Sim(host,{alt:'Espelho esférico com raios de luz formando a imagem de um objeto',h:w=>Math.min(360,Math.max(280,w*.5)),
-  legend:[['vel','objeto'],['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio que bate no vértice']],
-  ctrls:[{k:'t',l:'Espelho',opts:[['c','côncavo'],['v','convexo']],v:'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:25,u:'cm',live:true}],
-  draw(g,s){ rayDiagram(g,s,'mirror'); }, reads:s=>rayReads(s,'mirror')});
-SIMS.lens=(host)=>Sim(host,{alt:'Lente com raios de luz formando a imagem de um objeto',h:w=>Math.min(360,Math.max(280,w*.5)),
-  legend:[['vel','objeto'],['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio pelo centro óptico']],
-  ctrls:[{k:'t',l:'Lente',opts:[['c','convergente'],['v','divergente']],v:'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:25,u:'cm',live:true}],
-  draw(g,s){ rayDiagram(g,s,'lens'); }, reads:s=>rayReads(s,'lens')});
-
-/* refração e reflexão total */
-const NS=[[1,'ar (1,00)'],[1.33,'água (1,33)'],[1.5,'vidro (1,50)'],[2.42,'diamante (2,42)']];
-SIMS.refr=(host)=>Sim(host,{alt:'Raio de luz passando de um meio para outro e mudando de direção',h:320,
-  legend:[['force','raio incidente'],['vel','raio refratado'],['muted','raio refletido']],
-  ctrls:[{k:'n1',l:'Meio de cima',opts:NS.map(x=>[x[0],x[1]]),v:1,live:true},{k:'n2',l:'Meio de baixo',opts:NS.map(x=>[x[0],x[1]]),v:1.33,live:true},{k:'a',l:'Ângulo de incidência θ₁',min:0,max:89,step:1,v:40,u:'°',live:true}],
-  draw(g,s){ const cx=g.W/2, cy=g.H/2, L=Math.min(g.W*.45,g.H*.47), a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2, tir=sn>1;
-    g.rect(0,cy,g.W,g.H-cy,COL.vel+(s.p.n2>1.4?'30':s.p.n2>1?'1e':'08'),null,0); if(s.p.n1>1) g.rect(0,0,g.W,cy,COL.vel+(s.p.n1>1.4?'30':'1e'),null,0);
-    g.line(0,cy,g.W,cy,COL.ink,1.5); g.line(cx,cy-L,cx,cy+L,COL.muted,1,[5,5]); g.text('normal',cx+6,cy-L+12,{size:11,c:COL.muted});
-    const si=[cx-Math.sin(a)*L,cy-Math.cos(a)*L]; g.line(si[0],si[1],cx,cy,COL.force,3); g.arrow(si[0],si[1],(si[0]+cx)/2,(si[1]+cy)/2,COL.force,null,3);
-    g.arrow(cx,cy,cx+Math.sin(a)*L,cy-Math.cos(a)*L,tir?COL.force:COL.muted,tir?'reflexão total':null,tir?3:1.5);
-    if(!tir){ const b=Math.asin(sn); g.arrow(cx,cy,cx+Math.sin(b)*L,cy+Math.cos(b)*L,COL.vel,'θ₂ = '+nt(b*180/Math.PI,3)+'°',3); }
-    g.text(NS.find(x=>x[0]===s.p.n1)[1],12,20,{size:12,c:COL.muted}); g.text(NS.find(x=>x[0]===s.p.n2)[1],12,g.H-10,{size:12,c:COL.muted});
-    g.text('θ₁ = '+s.p.a+'°',si[0]+8,si[1]+16,{size:12,c:COL.force,bold:true}); },
-  reads:s=>{ const a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2; return [['n₁·sen θ₁',nt(s.p.n1*Math.sin(a),3)],['θ₂ (Snell: n₁ sen θ₁ = n₂ sen θ₂)',sn>1?'não existe: reflexão total':nt(Math.asin(sn)*180/Math.PI,3)+'°'],['Ângulo limite',s.p.n1>s.p.n2?nt(Math.asin(s.p.n2/s.p.n1)*180/Math.PI,3)+'°':'não há (a luz vai para um meio mais refringente)'],['Velocidade da luz embaixo c/n₂',nf(3e8/s.p.n2)+' m/s']]; }});
 
 /* lei de Coulomb */
 SIMS.coulomb=(host)=>Sim(host,{alt:'Duas cargas elétricas com as forças de atração ou repulsão',h:250,
@@ -1776,9 +1797,9 @@ SIMS.conduc=(host)=>Sim(host,{alt:'Placa de um material entre um lado quente e u
   reads:s=>{ const phi=s.def.phi(s); return [['Fluxo de calor Φ = k·A·ΔT/L',nf(phi)+' W'],['Energia que atravessa em 1 hora',nf(phi*3600)+' J'],['Condutividade k do material',nsig(s.p.k,3)+' W/(m·K)'],['O material é',s.p.k<=.2?'isolante':s.p.k>=40?'bom condutor':'mau condutor']]; }});
 
 /* MHS: massa-mola e pêndulo lado a lado */
-SIMS.mhs=(host)=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando lado a lado, com o gráfico da posição de cada um no tempo',anim:true,autoplay:true,h:w=>w<560?440:400,
+SIMS.mhs=(host,cfg={})=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando lado a lado, com o gráfico da posição de cada um no tempo',anim:true,autoplay:true,h:w=>w<560?440:400,
   legend:[['vel','massa na mola'],['force','pêndulo']],
-  ctrls:[{k:'m',l:'Massa m (a mesma nos dois)',min:.1,max:2,step:.1,v:.5,u:'kg',live:true},{k:'k',l:'Constante da mola k',min:5,max:80,step:5,v:20,u:'N/m',live:true},{k:'L',l:'Comprimento do pêndulo L',min:.2,max:2.5,step:.1,v:1,u:'m',live:true},{k:'A',l:'Amplitude (mola · pêndulo)',min:.02,max:.1,step:.01,v:.06,f:v=>nsig(v*100,2)+' cm · '+nsig(v*150,2)+'°',live:true}],
+  ctrls:[{k:'m',l:'Massa m (a mesma nos dois)',min:.1,max:2,step:.1,v:cfg.m??.5,u:'kg',live:true},{k:'k',l:'Constante da mola k',min:5,max:80,step:5,v:cfg.k??20,u:'N/m',live:true},{k:'L',l:'Comprimento do pêndulo L',min:.2,max:2.5,step:.1,v:cfg.L??1,u:'m',live:true},{k:'A',l:'Amplitude (mola · pêndulo)',min:.02,max:.1,step:.01,v:.06,f:v=>nsig(v*100,2)+' cm · '+nsig(v*150,2)+'°',live:true}],
   step(){},
   pos(s,t){ const ws=Math.sqrt(s.p.k/s.p.m), wp=Math.sqrt(GRAV/s.p.L); return [Math.cos(ws*t),Math.cos(wp*t)]; },
   draw(g,s){ const W=g.W, H=g.H, top=18, gh=Math.min(130,H*.3), gy=H-gh-30, zone=gy-top-36, t=s.t, [xs,xp]=s.def.pos(s,t), sz=16+14*Math.cbrt(s.p.m);
@@ -1799,9 +1820,9 @@ SIMS.mhs=(host)=>Sim(host,{alt:'Bloco preso a uma mola e um pêndulo oscilando l
   reads:s=>{ const Ts=2*Math.PI*Math.sqrt(s.p.m/s.p.k), Tp=2*Math.PI*Math.sqrt(s.p.L/GRAV); return [['Período da mola 2π√(m/k)',nt(Ts)+' s'],['Período do pêndulo 2π√(L/g)',nt(Tp)+' s'],['Frequências (mola · pêndulo)',nt(1/Ts)+' Hz · '+nt(1/Tp)+' Hz'],['Energia da mola k·A²/2',nt(.5*s.p.k*s.p.A**2)+' J']]; }});
 
 /* ondas estacionárias em cordas e tubos */
-SIMS.harm=(host)=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um tubo, com nós e ventres marcados',anim:true,autoplay:true,h:290,
+SIMS.harm=(host,cfg={})=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um tubo, com nós e ventres marcados',anim:true,autoplay:true,h:290,
   legend:[['vel','onda agora'],['muted','limites da vibração'],['force','nós (pontos parados)']],
-  ctrls:[{k:'tipo',l:'Onde está a onda',opts:[['corda','corda presa'],['aberto','tubo aberto'],['fechado','tubo fechado']],v:'corda',live:true},{k:'n',l:'Modo de vibração',min:1,max:5,step:1,v:1,f:v=>v+'º modo',live:true},{k:'L',l:'Comprimento L',min:.2,max:2,step:.1,v:1,u:'m',live:true},{k:'v',l:'Velocidade da onda v',min:100,max:400,step:10,v:340,u:'m/s',live:true}],
+  ctrls:[{k:'tipo',l:'Onde está a onda',opts:[['corda','corda presa'],['aberto','tubo aberto'],['fechado','tubo fechado']],v:cfg.tipo??'corda',live:true},{k:'n',l:'Modo de vibração',min:1,max:5,step:1,v:cfg.n??1,f:v=>v+'º modo',live:true},{k:'L',l:'Comprimento L',min:.2,max:2,step:.1,v:cfg.L??1,u:'m',live:true},{k:'v',l:'Velocidade da onda v',min:100,max:400,step:10,v:cfg.v??340,u:'m/s',live:true}],
   mode(s){ const L=s.p.L, t=s.p.tipo, h=t==='fechado'?2*s.p.n-1:s.p.n, lam=t==='fechado'?4*L/h:2*L/h, f1=t==='fechado'?s.p.v/(4*L):s.p.v/(2*L);
     const y=t==='corda'?u=>Math.sin(h*Math.PI*u):t==='aberto'?u=>Math.cos(h*Math.PI*u):u=>Math.sin(h*Math.PI*u/2);
     const nodes=[]; for(let j=0;j<=2*h;j++){ const u=t==='corda'?j/h:t==='aberto'?(j+.5)/h:2*j/h; if(u<=1+1e-9) nodes.push(u); }
@@ -1822,9 +1843,9 @@ SIMS.harm=(host)=>Sim(host,{alt:'Onda estacionária numa corda ou dentro de um t
 const BANDS=[[3,-.5,'ondas de rádio','rádio','rádio AM e FM, TV aberta, radioamador','energy'],[-.5,-3,'micro-ondas','micro-ondas','forno de micro-ondas, Wi-Fi, celular, radar','ok'],[-3,Math.log10(700e-9),'infravermelho','infraverm.','calor do Sol e do fogo, controle remoto, câmera térmica','force'],[Math.log10(700e-9),Math.log10(400e-9),'luz visível','visível','a única faixa que nossos olhos enxergam',''],[Math.log10(400e-9),-8,'ultravioleta','UV','bronzeado e queimadura de sol, lâmpada germicida','acc'],[-8,-11,'raios X','raios X','radiografia e tomografia','vel'],[-11,-13,'raios gama','gama','núcleos radioativos, radioterapia','muted']];
 function fmtLam(m){ const u=m>=1?[1,'m']:m>=1e-3?[1e-3,'mm']:m>=1e-6?[1e-6,'μm']:m>=1e-9?[1e-9,'nm']:[1e-12,'pm']; return nsig(m/u[0],3)+' '+u[1]; }
 function bandOf(x){ return BANDS.find(b=>x<=b[0]&&x>b[1])||(x>3?BANDS[0]:BANDS[BANDS.length-1]); }
-SIMS.spectrum=(host)=>{ const setX=(s,v)=>{ s.p.x=v; const inp=$(`#${host.id}-x`); if(inp){ inp.value=v; $(`#${host.id}-x-o`).textContent=fmtLam(10**v); } };
+SIMS.spectrum=(host,cfg={})=>{ const setX=(s,v)=>{ s.p.x=v; const inp=$(`#${host.id}-x`); if(inp){ inp.value=v; $(`#${host.id}-x-o`).textContent=fmtLam(10**v); } };
   return Sim(host,{alt:'Régua do espectro eletromagnético, das ondas de rádio aos raios gama, com a onda escolhida desenhada acima',h:w=>w<560?300:270,
-  ctrls:[{k:'x',l:'Comprimento de onda λ (escala de potências de 10)',min:-12,max:3,step:.02,v:Math.log10(530e-9),f:v=>fmtLam(10**v),live:true}],
+  ctrls:[{k:'x',l:'Comprimento de onda λ (escala de potências de 10)',min:-12,max:3,step:.02,v:cfg.x??Math.log10(530e-9),f:v=>fmtLam(10**v),live:true}],
   btns:[{l:'Rádio FM',f:s=>setX(s,Math.log10(3))},{l:'Micro-ondas',f:s=>setX(s,Math.log10(.122))},{l:'Luz verde',f:s=>setX(s,Math.log10(530e-9))},{l:'Ultravioleta',f:s=>setX(s,Math.log10(300e-9))},{l:'Raio X',f:s=>setX(s,Math.log10(.1e-9))}],
   draw(g,s){ const W=g.W, x0=16, x1=W-16, X=v=>x0+(3-v)/15*(x1-x0), by=g.H*.52, bh=34, x=s.p.x, lam=10**x, b=bandOf(x), nm=lam*1e9;
     const wc=nm>=380&&nm<=750?lamColor(nm):COL.ink, vis=clamp(8+(x+12)/15*230,8,238), cy=by-62, A=Math.min(24,g.H*.08);
@@ -3360,6 +3381,147 @@ LX.termodinamica.exa={q:'Um motor real recebe <b>1000 J</b> de calor por ciclo e
  {txt:'Conservação: W = Q₁ − Q₂ = 1000 − 700 = <b>300 J</b>. Veja a seta amarela do trabalho.',ask:{q:'Qual é o trabalho por ciclo?',a:300,u:'J'}},
  {txt:'Rendimento: η = W/Q₁ = 300/1000 = <b>30%</b>.',ask:{q:'Qual é o rendimento, em %?',a:30,u:'%'}},
  {txt:'O máximo (Carnot) seria 1 − 300/750 = 1 − 0,4 = <b>60%</b>. Este motor real aproveita metade do máximo possível.',ask:{q:'Qual é o rendimento máximo, em %?',a:60,u:'%'},tags:[['máximo possível: 60%','ok']]}]};
+
+/* =====================================================================
+   Jornadas e exemplos animados — Oscilações, ondas, som e óptica
+   ===================================================================== */
+const lensImg=s=>{ const f=(s.p.t==='c'?1:-1)*s.p.f, p=s.p.p; if(Math.abs(1/f-1/p)<1e-9) return null; const pi=1/(1/f-1/p); return {pi,A:-pi/p}; };
+
+LX.mhs.jor=[
+ {t:'cena',h:'O balanço',p:`<p>No parquinho, você empurra um balanço. Se empurrar no ritmo certo, ele sobe cada vez mais; fora do ritmo, atrapalha. O balanço tem um <b>ritmo próprio</b>.</p><p>Relógios antigos usavam esse ritmo para marcar o tempo. Do que ele depende?</p>`},
+ {t:'aposta',q:'Dois pêndulos do mesmo comprimento: um com bola de 1 kg, outro com bola de 4 kg. Qual balança mais rápido?',o:['os dois no mesmo ritmo','o mais pesado','o mais leve']},
+ {t:'lab',sim:'mhs',p:'À esquerda, uma massa presa a uma mola; à direita, um pêndulo com a mesma massa. <b>Desafio:</b> aumente a massa para <b>2 kg</b> e veja quem muda de ritmo.',goal:s=>eq(s.p.m,2)&&s.t>1,ok:'A mola ficou <b>mais lenta</b>; o pêndulo nem ligou para a massa. Compare os períodos T nos dois.',dica:'Arraste o controle de massa até o fim.'},
+ {t:'medir',sim:'mhs',p:'Agora mude o <b>comprimento do pêndulo</b> e anote o período, para quatro comprimentos.',rec:s=>[s.p.L,2*Math.PI*Math.sqrt(s.p.L/GRAV)],key:s=>[s.p.L],cols:['comprimento L (m)','período T (s)'],need:4,dec:2,
+  depois:{q:'Compare L = 0,5 m com L = 2 m (quatro vezes mais comprido). O período…',o:['dobra','quadruplica','fica igual'],why:'O período cresce com a <b>raiz</b> do comprimento: √4 = 2. A curva vai ficando mais deitada.'}},
+ {t:'deduz',p:'Monte as fórmulas dos períodos.',linhas:[
+   {txt:'O período do pêndulo cresce com a raiz de L e diminui com a gravidade: T ∝ ___',o:['√(L/g)','L/g','g/L']},
+   {txt:'Com o fator 2π: T<sub>pêndulo</sub> = ___',o:['2π·√(L/g)','2π·L/g','√(2π·L)']},
+   {txt:'Na mola, quem faz o papel de L/g é m/k (massa sobre rigidez): T<sub>mola</sub> = ___',o:['2π·√(m/k)','2π·√(k/m)','2π·m/k']}],fim:'T<sub class="up">pêndulo</sub> = 2π·√(L/g)      T<sub class="up">mola</sub> = 2π·√(m/k)'},
+ {t:'q',q:'Um relógio de pêndulo é levado para a Lua, onde g é 6 vezes menor. Ele…',o:['atrasa: o pêndulo balança mais devagar','adianta','continua certo'],why:'g menor → T maior. Cada "tique" demora mais, e o relógio atrasa.'},
+ {t:'n',q:'Qual é o período de um pêndulo de 2,5 m? (g = 10 m/s²; π ≈ 3,14)',a:2*Math.PI*.5,u:'s',why:'T = 2π·√(2,5/10) = 2π·0,5 ≈ 3,14 s.'},
+ {t:'mundo',h:'Oscilações na sua volta',itens:[['Balanço','Para empurrar bem, acompanhe o período dele.'],['Suspensão do carro','Molas e amortecedores evitam que o carro fique balançando.'],['Relógio de quartzo','Um cristal vibra 32 768 vezes por segundo, sempre no mesmo ritmo.']]}];
+LX.mhs.exa={q:'Um bloco de <b>0,4 kg</b> preso a uma mola de <b>k = 40 N/m</b> oscila. Qual é o período? E a frequência? (π ≈ 3,14)',sim:'mhs',set:{m:.4,k:40,L:1,A:.06},ty:999,passos:[
+ {txt:'m/k = 0,4/40 = <b>0,01</b>, e √0,01 = 0,1.',ask:{q:'Quanto vale m/k?',a:.01}},
+ {txt:'T = 2π·√(m/k) = 2 × 3,14 × 0,1 ≈ <b>0,63 s</b>. Veja duas oscilações completas da mola.',ask:{q:'Qual é o período?',a:.628,u:'s',tol:.03},ate:1.26},
+ {txt:'Frequência: f = 1/T = 1/0,63 ≈ <b>1,6 Hz</b>: um pouco mais de uma ida e volta e meia por segundo.',ask:{q:'Qual é a frequência?',a:1.59,u:'Hz',tol:.04}}]};
+
+LX.ondas.jor=[
+ {t:'cena',h:'A ola no estádio',p:`<p>Na "ola" do estádio, cada torcedor só levanta e senta no lugar. Mesmo assim, a onda atravessa a arquibancada inteira.</p><p>Uma <b>onda</b> leva energia de um lugar a outro <b>sem levar a matéria junto</b>.</p>`},
+ {t:'q',q:'Observe a fita vermelha amarrada na corda do laboratório. Enquanto a onda passa, a fita…',o:['só sobe e desce, sem sair do lugar','anda para a direita junto com a onda','anda para a esquerda'],why:'Cada pedaço da corda só oscila. Quem viaja é o formato da onda, e com ele a energia.'},
+ {t:'lab',sim:'wave',p:'<b>Desafio:</b> sem mudar a velocidade da corda (4 m/s), faça o comprimento de onda λ (distância entre duas cristas) ficar <b>2 m</b>.',goal:s=>eq(s.p.v,4)&&eq(s.p.v/s.p.f,2),ok:'Com o dobro da frequência (2 Hz), as cristas ficam com metade da distância.',dica:'Mude a frequência. Balançar mais rápido aproxima as cristas.'},
+ {t:'medir',sim:'wave',p:'Mantendo <b>v = 4 m/s</b>, anote o comprimento de onda para <b>quatro frequências</b>.',rec:s=>eq(s.p.v,4)?[s.p.f,s.p.v/s.p.f]:null,recMsg:'Coloque a velocidade em 4 m/s.',cols:['frequência f (Hz)','comprimento de onda λ (m)'],need:4,dec:2,
+  depois:{q:'Multiplique f por λ em cada linha. O que você obtém?',o:['sempre 4: a velocidade da onda','números diferentes','sempre 1'],why:'f·λ = v, sempre. Frequência maior, comprimento de onda menor, e a velocidade (que depende da corda) não muda.'}},
+ {t:'deduz',p:'Por que v = λ·f?',linhas:[
+   {txt:'Em um período T, a fonte faz uma oscilação e a onda avança um λ. Então v = ___',o:['λ/T','λ·T','T/λ']},
+   {txt:'Como a frequência é f = 1/T: v = ___',o:['λ·f','λ/f','f/λ']}],fim:'v = λ·f      f = '+frac('1','T')},
+ {t:'q',q:'Se você balançar a corda mais forte (maior amplitude), a velocidade da onda…',o:['não muda: ela depende só do meio','aumenta','diminui'],why:'Amplitude tem a ver com a energia. A velocidade depende da corda (tensão e espessura).'},
+ {t:'n',q:'Uma rádio FM transmite em 100 MHz (1×10⁸ Hz). As ondas viajam a 3×10⁸ m/s. Qual é o comprimento de onda?',a:3,u:'m',why:'λ = v/f = 3×10⁸ / 1×10⁸ = 3 m.'},
+ {t:'mundo',h:'Ondas na sua volta',itens:[['Mar','As ondas chegam à praia, mas a água no fundo só gira no lugar.'],['Terremoto','Ondas sísmicas levam energia por centenas de quilômetros.'],['Wi-Fi','Ondas de uns 12 cm levam dados até o seu celular.']]}];
+LX.ondas.exa={q:'Numa corda, as ondas viajam a <b>4 m/s</b>. Uma pessoa balança a ponta <b>2 vezes por segundo</b>. Qual é o comprimento de onda e o período?',sim:'wave',set:{f:2,v:4,A:.6},ty:999,passos:[
+ {txt:'A frequência é o número de oscilações por segundo: <b>f = 2 Hz</b>.'},
+ {txt:'λ = v/f = 4/2 = <b>2 m</b>: confira a cota entre duas cristas.',ask:{q:'Qual é o comprimento de onda?',a:2,u:'m'},ate:2},
+ {txt:'Período: T = 1/f = <b>0,5 s</b>. A fita vermelha sobe e desce uma vez a cada meio segundo.',ask:{q:'Qual é o período?',a:.5,u:'s'},ate:4}]};
+
+LX.som.jor=[
+ {t:'cena',h:'A sirene que muda',p:`<p>Uma ambulância passa por você: a sirene soa <b>mais aguda</b> quando ela chega e <b>mais grave</b> quando vai embora. Mas a sirene não mudou!</p><p>O som é uma onda no ar, viajando a 340 m/s. O que muda é como as ondas chegam até você.</p>`},
+ {t:'lab',sim:'doppler',p:'A fonte emite 440 Hz. <b>Desafio:</b> pare a fonte (velocidade zero).',goal:s=>s.p.M===0,ok:'Parada, as frentes de onda são círculos com o mesmo centro: os dois ouvintes escutam os mesmos 440 Hz.',dica:'Leve a velocidade da fonte até zero.'},
+ {t:'lab',sim:'doppler',cfg:{M:0},p:'<b>Desafio:</b> faça o ouvinte da frente escutar <b>mais de 600 Hz</b>.',goal:s=>s.p.M<1&&440/(1-s.p.M)>600,ok:'À frente da fonte, as frentes de onda ficam <b>espremidas</b>: chegam mais vezes por segundo, frequência maior, som mais agudo.',dica:'Aumente a velocidade da fonte, mas sem passar do som.'},
+ {t:'q',q:'Atrás da fonte, as frentes de onda ficam…',o:['mais espaçadas: frequência menor, som mais grave','mais juntas','iguais às da frente'],why:'É o <b>efeito Doppler</b>: aproximação, mais agudo; afastamento, mais grave.'},
+ {t:'lab',sim:'doppler',p:'<b>Desafio:</b> faça a fonte andar <b>mais rápido que o som</b>.',goal:s=>s.p.M>=1,ok:'A fonte passa as próprias ondas, que se acumulam num cone: o <b>estrondo sônico</b> dos jatos supersônicos.',dica:'Passe de 1,0 × a velocidade do som.'},
+ {t:'deduz',p:'Outra aplicação do som: o eco.',linhas:[
+   {txt:'Você grita para um paredão e ouve o eco depois de um tempo t. O som foi e voltou: percorreu ___ a distância até o paredão.',o:['2 vezes','a mesma','metade']},
+   {txt:'Então a distância é d = ___',o:['v·t/2','v·t','2·v·t']}],fim:'d = '+frac('v·t','2')+'   (eco)'},
+ {t:'n',q:'Você vê o relâmpago e ouve o trovão 3 s depois. A que distância caiu o raio? (som: 340 m/s)',a:1020,u:'m',why:'A luz chega quase na hora; o som leva 3 s: d = 340 × 3 = 1020 m. Aqui não há volta: não divida por 2.'},
+ {t:'q',q:'Um violão e um piano tocam a mesma nota. O que faz os sons serem diferentes?',o:['o timbre (a forma da onda)','a frequência','a velocidade do som'],why:'Mesma nota = mesma frequência. A forma da onda muda de instrumento para instrumento.'},
+ {t:'mundo',h:'Som na sua volta',itens:[['Radar de trânsito','Usa o efeito Doppler de ondas de rádio para medir a velocidade dos carros.'],['Ultrassom','Ecos de sons agudos demais para ouvirmos formam a imagem do bebê.'],['Morcegos','Se orientam pelo eco dos próprios gritos.']]}];
+LX.som.exa={q:'Uma ambulância com sirene de <b>440 Hz</b> anda à metade da velocidade do som (<b>170 m/s</b>, só para o exemplo). Que frequência ouvem as pessoas à frente e atrás?',sim:'doppler',set:{M:.5},tx:.5,ty:52,passos:[
+ {txt:'À frente, as frentes chegam espremidas: f\' = f·v/(v − v<sub>f</sub>) = 440 × 340/170.',ate:2},
+ {txt:'= <b>880 Hz</b>, uma oitava acima.',ask:{q:'Que frequência ouve quem está à frente?',a:880,u:'Hz'},tags:[['à frente: 880 Hz','vel']]},
+ {txt:'Atrás: f\' = 440 × 340/(340 + 170) = 440 × 340/510 ≈ <b>293 Hz</b>, bem mais grave.',ask:{q:'E quem está atrás?',a:293.3,u:'Hz',tol:.02},ate:4,tags:[['atrás: 293 Hz','force']]}]};
+
+LX.estacionarias.jor=[
+ {t:'cena',h:'As notas do violão',p:`<p>Num violão, cada corda presa nas duas pontas vibra num padrão que <b>não anda</b>: uma onda estacionária. Apertando a corda num traste, você encurta a parte que vibra e a nota sobe.</p><p>Como o comprimento decide a nota?</p>`},
+ {t:'aposta',q:'Você aperta a corda bem no meio. A frequência da nota…',o:['dobra','cai pela metade','fica igual']},
+ {t:'lab',sim:'harm',p:'<b>Desafio:</b> na corda, faça aparecer o <b>3º modo</b> de vibração. Conte os nós (pontos parados).',goal:s=>s.p.tipo==='corda'&&s.p.n===3,ok:'3 "barrigas" (ventres) e 4 nós, contando as pontas. Cada barriga é meia onda.',dica:'Mude o "Modo de vibração".'},
+ {t:'medir',sim:'harm',p:'Corda de <b>1 m</b>, ondas a <b>340 m/s</b>. Anote a frequência dos modos 1 a 4.',rec:s=>s.p.tipo==='corda'&&eq(s.p.L,1)&&s.p.v===340?[s.p.n,s.def.mode(s).f]:null,recMsg:'Use corda, L = 1 m e v = 340 m/s.',cols:['modo n','frequência (Hz)'],need:4,dec:0,
+  depois:{q:'A frequência do modo n é…',o:['n vezes a do 1º modo','n² vezes a do 1º modo','igual em todos'],why:'170, 340, 510, 680 Hz: múltiplos da fundamental. São os <b>harmônicos</b>.'}},
+ {t:'deduz',p:'Monte a fórmula da corda presa.',linhas:[
+   {txt:'No modo n cabem n meias ondas na corda: n·λ/2 = ___',o:['L','2L','L/2']},
+   {txt:'Então λ = 2L/n e f = v/λ = ___',o:['n·v/(2L)','2L/(n·v)','n·v·2L']}],fim:'f<sub class="up">n</sub> = n·'+frac('v','2L')},
+ {t:'lab',sim:'harm',p:'Num tubo <b>fechado</b> numa ponta, a ponta fechada é nó e a aberta é ventre. <b>Desafio:</b> faça um tubo fechado com fundamental de <b>85 Hz</b> (som a 340 m/s).',goal:s=>s.p.tipo==='fechado'&&s.p.n===1&&s.p.v===340&&Math.abs(s.def.mode(s).f-85)<.5,ok:'L = 1 m. No tubo fechado cabe só um quarto de onda no fundamental: f = v/(4L).',dica:'Use f = v/(4L) e descubra o comprimento.'},
+ {t:'n',q:'Uma corda de violão de 0,65 m vibra no fundamental; as ondas nela viajam a 286 m/s. Qual é a frequência?',a:220,u:'Hz',why:'f = v/(2L) = 286/1,3 = 220 Hz: a nota lá.'},
+ {t:'mundo',h:'Ressonância na sua volta',itens:[['Flauta','Tapar os furos muda o comprimento do tubo de ar que vibra.'],['Taça que estoura','Uma voz na frequência natural da taça faz a amplitude crescer até quebrar.'],['Ponte de Tacoma (1940)','O vento excitou a ponte no ritmo dela, e ela desabou.']]}];
+LX.estacionarias.exa={q:'Uma corda de violão de <b>0,65 m</b> vibra no modo fundamental, e as ondas nela viajam a <b>286 m/s</b>. Qual é a frequência da nota? E a do 2º harmônico?',sim:'harm',set:{tipo:'corda',n:1,L:.65,v:286},ty:56,passos:[
+ {txt:'No fundamental cabe meia onda na corda: λ = 2L = <b>1,3 m</b>.',ask:{q:'Qual é o comprimento de onda?',a:1.3,u:'m'},ate:1.5},
+ {txt:'f = v/λ = 286/1,3 = <b>220 Hz</b>: a nota lá.',ask:{q:'Qual é a frequência?',a:220,u:'Hz'}},
+ {txt:'No 2º harmônico cabem duas meias ondas: λ = 0,65 m e f = <b>440 Hz</b>, uma oitava acima.',ask:{q:'Qual é a frequência do 2º harmônico?',a:440,u:'Hz'},set:{n:2},ate:3}]};
+
+LX.espectro.jor=[
+ {t:'cena',h:'Tudo é a mesma coisa',p:`<p>O sinal do celular, o forno de micro-ondas, o controle remoto, a luz do Sol e o raio X do hospital parecem coisas totalmente diferentes.</p><p>Mas são <b>a mesma coisa</b>: ondas eletromagnéticas. Só muda o comprimento de onda.</p>`},
+ {t:'lab',sim:'spectrum',cfg:{x:0},p:'A régua vai de ondas de 1 km (rádio) até 1 pm (gama). <b>Desafio:</b> encontre a <b>luz visível</b>.',goal:s=>s.p.x<=Math.log10(700e-9)&&s.p.x>=Math.log10(400e-9),ok:'É uma faixa minúscula, de 400 a 700 nm. Todo o resto do espectro é invisível para nós.',dica:'Fica perto de 1 μm (um milésimo de milímetro).'},
+ {t:'lab',sim:'spectrum',cfg:{x:0},p:'<b>Desafio:</b> agora encontre a onda do forno de <b>micro-ondas</b>, com cerca de 12 cm.',goal:s=>{ const l=10**s.p.x; return l>.1&&l<.15; },ok:'12 cm: o tamanho de um palmo. As micro-ondas agitam as moléculas de água da comida.',dica:'Fica entre 1 mm e 1 m. Use o botão "Micro-ondas" se quiser conferir.'},
+ {t:'q',q:'Andando do rádio para os raios gama, a frequência…',o:['aumenta, e o comprimento de onda diminui','diminui','fica igual'],why:'Todas viajam à mesma velocidade c. Comprimento menor exige frequência maior.'},
+ {t:'deduz',p:'Use a equação das ondas.',linhas:[
+   {txt:'Toda onda eletromagnética viaja a c = 3×10⁸ m/s no vácuo, então c = ___',o:['λ·f','λ/f','f/λ']},
+   {txt:'Se o comprimento de onda cai pela metade, a frequência ___',o:['dobra','cai pela metade','não muda']}],fim:'c = λ·f = 3×10⁸ m/s'},
+ {t:'q',q:'Por que ultravioleta e raios X são perigosos e as ondas do celular não?',o:['a energia de cada fóton cresce com a frequência','os raios X são mais rápidos','o celular não emite ondas'],why:'Fótons de alta frequência têm energia para quebrar moléculas do DNA. Os de rádio e micro-ondas, não.'},
+ {t:'n',q:'Uma rádio FM transmite em 90 MHz (9×10⁷ Hz). Qual é o comprimento de onda? (c = 3×10⁸ m/s)',a:3e8/9e7,u:'m',why:'λ = 3×10⁸ / 9×10⁷ ≈ 3,3 m.'},
+ {t:'mundo',h:'O espectro na sua volta',itens:[['Controle remoto','Pisca em infravermelho: aponte para a câmera do celular e veja.'],['Protetor solar','Bloqueia o ultravioleta.'],['Raio X','Atravessa a pele mas é barrado pelos ossos.']]}];
+LX.espectro.exa={q:'Um forno de micro-ondas funciona em <b>2,45 GHz</b>. Qual é o comprimento das ondas? (c = 3×10⁸ m/s)',sim:'spectrum',set:{x:Math.log10(530e-9)},ty:999,passos:[
+ {txt:'Em hertz: 2,45 GHz = <b>2,45×10⁹ Hz</b>.',ask:{q:'Qual é o expoente? (2,45 × 10^?)',a:9}},
+ {txt:'λ = c/f = 3×10⁸ / 2,45×10⁹ ≈ <b>0,12 m = 12 cm</b>. Veja onde isso fica na régua.',ask:{q:'Qual é o comprimento de onda, em metros?',a:.1224,u:'m',tol:.03},set:{x:Math.log10(.1224)}},
+ {txt:'Cada fóton dessa onda tem pouquíssima energia (10⁻⁵ eV): esquenta a água, mas não danifica moléculas.'}]};
+
+LX.espelhos.jor=[
+ {t:'cena',h:'A colher',p:`<p>Olhe-se numa colher brilhante. Pelo lado de dentro (côncavo) você aparece <b>de cabeça para baixo</b>. Pelo lado de fora (convexo), <b>direito e pequenininho</b>.</p><p>O formato do espelho decide como os raios de luz se cruzam.</p>`},
+ {t:'lab',sim:'mirror',p:'Espelho côncavo, vela longe (25 cm). A imagem é real e invertida. <b>Desafio:</b> aproxime a vela até a imagem ficar <b>direita</b>.',goal:s=>s.p.t==='c'&&s.p.p<s.p.f,ok:'Dentro do foco, a imagem fica <b>direita e maior</b>, atrás do espelho (virtual). É o espelho de maquiagem.',dica:'Leve a vela para mais perto que o foco F.'},
+ {t:'lab',sim:'mirror',p:'<b>Desafio:</b> faça a imagem ficar do <b>mesmo tamanho</b> da vela.',goal:s=>s.p.t==='c'&&Math.abs(s.p.p-2*s.p.f)<1e-9,ok:'No centro de curvatura C (p = 2f): imagem invertida, do mesmo tamanho, no mesmo lugar do objeto.',dica:'Coloque a vela exatamente no ponto C.'},
+ {t:'medir',sim:'mirror',cfg:{p:30},p:'Côncavo com f = 10 cm. Anote a posição da vela e a da imagem para <b>quatro posições</b> além do foco.',rec:s=>{ const r=lensImg(s); return s.p.t==='c'&&s.p.f===10&&s.p.p>10&&r?[s.p.p,r.pi]:null; },recMsg:'Use o espelho côncavo com f = 10 cm e a vela além de 10 cm.',cols:['vela p (cm)','imagem p\' (cm)'],need:4,dec:1,
+  depois:{q:'Quanto mais perto do foco está a vela, a imagem…',o:['vai para mais longe e fica maior','chega mais perto','não muda'],why:'É o princípio do projetor: objeto pouco além do foco, imagem grande e longe.'}},
+ {t:'lab',sim:'mirror',p:'<b>Desafio:</b> troque para o espelho <b>convexo</b> e ponha a vela a 40 cm.',goal:s=>s.p.t==='v'&&s.p.p===40,ok:'No convexo a imagem é sempre <b>direita, menor e virtual</b>: o espelho mostra uma área grande. É o espelho de garagem e o retrovisor.',dica:'Mude o tipo de espelho e a distância.'},
+ {t:'deduz',p:'A equação dos espelhos (Gauss) liga f, p e p\': 1/f = 1/p + 1/p\'. Teste com f = 10 cm e p = 30 cm.',linhas:[
+   {txt:'1/p\' = 1/10 − 1/30 = ___',o:['2/30','1/20','1/40']},
+   {txt:'Então p\' = ___',o:['15 cm','20 cm','30 cm']},
+   {txt:'Aumento: A = −p\'/p = ___',o:['−0,5 (invertida, metade do tamanho)','0,5','−2']}],fim:frac('1','f')+' = '+frac('1','p')+' + '+frac('1','p\'')+'      A = −'+frac('p\'','p')},
+ {t:'n',q:'Um espelho côncavo tem f = 20 cm. Um objeto está a 60 cm dele. A que distância se forma a imagem?',a:30,u:'cm',why:'1/p\' = 1/20 − 1/60 = 2/60 → p\' = 30 cm (real, invertida, com metade do tamanho).'},
+ {t:'mundo',h:'Espelhos na sua volta',itens:[['Retrovisor','Convexo: mostra uma área maior, mas os carros parecem mais longe.'],['Farol do carro','A lâmpada fica no foco de um espelho côncavo e o feixe sai paralelo.'],['Antena parabólica','Junta as ondas do satélite no foco.']]}];
+LX.espelhos.exa={q:'Uma vela está a <b>30 cm</b> de um espelho côncavo de distância focal <b>10 cm</b>. Onde se forma a imagem e como ela é?',sim:'mirror',set:{t:'c',f:10,p:30},ty:999,passos:[
+ {txt:'Equação de Gauss: 1/p\' = 1/f − 1/p = 1/10 − 1/30 = 2/30.'},
+ {txt:'<b>p\' = 15 cm</b>, na frente do espelho: imagem real (pode ser projetada numa tela).',ask:{q:'A que distância se forma a imagem?',a:15,u:'cm'}},
+ {txt:'Aumento: A = −15/30 = <b>−0,5</b>: invertida e com metade do tamanho.',ask:{q:'Qual é o aumento A?',a:-.5}}]};
+
+LX.refracao.jor=[
+ {t:'cena',h:'O canudo quebrado',p:`<p>Um canudo dentro de um copo d'água parece <b>quebrado</b> na superfície. E a piscina parece mais rasa do que é.</p><p>A luz muda de direção quando passa de um meio para outro: é a <b>refração</b>.</p>`},
+ {t:'lab',sim:'refr',p:'Um laser passa do ar para a água. <b>Desafio:</b> faça o raio entrar na água <b>sem desviar</b>.',goal:s=>s.p.a===0&&s.p.n1===1&&s.p.n2===1.33,ok:'Entrando perpendicular à superfície (θ = 0°), a luz não desvia. O desvio só aparece quando ela chega inclinada.',dica:'Mude o ângulo de incidência.'},
+ {t:'medir',sim:'refr',p:'Do ar para a água: anote o <b>seno</b> do ângulo de entrada e o do ângulo de saída para <b>quatro ângulos</b>. (A tabela calcula os senos para você.)',rec:s=>s.p.n1===1&&s.p.n2===1.33&&s.p.a>0?[Math.sin(s.p.a*Math.PI/180),Math.sin(s.p.a*Math.PI/180)/1.33]:null,recMsg:'Use ar em cima, água embaixo e um ângulo maior que zero.',key:s=>[s.p.a],cols:['sen θ₁','sen θ₂'],need:4,dec:3,
+  depois:{q:'Divida sen θ₂ por sen θ₁ em cada linha. O resultado…',o:['é sempre o mesmo (≈ 0,75 = 1/1,33)','muda muito','é sempre 1'],why:'É uma reta pela origem. A razão entre os senos é fixa para cada par de meios: a lei de Snell.'}},
+ {t:'deduz',p:'Cada meio tem um índice de refração n (ar 1, água 1,33, vidro 1,5).',linhas:[
+   {txt:'A tabela mostrou sen θ₂ = sen θ₁/1,33. Com n₁ = 1 e n₂ = 1,33: n₁·sen θ₁ = ___',o:['n₂·sen θ₂','n₂/sen θ₂','sen θ₂']}],fim:'n₁·sen θ₁ = n₂·sen θ₂   (lei de Snell)'},
+ {t:'lab',sim:'refr',p:'Agora a luz sai da água para o ar. <b>Desafio:</b> encontre um ângulo em que ela <b>não consegue sair</b>.',goal:s=>s.p.n1===1.33&&s.p.n2===1&&1.33*Math.sin(s.p.a*Math.PI/180)>1,ok:'Acima de uns 49°, a luz é toda refletida: <b>reflexão total</b>. É assim que a luz fica presa dentro da fibra óptica.',dica:'Ponha água em cima e ar embaixo, e aumente o ângulo.'},
+ {t:'q',q:'Por que o diamante brilha tanto?',o:['tem índice de refração altíssimo: a luz sofre reflexão total várias vezes lá dentro antes de sair','porque é duro','porque é caro'],why:'Com n = 2,42, o ângulo limite é só 24°: a luz fica "presa" e sai concentrada pelas faces de cima.'},
+ {t:'n',q:'Um raio passa do ar para a água (n = 1,33) com 30° de incidência. Qual é o seno do ângulo de refração? (sen 30° = 0,5)',a:.5/1.33,u:'',why:'sen θ₂ = 1 × 0,5/1,33 ≈ 0,376, o que dá θ₂ ≈ 22°: o raio se aproxima da normal.',dica:'Use n₁·sen θ₁ = n₂·sen θ₂.'},
+ {t:'mundo',h:'Refração na sua volta',itens:[['Fibra óptica','A internet viaja como luz presa por reflexão total.'],['Arco-íris','Cada cor refrata um pouco diferente nas gotas de chuva.'],['Miragem no asfalto','Camadas de ar quente desviam a luz do céu, que parece água no chão.']]}];
+LX.refracao.exa={q:'Um laser passa do ar para a água (n = 1,33) fazendo <b>30°</b> com a normal. Qual é o ângulo dentro da água? (sen 30° = 0,5)',sim:'refr',set:{n1:1,n2:1.33,a:30},ty:999,passos:[
+ {txt:'Lei de Snell: 1 × sen 30° = 1,33 × sen θ₂.'},
+ {txt:'sen θ₂ = 0,5/1,33 ≈ <b>0,376</b>.',ask:{q:'Quanto vale sen θ₂?',a:.376,tol:.02}},
+ {txt:'θ₂ ≈ <b>22°</b>: o raio se aproxima da normal, porque a água é mais refringente que o ar.',ask:{q:'Qual é o ângulo θ₂, aproximadamente? (em graus)',a:22.08,u:'°',tol:.04}}]};
+
+LX.lentes.jor=[
+ {t:'cena',h:'Lupa, câmera e óculos',p:`<p>Com uma lupa, letras pequenas ficam enormes. Com a mesma lupa ao sol, dá para concentrar a luz num ponto e queimar um papel.</p><p>A câmera do celular e o seu olho também têm lentes. Elas desviam a luz por refração para formar imagens.</p>`},
+ {t:'lab',sim:'lens',p:'Lente convergente, vela a 25 cm. <b>Desafio:</b> forme uma imagem <b>invertida e do mesmo tamanho</b> da vela.',goal:s=>s.p.t==='c'&&Math.abs(s.p.p-2*s.p.f)<1e-9,ok:'Com a vela a 2f (o dobro da distância focal), a imagem real se forma a 2f do outro lado, do mesmo tamanho.',dica:'Ponha a vela a uma distância igual a duas vezes f.'},
+ {t:'lab',sim:'lens',p:'<b>Desafio:</b> use a lente como <b>lupa</b>: imagem direita e maior.',goal:s=>s.p.t==='c'&&s.p.p<s.p.f,ok:'Com o objeto entre a lente e o foco, a imagem é virtual, direita e ampliada. É a lupa.',dica:'Aproxime a vela da lente, mais perto que o foco.'},
+ {t:'medir',sim:'lens',cfg:{p:30},p:'Convergente com f = 10 cm. Anote p e p\' para <b>quatro posições</b> da vela além do foco.',rec:s=>{ const r=lensImg(s); return s.p.t==='c'&&s.p.f===10&&s.p.p>10&&r?[s.p.p,r.pi]:null; },recMsg:'Use a lente convergente com f = 10 cm e a vela além de 10 cm.',cols:['vela p (cm)','imagem p\' (cm)'],need:4,dec:1,
+  depois:{q:'Com a vela muito longe, onde fica a imagem?',o:['perto do foco do outro lado','muito longe também','sobre a lente'],why:'Raios de objetos distantes chegam quase paralelos e se juntam no foco. É assim que a lupa queima o papel com a luz do Sol.'}},
+ {t:'deduz',p:'A vergência V mede o "grau" da lente: V = 1/f, com f em metros. A unidade é a dioptria (di), o "grau" dos óculos.',linhas:[
+   {txt:'Uma lente com f = 50 cm tem V = 1/0,5 = ___',o:['2 di','0,5 di','50 di']},
+   {txt:'Lentes divergentes têm f negativo. Uma lente de −2 di tem f = ___',o:['−50 cm','−2 m','−0,2 cm']}],fim:'V = '+frac('1','f')+'   (f em metros)'},
+ {t:'q',q:'Uma pessoa míope vê mal de longe, porque o olho forma a imagem antes da retina. A lente que corrige é…',o:['divergente (grau negativo)','convergente','qualquer uma'],why:'A divergente "abre" os raios, empurrando a imagem para trás, até a retina.'},
+ {t:'n',q:'Uma lupa tem f = 10 cm, e você a usa a 5 cm de uma letra. Qual é o aumento? (1/p\' = 1/f − 1/p; A = −p\'/p)',a:2,u:'vezes',why:'1/p\' = 1/10 − 1/5 = −1/10 → p\' = −10 cm (virtual). A = −(−10)/5 = 2: a letra parece duas vezes maior.',dica:'p\' vai dar negativo: imagem virtual.'},
+ {t:'mundo',h:'Lentes na sua volta',itens:[['Câmera do celular','A lente forma uma imagem real, invertida e pequena sobre o sensor.'],['Olho humano','O cristalino muda de formato para focar perto e longe.'],['Projetor','Objeto pouco além do foco: imagem real, enorme e longe, na parede.']]}];
+LX.lentes.exa={q:'Você usa uma lupa de distância focal <b>10 cm</b> a <b>5 cm</b> de uma letra. Onde se forma a imagem? Quantas vezes maior a letra parece?',sim:'lens',set:{t:'c',f:10,p:5},ty:999,passos:[
+ {txt:'1/p\' = 1/f − 1/p = 1/10 − 1/5 = −1/10.'},
+ {txt:'<b>p\' = −10 cm</b>: o sinal negativo diz que a imagem é virtual, do mesmo lado da letra (é para onde você olha através da lupa).',ask:{q:'Qual é a posição da imagem p\'? (com sinal)',a:-10,u:'cm'}},
+ {txt:'Aumento: A = −p\'/p = −(−10)/5 = <b>2</b>: direita e duas vezes maior.',ask:{q:'Qual é o aumento?',a:2}}]};
 
 if(document.body) boot(); else addEventListener('DOMContentLoaded',boot);
 </script>

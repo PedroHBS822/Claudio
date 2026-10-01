@@ -2,50 +2,6 @@
    Laboratórios de óptica, eletricidade, magnetismo e física moderna
    ===================================================================== */
 
-/* diagrama de raios para espelhos esféricos e lentes (aproximação de raios paraxiais) */
-function rayDiagram(g,s,kind){
-  const mirror=kind==='mirror', conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9, pi=inf?Infinity:1/(1/f-1/p), A=inf?Infinity:-pi/p;
-  const xm=mirror?g.W*.66:g.W*.5, cy=g.H*.55, span=Math.max(p,Math.min(Math.abs(pi),60),2*s.p.f)*1.08, k=(mirror?xm-20:xm-20)/span, ho=Math.min(46,g.H*.2);
-  const side=mirror?-1:1, xo=xm-p*k, ix=inf?null:(mirror?xm-pi*k:xm+pi*k), hi=inf?0:A*ho;
-  g.line(0,cy,g.W,cy,COL.muted,1.2);
-  if(mirror){ const bulge=conv?14:-14; g.ctx.save(); g.ctx.strokeStyle=COL.ink; g.ctx.lineWidth=3; g.ctx.beginPath(); g.ctx.moveTo(xm-bulge,cy-g.H*.42); g.ctx.quadraticCurveTo(xm+bulge,cy,xm-bulge,cy+g.H*.42); g.ctx.stroke(); g.ctx.restore(); g.text(conv?'lado refletor ←':'lado refletor ←',xm-4,cy-g.H*.42-6,{size:11,c:COL.muted,align:'right'}); }
-  else { g.line(xm,cy-g.H*.42,xm,cy+g.H*.42,COL.ink,2.5); const tip=(y,d)=>{ g.line(xm,y,xm-8,y+d*8*(conv?1:-1),COL.ink,2.5); g.line(xm,y,xm+8,y+d*8*(conv?1:-1),COL.ink,2.5); }; tip(cy-g.H*.42,1); tip(cy+g.H*.42,-1); }
-  const fx=xm+side*f*k, lab=(x,t)=>{ g.line(x,cy-5,x,cy+5,COL.ink,2); g.text(t,x,cy+20,{size:12,align:'center',c:COL.muted,bold:true}); };
-  if(mirror){ lab(xm-f*k,'F'); lab(xm-2*f*k,'C'); } else { lab(xm-s.p.f*k,conv?'F':'F\''); lab(xm+s.p.f*k,conv?'F\'':'F'); }
-  const O=[xo,cy-ho]; g.arrow(xo,cy,xo,cy-ho,COL.vel,'objeto',3);
-  const rays=[[xm,cy-ho],mirror?[xm,cy]:[xm,cy]], out=(H,dir,c,dash)=>{ const L=2000/Math.hypot(dir[0],dir[1]); g.line(H[0],H[1],H[0]+dir[0]*L,H[1]+dir[1]*L,c,2,dash); };
-  const cols=[COL.force,COL.acc];
-  rays.forEach((H,i)=>{ g.line(O[0],O[1],H[0],H[1],cols[i],2);
-    if(inf){ const v=[xm-O[0],cy-O[1]]; out(H,mirror?[-v[0],v[1]]:v,cols[i]); return; }
-    const I=[ix,cy-hi], real=pi>0; if(real) out(H,[I[0]-H[0],I[1]-H[1]],cols[i]); else { out(H,[H[0]-I[0],H[1]-I[1]],cols[i]); g.line(H[0],H[1],I[0],I[1],cols[i],1.5,[5,5]); } });
-  if(!inf&&Math.abs(pi)<400) g.arrow(ix,cy,ix,cy-hi,COL.energy,'imagem',3);
-  return {pi,A,inf}; }
-function rayReads(s,kind){ const conv=s.p.t==='c', f=(conv?1:-1)*s.p.f, p=s.p.p, inf=Math.abs(1/f-1/p)<1e-9; if(inf) return [['Posição da imagem p\'','no infinito (imagem imprópria)'],['Por quê?','o objeto está exatamente no foco']];
-  const pi=1/(1/f-1/p), A=-pi/p, real=pi>0; return [['Posição da imagem p\'',nt(pi)+' cm'+(kind==='mirror'?(real?' (na frente do espelho)':' (atrás do espelho)'):(real?' (do outro lado da lente)':' (do mesmo lado do objeto)'))],['Aumento A = −p\'/p',nt(A)],['Natureza',`${real?'real':'virtual'}, ${A<0?'invertida':'direita'}, ${Math.abs(A)>1.001?'maior':Math.abs(A)<.999?'menor':'do mesmo tamanho'}`],['Vergência V = 1/f (f em metros)',nt(1/(f/100))+' di']]; }
-SIMS.mirror=(host)=>Sim(host,{alt:'Espelho esférico com raios de luz formando a imagem de um objeto',h:w=>Math.min(360,Math.max(280,w*.5)),
-  legend:[['vel','objeto'],['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio que bate no vértice']],
-  ctrls:[{k:'t',l:'Espelho',opts:[['c','côncavo'],['v','convexo']],v:'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:25,u:'cm',live:true}],
-  draw(g,s){ rayDiagram(g,s,'mirror'); }, reads:s=>rayReads(s,'mirror')});
-SIMS.lens=(host)=>Sim(host,{alt:'Lente com raios de luz formando a imagem de um objeto',h:w=>Math.min(360,Math.max(280,w*.5)),
-  legend:[['vel','objeto'],['energy','imagem'],['force','raio paralelo ao eixo'],['acc','raio pelo centro óptico']],
-  ctrls:[{k:'t',l:'Lente',opts:[['c','convergente'],['v','divergente']],v:'c',live:true},{k:'f',l:'Distância focal |f|',min:5,max:20,step:1,v:10,u:'cm',live:true},{k:'p',l:'Distância do objeto p',min:2,max:40,step:1,v:25,u:'cm',live:true}],
-  draw(g,s){ rayDiagram(g,s,'lens'); }, reads:s=>rayReads(s,'lens')});
-
-/* refração e reflexão total */
-const NS=[[1,'ar (1,00)'],[1.33,'água (1,33)'],[1.5,'vidro (1,50)'],[2.42,'diamante (2,42)']];
-SIMS.refr=(host)=>Sim(host,{alt:'Raio de luz passando de um meio para outro e mudando de direção',h:320,
-  legend:[['force','raio incidente'],['vel','raio refratado'],['muted','raio refletido']],
-  ctrls:[{k:'n1',l:'Meio de cima',opts:NS.map(x=>[x[0],x[1]]),v:1,live:true},{k:'n2',l:'Meio de baixo',opts:NS.map(x=>[x[0],x[1]]),v:1.33,live:true},{k:'a',l:'Ângulo de incidência θ₁',min:0,max:89,step:1,v:40,u:'°',live:true}],
-  draw(g,s){ const cx=g.W/2, cy=g.H/2, L=Math.min(g.W*.45,g.H*.47), a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2, tir=sn>1;
-    g.rect(0,cy,g.W,g.H-cy,COL.vel+(s.p.n2>1.4?'30':s.p.n2>1?'1e':'08'),null,0); if(s.p.n1>1) g.rect(0,0,g.W,cy,COL.vel+(s.p.n1>1.4?'30':'1e'),null,0);
-    g.line(0,cy,g.W,cy,COL.ink,1.5); g.line(cx,cy-L,cx,cy+L,COL.muted,1,[5,5]); g.text('normal',cx+6,cy-L+12,{size:11,c:COL.muted});
-    const si=[cx-Math.sin(a)*L,cy-Math.cos(a)*L]; g.line(si[0],si[1],cx,cy,COL.force,3); g.arrow(si[0],si[1],(si[0]+cx)/2,(si[1]+cy)/2,COL.force,null,3);
-    g.arrow(cx,cy,cx+Math.sin(a)*L,cy-Math.cos(a)*L,tir?COL.force:COL.muted,tir?'reflexão total':null,tir?3:1.5);
-    if(!tir){ const b=Math.asin(sn); g.arrow(cx,cy,cx+Math.sin(b)*L,cy+Math.cos(b)*L,COL.vel,'θ₂ = '+nt(b*180/Math.PI,3)+'°',3); }
-    g.text(NS.find(x=>x[0]===s.p.n1)[1],12,20,{size:12,c:COL.muted}); g.text(NS.find(x=>x[0]===s.p.n2)[1],12,g.H-10,{size:12,c:COL.muted});
-    g.text('θ₁ = '+s.p.a+'°',si[0]+8,si[1]+16,{size:12,c:COL.force,bold:true}); },
-  reads:s=>{ const a=s.p.a*Math.PI/180, sn=s.p.n1*Math.sin(a)/s.p.n2; return [['n₁·sen θ₁',nt(s.p.n1*Math.sin(a),3)],['θ₂ (Snell: n₁ sen θ₁ = n₂ sen θ₂)',sn>1?'não existe: reflexão total':nt(Math.asin(sn)*180/Math.PI,3)+'°'],['Ângulo limite',s.p.n1>s.p.n2?nt(Math.asin(s.p.n2/s.p.n1)*180/Math.PI,3)+'°':'não há (a luz vai para um meio mais refringente)'],['Velocidade da luz embaixo c/n₂',nf(3e8/s.p.n2)+' m/s']]; }});
-
 /* lei de Coulomb */
 SIMS.coulomb=(host)=>Sim(host,{alt:'Duas cargas elétricas com as forças de atração ou repulsão',h:250,
   legend:[['force','carga positiva'],['vel','carga negativa']],

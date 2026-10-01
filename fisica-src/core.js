@@ -23,7 +23,7 @@ function nf(x,sig=3){ if(!isFinite(x)) return '—'; if(x===0) return '0'; const
 function nt(x,sig=3){ return nf(x,sig).replace(/<sup>(-?\d+)<\/sup>/,(m,e)=>'^'+e).replace(/\^(-?\d+)/,(m,e)=>[...e].map(c=>SUP[c]).join('')); }
 function parseNum(str){ let t=String(str).trim().replace(/\s+/g,'').replace(/[−–]/g,'-');
   if(!t) return NaN;
-  if(/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) t=t.replace(/\./g,'');
+  if(/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(t)) t=t.replace(/\./g,'');
   t=t.replace(',','.').replace(/[x×*·]10\^?\(?(-?\d+)\)?$/i,'e$1').replace(/^10\^\(?(-?\d+)\)?$/,'1e$1');
   return /^-?(\d+\.?\d*|\.\d+)(e-?\d+)?$/i.test(t)?Number(t):NaN; }
 const frac=(a,b)=>`<span class="frac"><span>${a}</span><span>${b}</span></span>`;
