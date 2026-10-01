@@ -182,6 +182,18 @@ h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin
 .lab{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
 .labcv{position:relative;background:var(--paper);border-bottom:1px solid var(--line)}
 .labcv canvas{display:block;width:100%;touch-action:none}
+.labx{margin-left:auto}
+.spd+.labx{margin-left:0}
+.lab.big{position:fixed;inset:10px;z-index:60;overflow:auto;border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.45)}
+body.noscroll{overflow:hidden}
+body.noscroll::after{content:'';position:fixed;inset:0;background:rgba(5,10,20,.55);z-index:59}
+.lab:focus{outline:none}
+.spd{display:inline-flex;align-items:center;gap:4px;margin-left:auto;font-family:var(--display);font-size:12.5px;color:var(--muted)}
+.spdl{margin-right:2px}
+.spd button{border:1.5px solid var(--line);background:var(--card);border-radius:8px;padding:4px 8px;font-family:var(--mono);font-size:12.5px;cursor:pointer}
+.spd button.on{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.rd.chg b{animation:flash 1s ease-out}
+@keyframes flash{0%{background:var(--accent-soft);color:var(--accent)}100%{background:transparent}}
 .labui{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:0}
 .labui.solo{grid-template-columns:minmax(0,1fr)}
 .ctrls{padding:14px 16px;display:grid;gap:12px;align-content:start;border-right:1px solid var(--line)}
@@ -316,6 +328,28 @@ details.fold{background:var(--card);border:1px solid var(--line);border-radius:v
 details.fold>summary{cursor:pointer;padding:14px 0;font-family:var(--display);font-weight:700;font-size:16px;color:var(--accent)}
 details.fold[open]{padding-bottom:16px}
 details.fold #lab{margin-top:4px}
+
+/* exemplo animado */
+#exa{scroll-margin-top:76px}
+.exa{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--energy);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.exq .jtag{color:var(--energy)}
+.exq>div{font-size:18px;line-height:1.5;margin-bottom:12px}
+.exlab{margin:0 -4px}
+.exlab .lab{box-shadow:none}
+.locked .ctrls,.locked .labbar{display:none}
+.locked .labui{grid-template-columns:minmax(0,1fr)}
+.locked .reads{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));column-gap:18px}
+.exsteps{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;counter-reset:e}
+.exsteps li{counter-increment:e;display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;font-size:17px;line-height:1.5;opacity:.7}
+.exsteps li.on{opacity:1}
+.exsteps li::before{content:counter(e);font-family:var(--mono);font-size:13px;width:26px;height:26px;border-radius:50%;background:var(--energy);color:#fff;display:grid;place-items:center;margin-top:1px}
+.exwait{color:var(--muted);font-style:italic}
+.extry{margin-top:12px;border:2px dashed var(--energy);border-radius:12px;padding:12px 14px;font-size:17px}
+.extry.done{border:0;padding:0}
+.extry .jtag{color:var(--energy);margin-bottom:4px}
+.extry form{margin-top:10px}
+.exctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.exctl [data-x=next]{margin-left:auto}
 
 /* revisão */
 .revlist{display:grid;gap:8px;margin:14px 0}
@@ -452,10 +486,16 @@ function G(ctx,W,H){ const g={ctx,W,H,
   poly(pts,c=COL.ink,w=2,fill,close){ if(pts.length<2) return; ctx.save(); ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]); if(close) ctx.closePath(); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(c){ ctx.strokeStyle=c; ctx.lineWidth=w; ctx.lineJoin='round'; ctx.stroke(); } ctx.restore(); },
   circle(x,y,r,fill,stroke,w=2){ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=w; ctx.stroke(); } },
   rect(x,y,w,h,fill,stroke,r=0,lw=2){ ctx.beginPath(); if(ctx.roundRect&&r) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw; ctx.stroke(); } },
-  arrow(x1,y1,x2,y2,c,label,w=3,lpos){ const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); if(L<2) return; const ux=dx/L,uy=dy/L,hs=Math.min(11,L*.45);
-    ctx.save(); ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=w; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hs*.8,y2-uy*hs*.8); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*hs-uy*hs*.55,y2-uy*hs+ux*hs*.55); ctx.lineTo(x2-ux*hs+uy*hs*.55,y2-uy*hs-ux*hs*.55); ctx.closePath(); ctx.fill(); ctx.restore();
-    if(label){ const lx=x2+ux*12+(lpos||[0,0])[0], ly=y2+uy*12+(lpos||[0,0])[1]; g.text(label,lx,ly,{c,size:13,bold:true,align:ux<-.3?'right':ux>.3?'left':'center',base:'middle'}); } },
+  arrow(x1,y1,x2,y2,c,label,w=3,lpos){ const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); if(L<2) return; const ux=dx/L,uy=dy/L,hs=Math.min(11+w,L*.45);
+    const path=()=>{ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hs*.8,y2-uy*hs*.8); };
+    const head=()=>{ ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*hs-uy*hs*.55,y2-uy*hs+ux*hs*.55); ctx.lineTo(x2-ux*hs+uy*hs*.55,y2-uy*hs-ux*hs*.55); ctx.closePath(); };
+    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.strokeStyle=COL.paper; ctx.globalAlpha=.85; ctx.lineWidth=w+4; path(); ctx.stroke(); head(); ctx.stroke(); ctx.globalAlpha=1;
+    ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=w; path(); ctx.stroke(); head(); ctx.fill(); ctx.restore();
+    if(label){ const lx=x2+ux*14+(lpos||[0,0])[0], ly=y2+uy*14+(lpos||[0,0])[1]; g.tag(label,lx,ly,c,ux<-.3?'right':ux>.3?'left':'center'); } },
+  /* etiqueta legível sobre qualquer fundo */
+  tag(t,x,y,c,align='center',size=12.5){ g.font(size,'display',true); const w=ctx.measureText(t).width+10, h=size+7, x0=align==='left'?x-3:align==='right'?x-w+3:x-w/2;
+    ctx.save(); ctx.globalAlpha=.88; g.rect(x0,y-h/2,w,h,COL.card,null,h/2); ctx.restore(); g.text(t,x0+w/2,y+1,{c,size,bold:true,align:'center',base:'middle'}); },
   /* gráfico: caixa (x,y,w,h), faixas xr/yr, séries [{pts:[[x,y]...],c}] */
   plot(x,y,w,h,o){ const xr=o.xr,yr=o.yr; const X=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, Y=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
     g.rect(x,y,w,h,COL.card,COL.line,0,1);
@@ -476,32 +516,45 @@ function G(ctx,W,H){ const g={ctx,W,H,
 /* ---------- laboratório genérico ---------- */
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function Sim(host,def){
-  const s={p:{},t:0,playing:false,def}; (def.ctrls||[]).forEach(c=>s.p[c.k]=c.v);
+  const s={p:{},t:0,playing:false,def,rate:1,host}; (def.ctrls||[]).forEach(c=>s.p[c.k]=c.v);
   const ctrlHTML=(def.ctrls||[]).map(c=>c.opts
     ?`<div class="ctrl"><label>${c.l}</label><div class="seg" role="group" aria-label="${c.l}">${c.opts.map(o=>`<button type="button" data-k="${c.k}" data-v="${o[0]}" class="${o[0]===c.v?'on':''}">${o[1]}</button>`).join('')}</div></div>`
     :`<div class="ctrl"><label for="${host.id}-${c.k}"><span>${c.l}</span><output id="${host.id}-${c.k}-o">${fmtC(c,c.v)}</output></label><input type="range" id="${host.id}-${c.k}" data-k="${c.k}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.v}"></div>`).join('');
-  host.innerHTML=`<div class="lab"><div class="labcv"><canvas aria-label="${esc(def.alt||'Simulação')}" role="img"></canvas></div>${def.legend?`<div class="legend">${def.legend.map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join('')}</div>`:''}<div class="labui${ctrlHTML||def.drag?'':' solo'}">${ctrlHTML||def.drag?`<div class="ctrls">${ctrlHTML||'<p class="eyebrow" style="margin:0">Arraste os elementos no desenho</p>'}</div>`:''}<div class="reads" aria-live="polite"></div></div>${def.anim?`<div class="labbar"><button class="btn sm" type="button" data-act="play">▶ Iniciar</button><button class="btn sm ghost" type="button" data-act="reset">↺ Reiniciar</button>${(def.btns||[]).map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('')}</div>`:(def.btns?`<div class="labbar">${def.btns.map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('')}</div>`:'')}</div>`;
-  const cv=$('canvas',host), ctx=cv.getContext('2d'), rdEl=$('.reads',host); let lastR='';
+  const xb=(def.btns||[]).map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('');
+  const spd=def.anim?`<span class="spd" role="group" aria-label="Velocidade da simulação"><span class="spdl">câmera lenta</span>${[[.25,'¼×'],[.5,'½×'],[1,'1×']].map(([r,t])=>`<button type="button" data-rate="${r}" class="${r===1?'on':''}" aria-label="${t}">${t}</button>`).join('')}</span>`:'';
+  host.innerHTML=`<div class="lab"><div class="labcv"><canvas aria-label="${esc(def.alt||'Simulação')}" role="img"></canvas></div>${def.legend?`<div class="legend">${def.legend.map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join('')}</div>`:''}<div class="labui${ctrlHTML||def.drag?'':' solo'}">${ctrlHTML||def.drag?`<div class="ctrls">${ctrlHTML||'<p class="eyebrow" style="margin:0">Arraste os elementos no desenho</p>'}</div>`:''}<div class="reads" aria-live="polite"></div></div><div class="labbar">${def.anim?`<button class="btn sm" type="button" data-act="play">▶ Iniciar</button><button class="btn sm ghost" type="button" data-act="reset">↺ Reiniciar</button>`:''}${xb}${spd}<button class="btn sm ghost labx" type="button" data-act="big" aria-label="Ampliar o laboratório">⤢ Ampliar</button></div></div>`;
+  const lab=$('.lab',host), cv=$('canvas',host), ctx=cv.getContext('2d'), rdEl=$('.reads',host); let lastR='', prevVals=[];
   function fmtC(c,v){ return c.f?c.f(v):(nsig(v,4)+(c.u?' '+c.u:'')); }
-  function size(){ const w=cv.clientWidth||600; const h=typeof def.h==='function'?def.h(w):(def.h||300); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
-  s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); def.draw(G(ctx,s.W,s.H),s); if(def.reads){ const r=def.reads(s).map(([a,b])=>`<div class="rd"><span>${a}</span><b>${b}</b></div>`).join(''); if(r!==lastR){ rdEl.innerHTML=r; lastR=r; } } };
-  s.reset=()=>{ s.t=0; s.playing=false; setPlay(); def.init&&def.init(s); s.render(); };
+  function size(){ const w=cv.clientWidth||600; let h=typeof def.h==='function'?def.h(w):(def.h||300); if(lab.classList.contains('big')) h=Math.max(h,Math.min(innerHeight-230,w*.62)); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
+  s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); const g=G(ctx,s.W,s.H); def.draw(g,s); if(s.overlay) s.overlay(g,s);
+    if(def.reads){ const rows=def.reads(s), vals=rows.map(r=>r[1]); const r=rows.map(([a,b],i)=>`<div class="rd${!s.playing&&prevVals.length&&prevVals[i]!==b?' chg':''}"><span>${a}</span><b>${b}</b></div>`).join(''); if(vals.join('|')!==prevVals.join('|')||!lastR){ rdEl.innerHTML=r; lastR=r; prevVals=vals; } } };
+  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; setPlay(); def.init&&def.init(s); s.render(); };
   let raf=0,last=0;
-  function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now; if(s.playing){ const k=def.speed||1, n=def.sub||1; for(let i=0;i<n;i++){ def.step(s,dt*k/n); s.t+=dt*k/n; } } s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
+  function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now;
+    if(s.playing){ const n=def.sub||1; let tot=dt*(def.speed||1)*s.rate; if(s.until!=null) tot=Math.min(tot,Math.max(0,s.until-s.t));
+      for(let i=0;i<n;i++){ def.step(s,tot/n); s.t+=tot/n; }
+      if(s.until!=null&&s.t>=s.until-1e-9){ s.t=s.until; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; } }
+    s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
   s.play=on=>{ s.playing=on; setPlay(); if(on&&!raf){ last=performance.now(); raf=requestAnimationFrame(frame); } };
+  /* roda a animação até o instante t (usado nos exemplos animados) */
+  s.runTo=(t,cb)=>{ if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
   function setPlay(){ const b=$('[data-act=play]',host); if(b) b.textContent=s.playing?'❚❚ Pausar':(s.t>0?'▶ Continuar':'▶ Iniciar'); }
   host.addEventListener('input',e=>{ const k=e.target.dataset.k; if(!k) return; const c=def.ctrls.find(x=>x.k===k); s.p[k]=+e.target.value; $(`#${host.id}-${k}-o`).textContent=fmtC(c,s.p[k]); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); });
   host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!host.contains(b)) return;
+    if(b.dataset.rate){ s.rate=+b.dataset.rate; $$('[data-rate]',host).forEach(x=>x.classList.toggle('on',x===b)); return; }
     if(b.dataset.k){ const k=b.dataset.k,c=def.ctrls.find(x=>x.k===k); const raw=b.dataset.v; s.p[k]=isNaN(+raw)?raw:+raw; $$(`button[data-k="${k}"]`,host).forEach(x=>x.classList.toggle('on',x===b)); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); return; }
-    const a=b.dataset.act; if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
+    const a=b.dataset.act; if(a==='big'){ const on=!lab.classList.contains('big'); lab.classList.toggle('big',on); document.body.classList.toggle('noscroll',on); b.textContent=on?'✕ Fechar':'⤢ Ampliar'; b.setAttribute('aria-label',on?'Fechar a tela ampliada':'Ampliar o laboratório'); size(); s.render(); return; }
+    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
   if(def.drag){ const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }; let dragging=false;
-    cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); s.render(); e.preventDefault(); } });
-    cv.addEventListener('pointermove',e=>{ if(!dragging) return; const [x,y]=pos(e); def.drag.move(s,x,y); s.render(); });
-    const up=()=>{ if(dragging){ dragging=false; def.drag.up&&def.drag.up(s); s.render(); } }; cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); cv.style.cursor='grab'; }
+    cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); cv.style.cursor='grabbing'; s.render(); e.preventDefault(); } });
+    cv.addEventListener('pointermove',e=>{ const [x,y]=pos(e); if(!dragging){ if(def.drag.hover) cv.style.cursor=def.drag.down({...s,dr:null,def},x,y)?'grab':'default'; return; } def.drag.move(s,x,y); s.render(); });
+    const up=()=>{ if(dragging){ dragging=false; cv.style.cursor='grab'; def.drag.up&&def.drag.up(s); s.render(); } }; cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); cv.style.cursor='grab'; }
+  /* atalhos de teclado: espaço inicia/pausa, R reinicia, Esc fecha a tela ampliada */
+  lab.tabIndex=-1; lab.addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')) return; if(e.key===' '&&def.anim){ e.preventDefault(); $('[data-act=play]',host)?.click(); } else if((e.key==='r'||e.key==='R')&&def.anim) s.reset(); else if(e.key==='Escape'&&lab.classList.contains('big')) $('[data-act=big]',host).click(); });
   new ResizeObserver(()=>{ size(); if(def.onResize) def.onResize(s); s.render(); }).observe(cv);
   size(); def.init&&def.init(s); LIVE.add(s); s.render();
   if(def.anim&&def.autoplay&&!REDUCED) s.play(true);
-  s.dispose=()=>{ s.playing=false; LIVE.delete(s); };
+  s.dispose=()=>{ s.playing=false; LIVE.delete(s); if(lab.classList.contains('big')) document.body.classList.remove('noscroll'); };
   return s; }
 
 /* ---------- blocos de conteúdo ---------- */
@@ -649,7 +702,7 @@ function viewHome(){
 
 function chipCls(id){ const x=P.l[id]; return isDue(id)?'due':x&&x.s===2?'ok':''; }
 function stepsHTML(l){ const x=P.l[l.id]||{};
-  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
+  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!(l.ex||l.exa)],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
     .map(([k,t,d])=>`<li><button type="button" class="${d?'done':''}" data-go="${k}"><span class="ck" aria-hidden="true">${d?'✓':''}</span>${t}${d?'<span class="sr"> (feito)</span>':''}</button></li>`).join(''); }
 function updateHead(l){ const s=$('#steps'); if(s) s.innerHTML=stepsHTML(l); const c=$('#lstat'); if(c){ c.textContent=statusText(l.id); c.className='chip '+chipCls(l.id); } }
 
@@ -687,7 +740,7 @@ function viewJourneyLesson(l){
   <section class="sec">${H('Resumo da lição')}<details class="fold" id="resumo"${x.jd?' open':''}><summary>${x.jd?'O que você descobriu':'Abrir o resumo (melhor depois da jornada)'}</summary><div class="prose">${l.idea}${l.f.map(f=>formulaCard(f)).join('')}${l.fn?`<div>${l.fn}</div>`:''}${l.keep?`<div class="note"><b>Para lembrar</b><ul style="margin:6px 0 0">${l.keep.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</div>
     <div class="ai aiask" id="aiidea"><span>Ainda confuso? Peça ao tutor:</span><button class="btn sm ghost" type="button" data-ai="simples">Explique mais simples</button><button class="btn sm ghost" type="button" data-ai="analogia">Dê uma analogia</button><button class="btn sm ghost" type="button" data-ai="fundo">Quero ir mais fundo</button></div><div class="aiout"></div></details></section>
   <section class="sec">${H('Laboratório livre')}<details class="fold" id="livre"><summary>Abrir o laboratório para explorar à vontade</summary><div id="lab"></div>${l.tasks?`<div class="note" style="margin-top:12px"><b>Ideias para testar:</b><ul class="tasks">${l.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</details></section>
-  ${l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
+  ${l.exa?`<section class="sec">${H('Exemplo animado')}<p class="lead2">Um problema resolvido acontecendo na tela. Antes de cada conta, tente prever o número.</p><div id="exa"></div></section>`:l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
   <section class="sec">${H('Pratique')}<p class="lead2">Os números mudam a cada questão. Três acertos seguidos de primeira dominam a lição; se errar, você ganha uma pista e uma segunda chance.</p><div id="prac"></div>
     <div class="ai aigen"><button class="btn sm ghost" type="button" id="aigen">${AIPILL} Criar uma questão estilo ENEM</button><span class="aitag">Treino extra; não conta para o domínio.</span></div><div id="aiq"></div></section>
   ${l.traps?`<section class="sec prose">${H('Erros comuns')}<ul>${l.traps.map(t=>`<li>${t}</li>`).join('')}</ul></section>`:''}
@@ -716,7 +769,7 @@ function mountLesson(l){
     const lv=$('#livre'); lv.addEventListener('toggle',()=>{ if(lv.open&&!lv.dataset.m){ lv.dataset.m=1; SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{})); } }); }
   else { SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
     const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch)); }
-  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
+  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex, #exa',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
   const pr=$('#pred'); if(pr){
     const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x().pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x().pr===l.pred.a?'ok':'info'}"><b>${x().pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
     const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x().pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
@@ -724,6 +777,7 @@ function mountLesson(l){
     pr.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.p!=null&&x().pr==null){ ls(l.id).pr=+b.dataset.p; save(); pend(); upd(); } else if(b.dataset.rev){ ls(l.id).prr=1; save(); reveal(); } }); }
   const ex=$('.ex'); if(ex){ let k=0; const ol=$('ol',ex), bt=$('[data-ex]',ex);
     bt.addEventListener('click',()=>{ if(k<l.ex.s.length){ ol.insertAdjacentHTML('beforeend',`<li><span>${l.ex.s[k]}</span></li>`); k++; } bt.textContent=k<l.ex.s.length?'Próximo passo':'Pronto'; if(k>=l.ex.s.length){ bt.disabled=true; if(!x().ex){ ls(l.id).ex=1; save(); upd(); } } }); }
+  if(l.exa&&$('#exa')) ExPlayer($('#exa'),l,upd);
   Practice($('#prac'),[l],{onChange:()=>{ renderSide(); upd(); },focus:false});
   const ai=$('#aiidea'); ai.addEventListener('click',e=>{ const b=e.target.closest('[data-ai]'); if(!b) return; const k=b.dataset.ai;
     aiAsk(ai.nextElementSibling,TUTOR+'\n\n'+lessonCtx(l)+'\n\nPedido do aluno: '+IDEA_ASK[k],{tier:k==='fundo'?'default':'quick'}); });
@@ -876,23 +930,125 @@ function Jornada(host,l,onDone){
   if(st0.jd) finish(false); else render(false); }
 
 /* =====================================================================
+   Exemplo animado: o problema acontece no laboratório, passo a passo.
+   l.exa = {q, sim, cfg, set:{...}, fn(s), passos:[{txt, ate, set, fn(s), tags:[[texto,cor]], ask:{q,a,u,tol}}]}
+   - set / fn: mudam o laboratório antes do passo (parâmetros ou estado)
+   - ate: anima até esse instante (s)
+   - tags: etiquetas que aparecem no desenho durante o passo
+   - ask: "tente antes": o aluno prevê o número; o texto e a animação vêm depois
+   ===================================================================== */
+function ExPlayer(host,l,onDone){
+  const E=l.exa; let k=-1, s=null, answered={}, tick=0;
+  host.innerHTML=`<div class="exa"><div class="exq"><p class="jtag">Problema</p><div>${E.q}</div></div><div class="exlab locked" id="exlab"></div>
+    <div class="expanel"><ol class="exsteps"></ol><div class="exask" aria-live="polite"></div>
+    <div class="exctl"><button class="btn ghost" type="button" data-x="prev" disabled>← Voltar</button><button class="btn ghost" type="button" data-x="replay" disabled>↺ Ver de novo</button><button class="btn" type="button" data-x="next">Começar ▶</button></div></div></div>`;
+  s=SIMS[E.sim]($('#exlab',host),E.cfg||{}); SIMNOW.push(s);
+  /* mantém as etiquetas desenhadas mesmo com a animação parada */
+  tick=setInterval(()=>{ if(!s.playing&&host.isConnected) s.render(); },120); SIMNOW.push({dispose(){ clearInterval(tick); }});
+  const applySets=upto=>{ Object.assign(s.p,E.set||{}); if(E.fn) E.fn(s); for(let i=0;i<=upto;i++){ const P=E.passos[i]; if(P&&P.set) Object.assign(s.p,P.set); } };
+  const lastAte=upto=>{ for(let i=upto;i>=0;i--) if(E.passos[i].ate!=null) return E.passos[i].ate; return 0; };
+  function ff(t){ s.reset(); const n=s.def.sub||1; let guard=0; while(s.t<t-1e-9&&guard++<5000){ const d=Math.min(.01,t-s.t); for(let i=0;i<n;i++) s.def.step(s,d/n); s.t+=d; } s.playing=false; s.render(); }
+  function overlay(i){ const P=E.passos[i]; s.overlay=P&&(P.tags||P.ov)?(g,st)=>{ (P.tags||[]).forEach(([t,c],j)=>g.tag(t,g.W*(E.tx??.5),(E.ty??22)+j*26,COL[c]||c||COL.ink,'center',13.5)); P.ov&&P.ov(g,st); }:null; }
+  /* monta o laboratório no estado do passo i (sem animar) */
+  function settle(i){ applySets(i); ff(i>=0?lastAte(i):0); for(let j=0;j<=i;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(i); s.render(); }
+  function list(){ const ol=$('.exsteps',host); ol.innerHTML=E.passos.slice(0,k+1).map((P,i)=>{ const hidden=P.ask&&!answered[i]; return `<li class="${i===k?'on':''}"><span>${hidden?'<span class="exwait">Tente prever antes de ver.</span>':P.txt}</span></li>`; }).join(''); }
+  function show(animate){ const P=E.passos[k]; list(); $('.exask',host).innerHTML='';
+    $('[data-x=prev]',host).disabled=k<=0; $('[data-x=replay]',host).disabled=k<0;
+    const nb=$('[data-x=next]',host); nb.textContent=k>=E.passos.length-1?'Concluído ✓':'Próximo passo ▶'; nb.disabled=k>=E.passos.length-1;
+    if(P.ask&&!answered[k]){ nb.disabled=true; ask(P); return; }
+    run(P,animate); if(k===E.passos.length-1){ const x=ls(l.id); if(!x.ex){ x.ex=1; save(); onDone&&onDone(); } } }
+  function run(P,animate){ applySets(k); if(P.fn) P.fn(s); overlay(k);
+    if(P.ate!=null&&animate){ s.runTo(P.ate); } else if(P.ate!=null){ settle(k); } else s.render(); }
+  function ask(P){ const box=$('.exask',host); let tries=0;
+    box.innerHTML=`<div class="extry"><p class="jtag">Tente antes</p><div>${P.ask.q}</div><form class="ans" autocomplete="off"><input inputmode="decimal" placeholder="sua previsão" aria-label="Sua previsão"><span class="u">${P.ask.u||''}</span><button class="btn sm" type="submit">Conferir</button><button class="btn sm ghost" type="button" data-show>Mostrar</button></form><div class="jfb"></div></div>`;
+    const finish=(msg)=>{ answered[k]=true; box.innerHTML=msg?`<div class="extry done">${msg}</div>`:''; list(); const nb=$('[data-x=next]',host); nb.disabled=k>=E.passos.length-1; run(P,true); if(k===E.passos.length-1){ const x=ls(l.id); if(!x.ex){ x.ex=1; save(); onDone&&onDone(); } } };
+    $('form',box).addEventListener('submit',e=>{ e.preventDefault(); const v=parseNum($('input',box).value); if(isNaN(v)) return; tries++; const tol=P.ask.tol||.02, ok=Math.abs(v-P.ask.a)<=Math.max(tol*Math.abs(P.ask.a),1e-9);
+      if(ok) finish(`<div class="fb ok"><b>Acertou a previsão!</b> Veja acontecer.</div>`); else if(tries>=2) finish(`<div class="fb info"><b>Era ${nf(P.ask.a)} ${P.ask.u||''}.</b> Veja como chegar lá.</div>`); else $('.jfb',box).innerHTML='<div class="fb bad">Quase. Pense no passo anterior e tente de novo.</div>'; });
+    $('[data-show]',box).addEventListener('click',()=>finish('')); $('input',box).focus({preventScroll:true}); }
+  host.addEventListener('click',e=>{ const b=e.target.closest('[data-x]'); if(!b||b.disabled) return; const a=b.dataset.x;
+    if(a==='next'&&k<E.passos.length-1){ k++; if(k===0) settle(-1); show(true); }
+    else if(a==='prev'&&k>0){ k--; settle(k); show(false); }
+    else if(a==='replay'){ settle(-1); applySets(k); for(let j=0;j<=k;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(k); const t=lastAte(k); if(t>0) s.runTo(t); } });
+  settle(-1); }
+
+/* =====================================================================
+   Kit de cenas: céu, estrada, carro, bola, caixa, pessoa, prédio,
+   cronômetro, velocímetro e cotas. Tudo a partir dos tokens do tema,
+   então funciona no claro e no escuro.
+   ===================================================================== */
+function hexRGB(c){ c=String(c).trim(); if(c.startsWith('rgb')) return c.match(/[\d.]+/g).slice(0,3).map(Number); if(c[0]==='#'){ c=c.slice(1); if(c.length===3) c=[...c].map(x=>x+x).join(''); return [0,2,4].map(i=>parseInt(c.slice(i,i+2),16)); } return [128,128,128]; }
+function mix(a,b,t){ const A=hexRGB(a), B=hexRGB(b); return `rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`; }
+function alpha(c,a){ const A=hexRGB(c); return `rgba(${A.join(',')},${a})`; }
+const isDark=()=>{ const [r,g,b]=hexRGB(COL.paper); return r+g+b<300; };
+
+const SK={
+  /* céu com nuvens; off desloca as nuvens (paralaxe) */
+  sky(g,y,off=0){ const c=g.ctx, gr=c.createLinearGradient(0,0,0,y), d=isDark();
+    gr.addColorStop(0,d?mix(COL.paper,'#1b2a4a',.8):mix('#7fb6f2',COL.paper,.35)); gr.addColorStop(1,d?mix(COL.paper,'#24365c',.5):mix('#cfe5fb',COL.paper,.25));
+    c.fillStyle=gr; c.fillRect(0,0,g.W,y);
+    if(d){ c.fillStyle='rgba(255,255,255,.55)'; for(let i=0;i<26;i++){ const x=((i*137.5+off*.05)%g.W+g.W)%g.W, yy=(i*53)%Math.max(10,y-10); c.fillRect(x,yy,1.4,1.4); } }
+    else { c.fillStyle='rgba(255,255,255,.75)'; [[.15,.25,1],[.55,.15,1.3],[.85,.32,.9]].forEach(([fx,fy,sc])=>{ const x=((fx*g.W-off*.15)%(g.W+120)+g.W+120)%(g.W+120)-60, yy=fy*y; [[0,0,22],[18,-6,17],[36,2,19],[-16,4,14]].forEach(([dx,dy,r])=>{ c.beginPath(); c.arc(x+dx*sc,yy+dy*sc,r*sc,0,7); c.fill(); }); }); } },
+  hills(g,y,off=0){ const c=g.ctx; c.fillStyle=isDark()?mix(COL.paper,COL.ok,.18):mix(COL.ok,COL.paper,.62); c.beginPath(); c.moveTo(0,y); for(let x=0;x<=g.W+20;x+=20){ c.lineTo(x,y-14-10*Math.sin((x+off*.3)/70)-6*Math.sin((x+off*.3)/23)); } c.lineTo(g.W,y); c.closePath(); c.fill(); },
+  grass(g,y,h){ const c=g.ctx, gr=c.createLinearGradient(0,y,0,y+h); gr.addColorStop(0,isDark()?mix(COL.paper,COL.ok,.28):mix(COL.ok,COL.paper,.45)); gr.addColorStop(1,isDark()?mix(COL.paper,COL.ok,.14):mix(COL.ok,COL.paper,.62)); c.fillStyle=gr; c.fillRect(0,y,g.W,h); },
+  /* estrada com faixas que andam conforme off (em pixels) */
+  road(g,y,h,off=0){ const c=g.ctx; c.fillStyle=isDark()?mix(COL.paper,'#000',.25):mix('#3d4552',COL.paper,.15); c.fillRect(0,y,g.W,h);
+    c.fillStyle=isDark()?'#d9dee6':'#f4f6f8'; c.fillRect(0,y,g.W,2); c.fillRect(0,y+h-2,g.W,2);
+    c.fillStyle='#f2c94c'; const per=40, o=((off%per)+per)%per; for(let x=-per+o*-1;x<g.W+per;x+=per) c.fillRect(x,y+h/2-1.5,22,3); },
+  shadow(g,x,y,w,a=.25){ const c=g.ctx; c.save(); c.fillStyle=`rgba(0,0,0,${a})`; c.beginPath(); c.ellipse(x,y,w/2,Math.max(2,w*.09),0,0,7); c.fill(); c.restore(); },
+  /* carro: x = centro, y = chão; rot = ângulo das rodas (rad) */
+  car(g,x,y,w,col,rot=0){ const c=g.ctx, h=w*.28, r=w*.12, wy=y-r;
+    SK.shadow(g,x,y+1,w*.95,.22);
+    c.save(); c.fillStyle=col; c.strokeStyle=mix(col,'#000',.35); c.lineWidth=1.5;
+    c.beginPath(); c.moveTo(x-w/2,wy-2); c.lineTo(x-w/2,wy-h*.75); c.quadraticCurveTo(x-w/2,wy-h,x-w*.42,wy-h); c.lineTo(x-w*.27,wy-h); c.lineTo(x-w*.14,wy-h*1.75); c.lineTo(x+w*.17,wy-h*1.75); c.lineTo(x+w*.31,wy-h); c.lineTo(x+w*.44,wy-h*.92); c.quadraticCurveTo(x+w/2,wy-h*.8,x+w/2,wy-h*.45); c.lineTo(x+w/2,wy-2); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle=isDark()?'#9fc3ea':'#d7ecff'; c.beginPath(); c.moveTo(x-w*.23,wy-h*1.02); c.lineTo(x-w*.12,wy-h*1.62); c.lineTo(x-w*.0,wy-h*1.62); c.lineTo(x-w*.0,wy-h*1.02); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(x+w*.03,wy-h*1.02); c.lineTo(x+w*.03,wy-h*1.62); c.lineTo(x+w*.15,wy-h*1.62); c.lineTo(x+w*.26,wy-h*1.02); c.closePath(); c.fill();
+    c.fillStyle='#ffd866'; c.beginPath(); c.ellipse(x+w*.47,wy-h*.62,w*.025,h*.12,0,0,7); c.fill(); c.fillStyle='#e5484d'; c.fillRect(x-w/2,wy-h*.7,w*.03,h*.22);
+    [[x-w*.3],[x+w*.3]].forEach(([wx])=>{ c.fillStyle='#1c1f24'; c.beginPath(); c.arc(wx,wy,r,0,7); c.fill(); c.fillStyle='#9aa3ad'; c.beginPath(); c.arc(wx,wy,r*.5,0,7); c.fill(); c.strokeStyle='#1c1f24'; c.lineWidth=1.6; for(let k=0;k<4;k++){ const a=rot+k*Math.PI/2; c.beginPath(); c.moveTo(wx,wy); c.lineTo(wx+Math.cos(a)*r*.5,wy+Math.sin(a)*r*.5); c.stroke(); } });
+    c.restore(); },
+  /* bola com brilho; spin desenha uma costura girando */
+  ball(g,x,y,r,col,spin){ const c=g.ctx, gr=c.createRadialGradient(x-r*.35,y-r*.4,r*.15,x,y,r); gr.addColorStop(0,mix(col,'#ffffff',.55)); gr.addColorStop(.6,col); gr.addColorStop(1,mix(col,'#000',.35));
+    c.save(); c.fillStyle=gr; c.beginPath(); c.arc(x,y,r,0,7); c.fill();
+    if(spin!=null){ c.strokeStyle=alpha('#ffffff',.55); c.lineWidth=Math.max(1,r*.12); c.beginPath(); c.arc(x,y,r*.62,spin,spin+2.2); c.stroke(); }
+    c.restore(); },
+  /* caixa de madeira */
+  crate(g,x,y,w,h,label){ const c=g.ctx, wood=isDark()?'#a0703f':'#c98d4f', dark=mix(wood,'#000',.35);
+    SK.shadow(g,x+w/2,y+h,w*1.05,.2);
+    c.save(); c.fillStyle=wood; c.strokeStyle=dark; c.lineWidth=2; g.rect(x,y,w,h,wood,dark,4,2);
+    c.strokeStyle=alpha(dark,.55); c.lineWidth=1; for(let k=1;k<4;k++){ c.beginPath(); c.moveTo(x+3,y+h*k/4); c.lineTo(x+w-3,y+h*k/4); c.stroke(); }
+    c.strokeStyle=dark; c.lineWidth=3; c.beginPath(); c.moveTo(x+4,y+4); c.lineTo(x+w-4,y+h-4); c.stroke(); c.lineWidth=2; c.strokeRect(x+3,y+3,w-6,h-6); c.restore();
+    if(label) g.tag(label,x+w/2,y+h/2,'#3b2a14'); },
+  /* pessoa estilizada; pose: 'stand' | 'push' */
+  person(g,x,y,h,col,pose='stand'){ const c=g.ctx, hd=h*.13; c.save(); c.lineCap='round'; c.strokeStyle=col; c.fillStyle=col;
+    const lean=pose==='push'?h*.18:0, hipX=x, hipY=y-h*.45, shX=x+lean, shY=y-h*.8;
+    c.lineWidth=h*.085; c.beginPath(); c.moveTo(hipX,hipY); c.lineTo(shX,shY); c.stroke();
+    c.beginPath(); c.arc(shX+lean*.25,shY-hd*1.15,hd,0,7); c.fill();
+    c.lineWidth=h*.07; c.beginPath(); c.moveTo(hipX,hipY); c.lineTo(hipX-(pose==='push'?h*.22:h*.08),y); c.moveTo(hipX,hipY); c.lineTo(hipX+h*.08,y); c.stroke();
+    c.lineWidth=h*.06; c.beginPath(); if(pose==='push'){ c.moveTo(shX,shY+h*.04); c.lineTo(shX+h*.28,shY+h*.1); } else { c.moveTo(shX,shY+h*.04); c.lineTo(shX-h*.12,shY+h*.32); c.moveTo(shX,shY+h*.04); c.lineTo(shX+h*.12,shY+h*.32); } c.stroke(); c.restore(); },
+  building(g,x,y,w,h){ const c=g.ctx, wall=isDark()?mix(COL.paper,'#8892a3',.3):mix('#b8c1cc',COL.paper,.25); g.rect(x,y,w,h,wall,mix(wall,'#000',.3),3,1.5);
+    const cols=Math.max(2,Math.floor(w/22)), rows=Math.max(2,Math.floor(h/26)); for(let i=0;i<cols;i++) for(let j=0;j<rows;j++){ const wx=x+6+i*(w-12)/cols, wy=y+8+j*(h-12)/rows; c.fillStyle=(i*7+j*3)%5===0?'#ffe08a':(isDark()?'#2c3a52':'#e8f2fc'); c.fillRect(wx,wy,(w-12)/cols-6,(h-12)/rows-9); } },
+  tree(g,x,y,s){ const c=g.ctx; c.fillStyle=isDark()?'#5b4630':'#8a6a45'; c.fillRect(x-s*.06,y-s*.45,s*.12,s*.45); c.fillStyle=isDark()?mix(COL.paper,COL.ok,.45):mix(COL.ok,'#000',.05); [[0,-.62,.3],[-.17,-.5,.22],[.17,-.5,.22]].forEach(([dx,dy,r])=>{ c.beginPath(); c.arc(x+dx*s,y+dy*s,r*s,0,7); c.fill(); }); },
+  /* cronômetro analógico + digital */
+  watch(g,x,y,r,t){ const c=g.ctx; g.circle(x,y,r+3,COL.card,COL.ink,2); g.rect(x-4,y-r-9,8,6,COL.ink,null,2);
+    for(let k=0;k<12;k++){ const a=k/12*Math.PI*2; g.line(x+Math.sin(a)*r*.78,y-Math.cos(a)*r*.78,x+Math.sin(a)*r*.92,y-Math.cos(a)*r*.92,COL.muted,k%3?1:2); }
+    const a=(t%1)*Math.PI*2; g.line(x,y,x+Math.sin(a)*r*.75,y-Math.cos(a)*r*.75,COL.force,2); g.circle(x,y,2.5,COL.ink);
+    g.text(nsig(Math.floor(t*100)/100,4).replace(/^(\d+)$/,'$1,00')+' s',x,y+r+18,{size:13,bold:true,mono:true,align:'center'}); },
+  /* velocímetro em arco */
+  gauge(g,x,y,r,v,vmax,unit,col=COL.accent){ const c=g.ctx, a0=Math.PI*.8, a1=Math.PI*2.2, f=clamp(Math.abs(v)/vmax,0,1);
+    c.save(); c.lineCap='round'; c.lineWidth=r*.16; c.strokeStyle=COL.line; c.beginPath(); c.arc(x,y,r,a0,a1); c.stroke();
+    c.strokeStyle=col; c.beginPath(); c.arc(x,y,r,a0,a0+(a1-a0)*f); c.stroke(); c.restore();
+    const an=a0+(a1-a0)*f; g.line(x,y,x+Math.cos(an)*r*.8,y+Math.sin(an)*r*.8,COL.ink,2.5); g.circle(x,y,4,COL.ink);
+    g.text(nsig(Math.round(v*10)/10,3),x,y+r*.55,{size:Math.max(12,r*.42),bold:true,mono:true,align:'center'}); g.text(unit,x,y+r*.55+13,{size:10.5,c:COL.muted,align:'center'}); },
+  /* cota entre dois pontos, com etiqueta */
+  dim(g,x1,y1,x2,y2,label,col=COL.muted){ const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1, nx=-dy/L*6, ny=dx/L*6;
+    g.line(x1,y1,x2,y2,col,1.4); g.line(x1-nx,y1-ny,x1+nx,y1+ny,col,1.4); g.line(x2-nx,y2-ny,x2+nx,y2+ny,col,1.4); if(label) g.tag(label,(x1+x2)/2,(y1+y2)/2,col); },
+  /* destaque pulsante para chamar atenção num ponto (exemplos) */
+  pulse(g,x,y,r,col=COL.energy){ const k=(performance.now()/900)%1; g.ctx.save(); g.ctx.globalAlpha=1-k; g.circle(x,y,r*(1+k*.8),null,col,3); g.ctx.restore(); }
+};
+
+/* =====================================================================
    Laboratórios de fundamentos e mecânica (g = 10 m/s² em todo o curso)
    ===================================================================== */
 const GRAV=10;
-
-/* km/h ↔ m/s: o carro anda o que a velocidade diz, segundo a segundo */
-SIMS.conv=(host)=>Sim(host,{alt:'Carro percorrendo uma pista de 100 metros com marcas a cada segundo',anim:true,h:210,
-  ctrls:[{k:'v',l:'Velocidade',min:0,max:180,step:1,v:72,u:'km/h'}],
-  init(s){ s.x=0; s.marks=[]; },
-  step(s,dt){ const ms=s.p.v/3.6; const before=Math.floor(s.t); s.x+=ms*dt; if(Math.floor(s.t+dt)>before) s.marks.push(s.x); if(s.x>=100){ s.x=100; s.play(false); } },
-  done:s=>s.x>=100,
-  draw(g,s){ const L=24,Rr=g.W-24,y=130,k=(Rr-L)/100,X=m=>L+m*k;
-    g.text(`${nt(s.p.v)} km/h  =  ${nt(s.p.v/3.6)} m/s`,g.W/2,34,{size:20,bold:true,align:'center'});
-    g.text('dividir por 3,6 transforma km/h em m/s',g.W/2,56,{size:13,c:COL.muted,align:'center'});
-    g.ground(y+16); for(let m=0;m<=100;m+=10){ g.line(X(m),y+16,X(m),y+24,COL.muted,1.5); g.text(m+' m',X(m),y+40,{size:11,c:COL.muted,align:'center',mono:true}); }
-    s.marks.forEach((m,i)=>{ g.line(X(m),y-24,X(m),y+14,COL.vel,1.5,[3,3]); g.text((i+1)+' s',X(m),y-30,{size:11,c:COL.vel,align:'center',mono:true}); });
-    const cx=X(s.x); g.rect(cx-30,y-14,34,20,COL.vel,null,5); g.rect(cx-22,y-24,20,12,COL.vel,null,4); g.circle(cx-22,y+8,5,COL.ink); g.circle(cx-3,y+8,5,COL.ink); },
-  reads:s=>[['Em km/h',nt(s.p.v)+' km/h'],['Em m/s',nt(s.p.v/3.6)+' m/s'],['A cada segundo anda',nt(s.p.v/3.6)+' m'],['Tempo para 100 m',s.p.v?nt(100/(s.p.v/3.6))+' s':'—']]});
 
 /* potências de 10: régua logarítmica do átomo à galáxia */
 const SCALE=[[-10,'átomo','1×10⁻¹⁰ m'],[-7,'vírus','1×10⁻⁷ m'],[-5,'célula humana','1×10⁻⁵ m'],[-4,'espessura de um fio de cabelo','1×10⁻⁴ m'],[-3,'grão de areia','1×10⁻³ m'],[-2,'largura de um dedo','1×10⁻² m'],[0,'uma criança','1 m'],[2,'campo de futebol','1×10² m'],[5,'São Paulo–Rio (360 km)','3,6×10⁵ m'],[7,'diâmetro da Terra','1,3×10⁷ m'],[8,'distância Terra–Lua','3,8×10⁸ m'],[9,'diâmetro do Sol','1,4×10⁹ m'],[11,'distância Terra–Sol','1,5×10¹¹ m'],[16,'um ano-luz','9,5×10¹⁵ m'],[21,'diâmetro da Via Láctea','1×10²¹ m']];
@@ -930,137 +1086,6 @@ SIMS.vec=(host)=>Sim(host,{alt:'Dois vetores arrastáveis e a resultante',h:w=>M
     g.text('arraste as bolinhas nas pontas',10,20,{c:COL.muted,size:12.5}); },
   reads:s=>{ const B=s.p.m==='s'?s.B:[-s.B[0],-s.B[1]], Rv=[s.A[0]+B[0],s.A[1]+B[1]], m=v=>nt(Math.hypot(v[0],v[1])), ang=v=>nt(Math.atan2(v[1],v[0])*180/Math.PI,3)+'°';
     return [['A = (Aₓ, A<sub>y</sub>)',`(${nt(s.A[0])}, ${nt(s.A[1])}) · módulo ${m(s.A)}`],['B',`(${nt(s.B[0])}, ${nt(s.B[1])}) · módulo ${m(s.B)}`],['R (componentes somadas)',`(${nt(Rv[0])}, ${nt(Rv[1])})`],['Módulo de R',m(Rv)],['Ângulo de R com o eixo x',ang(Rv)]]; }});
-
-/* MU e MUV: carro na pista com gráficos s×t e v×t */
-SIMS.mov=(host,cfg)=>Sim(host,{alt:'Carro em movimento com gráficos de posição e velocidade',anim:true,h:w=>w<560?420:360,
-  legend:[['vel','posição s(t)'],['acc','velocidade v(t) — a área sob a curva é o deslocamento']],
-  ctrls:[{k:'s0',l:'Posição inicial s₀',min:-20,max:40,step:5,v:0,u:'m'},{k:'v0',l:'Velocidade inicial v₀',min:-10,max:20,step:1,v:cfg.acc?2:8,u:'m/s'}].concat(cfg.acc?[{k:'a',l:'Aceleração a',min:-4,max:4,step:.5,v:1.5,u:'m/s²'}]:[]),
-  init(s){ s.pos=[]; s.vel=[]; const a=s.p.a||0, f=t=>s.p.s0+s.p.v0*t+a*t*t/2; let lo=Infinity,hi=-Infinity; for(let t=0;t<=10;t+=.1){ lo=Math.min(lo,f(t)); hi=Math.max(hi,f(t)); } s.lo=Math.min(lo,0); s.hi=Math.max(hi,10); s.x=s.p.s0; s.v=s.p.v0; s.pos.push([0,s.x]); s.vel.push([0,s.v]); },
-  step(s,dt){ const a=s.p.a||0, t=Math.min(10,s.t+dt); s.x=s.p.s0+s.p.v0*t+a*t*t/2; s.v=s.p.v0+a*t; s.pos.push([t,s.x]); s.vel.push([t,s.v]); if(t>=10) s.play(false); },
-  done:s=>s.t>=10,
-  draw(g,s){ const L=40,Rr=g.W-24,y=56,span=s.hi-s.lo,X=m=>L+(m-s.lo)/span*(Rr-L);
-    g.ground(y+14); const st=span>200?50:span>80?20:10; for(let m=Math.ceil(s.lo/st)*st;m<=s.hi;m+=st){ g.line(X(m),y+14,X(m),y+20,COL.muted,1.2); g.text(m+' m',X(m),y+34,{size:10.5,c:COL.muted,align:'center',mono:true}); }
-    s.pos.forEach(([t,x],i)=>{ if(i%10===0&&i>0) g.circle(X(x),y+3,2.5,COL.vel); });
-    const cx=X(s.x); g.rect(cx-16,y-8,32,18,COL.vel,null,5); g.circle(cx-9,y+11,4,COL.ink); g.circle(cx+9,y+11,4,COL.ink);
-    if(Math.abs(s.v)>.05) g.arrow(cx,y-16,cx+clamp(s.v*5,-80,80),y-16,COL.acc,'v',2.5);
-    const top=y+62, gh=g.H-top-44, narrow=g.W<560, gw=narrow?g.W-70:(g.W-110)/2;
-    const vr=[Math.min(0,s.p.v0,s.p.v0+(s.p.a||0)*10)-1,Math.max(0,s.p.v0,s.p.v0+(s.p.a||0)*10)+1];
-    if(narrow){ const h2=(gh-40)/2; g.plot(50,top,gw,h2,{xr:[0,10],yr:[s.lo,s.hi],series:[{pts:s.pos,c:COL.vel,dot:true}],yl:'s (m)'}); g.plot(50,top+h2+40,gw,h2,{xr:[0,10],yr:vr,series:[{pts:s.vel,c:COL.acc,dot:true,fill:COL.acc+'33'}],xl:'t (s)',yl:'v (m/s)'}); }
-    else { g.plot(50,top,gw,gh,{xr:[0,10],yr:[s.lo,s.hi],series:[{pts:s.pos,c:COL.vel,dot:true}],xl:'t (s)',yl:'posição s (m)'}); g.plot(100+gw,top,gw,gh,{xr:[0,10],yr:vr,series:[{pts:s.vel,c:COL.acc,dot:true,fill:COL.acc+'33'}],xl:'t (s)',yl:'velocidade v (m/s)'}); } },
-  reads:s=>[['Tempo t',nt(Math.min(s.t,10))+' s'],['Posição s',nt(s.x)+' m'],['Velocidade v',nt(s.v)+' m/s'],['Deslocamento Δs = s − s₀',nt(s.x-s.p.s0)+' m']]});
-
-/* queda livre */
-const GS=[[9.8,'Terra'],[1.6,'Lua'],[3.7,'Marte'],[24.8,'Júpiter']];
-SIMS.fall=(host)=>Sim(host,{alt:'Duas bolas de massas diferentes caindo juntas no vácuo',anim:true,h:360,
-  ctrls:[{k:'h',l:'Altura de queda',min:5,max:100,step:5,v:45,u:'m'},{k:'g',l:'Onde?',opts:GS.map(x=>[x[0],x[1]]),v:9.8}],
-  init(s){ s.y=0; s.v=0; s.tr=[[0,0]]; s.T=Math.sqrt(2*s.p.h/s.p.g); },
-  step(s,dt){ const t=Math.min(s.T,s.t+dt); s.y=s.p.g*t*t/2; s.v=s.p.g*t; s.tr.push([t,s.v]); if(t>=s.T) s.play(false); },
-  done:s=>s.t>=s.T,
-  draw(g,s){ const top=30,bot=g.H-40,cw=Math.min(210,g.W*.38),k=(bot-top)/s.p.h;
-    g.ground(bot+10); for(let m=0;m<=s.p.h;m+=s.p.h>50?20:10){ g.line(cw-12,top+m*k,cw-4,top+m*k,COL.muted,1.2); g.text(nt(s.p.h-m)+' m',cw-16,top+m*k+4,{size:10.5,c:COL.muted,align:'right',mono:true}); }
-    const n=Math.floor(Math.min(s.t,s.T)/.5); for(let i=1;i<=n;i++){ const yy=top+s.p.g*(i*.5)**2/2*k; g.circle(cw*.35,yy,5,COL.line); g.circle(cw*.7,yy,3,COL.line); }
-    const yy=top+s.y*k; g.circle(cw*.35,yy,11,COL.force); g.circle(cw*.7,yy,6,COL.vel);
-    g.text('10 kg',cw*.35,yy-16,{size:10.5,c:COL.muted,align:'center'}); g.text('0,1 kg',cw*.7,yy-12,{size:10.5,c:COL.muted,align:'center'});
-    g.text('marcas a cada 0,5 s',8,g.H-12,{size:11,c:COL.muted});
-    const vmax=s.p.g*s.T; g.plot(cw+50,top,g.W-cw-70,bot-top-10,{xr:[0,Math.max(1,s.T)],yr:[0,vmax*1.05],series:[{pts:s.tr,c:COL.acc,dot:true}],xl:'t (s)',yl:'velocidade (m/s)'}); },
-  reads:s=>[['Tempo',nt(Math.min(s.t,s.T))+' s'],['Distância caída',nt(s.y)+' m'],['Velocidade',nt(s.v)+' m/s'],['Tempo total de queda',nt(s.T)+' s'],['Velocidade ao chegar',nt(s.p.g*s.T)+' m/s']]});
-
-/* lançamento oblíquo (também é o experimento da página inicial) */
-SIMS.proj=(host,cfg)=>{ const hero=!!cfg.hero; const angs=[30,45,60];
-  return Sim(host,{alt:'Projéteis lançados em ângulos diferentes; 30° e 60° caem no mesmo lugar',anim:true,autoplay:hero,h:hero?250:320,speed:hero?1.4:1,
-  legend:hero?[['force','30°'],['vel','45°'],['acc','60°']]:[['vel','vₓ (constante)'],['acc','v_y (muda por causa da gravidade)']],
-  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:cfg.th||45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
-  init(s){ if(hero){ s.p.v0=18; s.p.g=10; s.k=s.k||0; s.p.th=angs[s.k%3]; s.done=s.done||[]; s.wait=0; } s.tr=[]; s.x=0; s.y=0; },
-  step(s,dt){ if(hero&&s.wait>0){ s.wait-=dt; if(s.wait<=0){ s.k++; if(s.k%3===0) s.done=[]; s.t=0; s.def.init(s); } return; }
-    const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th), T=2*vy/s.p.g, t=Math.min(T,s.t+dt);
-    s.x=vx*t; s.y=vy*t-s.p.g*t*t/2; s.tr.push([s.x,Math.max(0,s.y)]); if(t>=T){ if(hero){ s.done.push({tr:s.tr,k:s.k%3}); s.wait=.9; } else s.play(false); } },
-  done:s=>!hero&&s.tr.length>1&&s.y<=0,
-  draw(g,s){ const g0=s.p.g, R=s.p.v0**2/g0, H=s.p.v0**2/(2*g0), W=g.W, x0=30, base=g.H-(hero?28:34), k=Math.min((W-60)/(R*1.08),(base-24)/(H*1.1));
-    g.ground(base); for(let m=0;m<=R*1.05;m+=R>60?20:R>25?10:5){ g.line(x0+m*k,base,x0+m*k,base+6,COL.muted,1.2); g.text(m+' m',x0+m*k,base+18,{size:10.5,c:COL.muted,align:'center',mono:true}); }
-    const cols=[COL.force,COL.vel,COL.acc];
-    (s.done||[]).forEach(d=>g.poly(d.tr.map(p=>[x0+p[0]*k,base-p[1]*k]),cols[d.k],2.5));
-    const c=hero?cols[s.k%3]:COL.ink; g.poly(s.tr.map(p=>[x0+p[0]*k,base-p[1]*k]),c,2.5);
-    s.tr.forEach((p,i)=>{ if(!hero&&i%6===0) g.circle(x0+p[0]*k,base-p[1]*k,2.5,COL.muted); });
-    const px=x0+s.x*k, py=base-Math.max(0,s.y)*k; g.circle(px,py,7,hero?c:COL.force);
-    if(!hero&&s.tr.length){ const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th)-g0*s.t, sc=2.2; g.arrow(px,py,px+vx*sc,py,COL.vel,'vₓ',2.5); g.arrow(px,py,px,py-vy*sc,COL.acc,'v_y',2.5); }
-    if(hero) g.text('30° e 60° caem no mesmo lugar',W/2,18,{size:13,c:COL.muted,align:'center'}); },
-  reads:s=>{ if(hero) return [['Velocidade de lançamento','18 m/s'],['Ângulo atual',s.p.th+'°'],['Alcance',nt(s.p.v0**2*Math.sin(2*s.p.th*Math.PI/180)/s.p.g)+' m']];
-    const th=s.p.th*Math.PI/180,v=s.p.v0,g0=s.p.g; return [['vₓ = v₀·cos θ',nt(v*Math.cos(th))+' m/s'],['v<sub>y</sub> inicial = v₀·sen θ',nt(v*Math.sin(th))+' m/s'],['Tempo de voo',nt(2*v*Math.sin(th)/g0)+' s'],['Altura máxima',nt((v*Math.sin(th))**2/(2*g0))+' m'],['Alcance',nt(v*v*Math.sin(2*th)/g0)+' m']]; }}); };
-
-/* movimento circular uniforme e força centrípeta */
-SIMS.mcu=(host,cfg)=>Sim(host,{alt:'Bola girando em círculo com vetores de velocidade e aceleração centrípeta',anim:true,h:320,
-  legend:[['vel','velocidade (tangente)'],['acc','aceleração centrípeta (para o centro)']].concat(cfg.force?[['force','força centrípeta (tração da corda)']]:[]),
-  ctrls:[{k:'R',l:'Raio R',min:.5,max:3,step:.1,v:1.5,u:'m'},{k:'T',l:'Período T (uma volta)',min:.5,max:5,step:.1,v:2,u:'s'}].concat(cfg.force?[{k:'m',l:'Massa',min:.2,max:5,step:.1,v:1,u:'kg'}]:[]),
-  btns:cfg.force?[{l:'✂ Cortar a corda',f(s){ if(!s.free){ s.free=true; const w=2*Math.PI/s.p.T; s.fv=[-Math.sin(s.ang)*w*s.p.R,Math.cos(s.ang)*w*s.p.R]; s.fp=[Math.cos(s.ang)*s.p.R,Math.sin(s.ang)*s.p.R]; if(!s.playing) s.play(true); } }}]:[],
-  init(s){ s.ang=0; s.free=false; s.tr=[]; },
-  step(s,dt){ if(s.free){ s.fp[0]+=s.fv[0]*dt; s.fp[1]+=s.fv[1]*dt; s.tr.push(s.fp.slice()); if(Math.hypot(...s.fp)>6) s.play(false); } else s.ang+=2*Math.PI/s.p.T*dt; },
-  draw(g,s){ const cx=g.W/2, cy=g.H/2, k=(Math.min(g.W,g.H)/2-30)/3, R=s.p.R*k, w=2*Math.PI/s.p.T, v=w*s.p.R, ac=v*v/s.p.R;
-    g.circle(cx,cy,R,null,COL.line,1.5); g.circle(cx,cy,4,COL.ink);
-    const p=s.free?s.fp:[Math.cos(s.ang)*s.p.R,Math.sin(s.ang)*s.p.R], px=cx+p[0]*k, py=cy-p[1]*k;
-    if(s.free) g.poly(s.tr.map(q=>[cx+q[0]*k,cy-q[1]*k]),COL.muted,1.5,null); else g.line(cx,cy,px,py,cfg.force?COL.force:COL.muted,1.5,cfg.force?null:[4,4]);
-    g.circle(px,py,9,COL.ink);
-    const tv=s.free?[s.fv[0]/v,s.fv[1]/v]:[-Math.sin(s.ang),Math.cos(s.ang)], vs=clamp(v*10,18,90); g.arrow(px,py,px+tv[0]*vs,py-tv[1]*vs,COL.vel,'v',3);
-    if(!s.free){ const as=clamp(ac*4,14,R-12), u=[-Math.cos(s.ang),-Math.sin(s.ang)]; g.arrow(px,py,px+u[0]*as,py-u[1]*as,cfg.force?COL.force:COL.acc,cfg.force?'F':'a',3); }
-    if(s.free) g.text('sem a corda, a bola segue em linha reta (inércia)',g.W/2,g.H-12,{size:13,c:COL.muted,align:'center'}); },
-  reads:s=>{ const v=2*Math.PI*s.p.R/s.p.T, ac=v*v/s.p.R; return [['Frequência f = 1/T',nt(1/s.p.T)+' Hz'],['Velocidade v = 2πR/T',nt(v)+' m/s'],['Aceleração centrípeta v²/R',nt(ac)+' m/s²']].concat(cfg.force?[['Força centrípeta m·v²/R',nt(s.p.m*ac)+' N']]:[]); }});
-
-/* bloco empurrado: leis de Newton e atrito */
-SIMS.block=(host,cfg)=>Sim(host,{alt:'Bloco empurrado sobre uma superfície com diagrama de forças',anim:true,h:300,
-  legend:[['force','força aplicada e atrito'],['vel','peso e normal'],['acc','aceleração']],
-  ctrls:[{k:'m',l:'Massa',min:1,max:20,step:1,v:5,u:'kg'},{k:'F',l:'Força aplicada',min:0,max:100,step:1,v:20,u:'N'}].concat(cfg.fric?[{k:'ue',l:'Atrito estático μₑ',min:0,max:1,step:.05,v:.5},{k:'uc',l:'Atrito cinético μ_c',min:0,max:1,step:.05,v:.3}]:[]),
-  init(s){ s.x=0; s.v=0; s.vt=[[0,0]]; },
-  forces(s){ const N=s.p.m*GRAV, F=s.p.F; if(!cfg.fric) return {N,F,fat:0,kind:'sem atrito',a:F/s.p.m};
-    const ue=s.p.ue, uc=Math.min(s.p.uc,ue); if(s.v<1e-6&&F<=ue*N) return {N,F,fat:F,kind:'estático (segura o bloco)',a:0};
-    const fat=uc*N; return {N,F,fat,kind:'cinético',a:(F-fat)/s.p.m}; },
-  step(s,dt){ const f=s.def.forces(s); s.v=Math.max(0,s.v+f.a*dt); s.x+=s.v*dt; s.vt.push([s.t+dt,s.v]); if(s.t>8) s.play(false); },
-  done:s=>s.t>8,
-  draw(g,s){ const f=s.def.forces(s), y=g.H-70, W=g.W, k=14, bx=40+((s.x*k)%(W*.5)), bw=60+s.p.m*2, bh=40+s.p.m;
-    g.ground(y); for(let i=0;i<W;i+=40){ const xx=(i-(s.x*k)%40+40)%(W+40)-20; g.line(xx,y+2,xx+10,y+2,COL.line,2); }
-    const cx=bx+bw/2, cy=y-bh/2; g.rect(bx,y-bh,bw,bh,COL.sunk,COL.ink,6); g.text(s.p.m+' kg',cx,cy+5,{size:13,bold:true,align:'center'});
-    const sc=v=>clamp(v*1.1,0,120);
-    g.arrow(cx,cy,cx,cy+sc(s.p.m*GRAV)+bh/2,COL.vel,'P',3); g.arrow(cx,y-bh,cx,y-bh-sc(f.N),COL.vel,'N',3);
-    if(s.p.F>0) g.arrow(bx+bw,cy,bx+bw+sc(s.p.F),cy,COL.force,'F',3);
-    if(f.fat>0) g.arrow(bx,y-6,bx-sc(f.fat),y-6,COL.force,'Fat',3);
-    if(f.a>0) g.arrow(cx-20,y-bh-20,cx-20+clamp(f.a*10,10,90),y-bh-20,COL.acc,'a',2.5);
-    g.plot(W-190,20,170,110,{xr:[0,8],yr:[0,Math.max(5,(s.p.F/s.p.m)*8*.6)],series:[{pts:s.vt,c:COL.acc,dot:true}],yl:'v (m/s)',xl:'t (s)'}); },
-  reads:s=>{ const f=s.def.forces(s); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N',nt(f.N)+' N']].concat(cfg.fric?[['Atrito',nt(f.fat)+' N · '+f.kind],['Atrito máximo μₑ·N',nt(s.p.ue*f.N)+' N']]:[]).concat([['Força resultante',nt(s.p.F-f.fat)+' N'],['Aceleração a = F<sub>R</sub>/m',nt(f.a)+' m/s²'],['Velocidade',nt(s.v)+' m/s']]); }});
-
-/* elevador: normal, peso e ação e reação */
-SIMS.elev=(host,cfg={})=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador acelerando',anim:true,h:330,
-  legend:[['force','peso (a Terra puxa a pessoa)'],['vel','normal (a balança empurra a pessoa)'],['muted','reação: a pessoa empurra a balança']],
-  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:cfg.a??2,u:'m/s²'}],
-  init(s){ s.y=0; s.v=0; },
-  step(s,dt){ s.v+=s.p.a*dt; s.y+=s.v*dt; if(Math.abs(s.y)>9) s.play(false); },
-  done:s=>Math.abs(s.y)>9,
-  draw(g,s){ const N=Math.max(0,s.p.m*(GRAV+s.p.a)), P=s.p.m*GRAV, cx=g.W*.35, shaftT=10, shaftB=g.H-10, ew=150, eh=190, ey=(shaftT+shaftB)/2-s.y*8-eh/2;
-    g.rect(cx-ew/2-10,shaftT,ew+20,shaftB-shaftT,null,COL.line,4,1.5); g.line(cx,shaftT,cx,ey,COL.muted,1.5);
-    g.rect(cx-ew/2,ey,ew,eh,COL.card,COL.ink,8); const fy=ey+eh-14; g.rect(cx-30,fy,60,8,COL.sunk,COL.ink,3);
-    g.circle(cx,fy-78,13,COL.sunk,COL.ink); g.line(cx,fy-65,cx,fy-28,COL.ink,3); g.line(cx,fy-28,cx-10,fy,COL.ink,3); g.line(cx,fy-28,cx+10,fy,COL.ink,3); g.line(cx-16,fy-52,cx+16,fy-52,COL.ink,3);
-    const sc=v=>clamp(v*.1,0,110); g.arrow(cx+34,fy-50,cx+34,fy-50+sc(P),COL.force,'P',3); g.arrow(cx-34,fy-4,cx-34,fy-4-sc(N),COL.vel,'N',3); if(N>0) g.arrow(cx+56,fy+4,cx+56,fy+4+sc(N)*.5,COL.muted,'N\'',2);
-    if(s.p.a) g.arrow(cx+ew/2+30,g.H/2,cx+ew/2+30,g.H/2-Math.sign(s.p.a)*clamp(Math.abs(s.p.a)*12,12,60),COL.acc,'a',3);
-    const x2=g.W*.72; g.rect(x2-70,40,140,70,COL.sunk,COL.ink,10); g.text('a balança marca',x2,66,{size:12,c:COL.muted,align:'center'}); g.text(nt(N/GRAV,3)+' kg',x2,96,{size:24,bold:true,align:'center',mono:true});
-    if(s.p.a<=-10) g.text('queda livre: "sem peso"',x2,138,{size:13,c:COL.force,align:'center'}); },
-  reads:s=>{ const N=Math.max(0,s.p.m*(GRAV+s.p.a)); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N = m·(g + a)',nt(N)+' N'],['Resultante N − P = m·a',nt(N-s.p.m*GRAV)+' N'],['Balança marca N/g',nt(N/GRAV)+' kg']]; }});
-
-/* plano inclinado */
-SIMS.incl=(host)=>Sim(host,{alt:'Bloco num plano inclinado com o peso decomposto',anim:true,h:320,
-  legend:[['vel','peso e suas componentes'],['force','atrito'],['acc','normal']],
-  ctrls:[{k:'th',l:'Inclinação θ',min:0,max:60,step:1,v:30,u:'°'},{k:'m',l:'Massa',min:1,max:10,step:1,v:2,u:'kg'},{k:'mu',l:'Coeficiente de atrito μ',min:0,max:1,step:.05,v:.3}],
-  init(s){ s.d=0; s.v=0; },
-  phys(s){ const th=s.p.th*Math.PI/180, P=s.p.m*GRAV, Px=P*Math.sin(th), Py=P*Math.cos(th), N=Py, fmax=s.p.mu*N; const slides=Px>fmax+1e-9; return {th,P,Px,Py,N,fmax,fat:slides?fmax:Px,slides,a:slides?(Px-fmax)/s.p.m:0}; },
-  step(s,dt){ const f=s.def.phys(s); if(f.slides){ s.v+=f.a*dt; s.d+=s.v*dt; } if(s.d>6||!f.slides) s.play(false); },
-  done:s=>s.d>6,
-  draw(g,s){ const f=s.def.phys(s), th=f.th, L=Math.min(g.W*.8,520), x0=g.W*.1, y0=g.H-30, x1=x0+L*Math.cos(th), y1=y0-L*Math.sin(th);
-    g.poly([[x0,y0],[x1,y0],[x1,y1]],COL.ink,2,COL.sunk,true); g.ground(y0);
-    const ux=-Math.cos(th), uy=Math.sin(th), nx=-Math.sin(th), ny=-Math.cos(th), t=clamp(.4+s.d/12,0,.95);
-    const bx=x1+ux*L*t, by=y1+uy*L*t, cx=bx+nx*22, cy=by+ny*22;
-    const c=g.ctx; c.save(); c.translate(cx,cy); c.rotate(-th); g.rect(-30,-22,60,44,COL.card,COL.ink,6); c.restore();
-    const sc=v=>clamp(v*2.2,0,110); g.arrow(cx,cy,cx,cy+sc(f.P),COL.vel,'P',3);
-    g.arrow(cx,cy,cx+ux*sc(f.Px),cy+uy*sc(f.Px),COL.vel,'P·sen θ',2,[0,0]); g.arrow(cx,cy,cx-nx*sc(f.Py),cy-ny*sc(f.Py),COL.vel,'P·cos θ',2);
-    g.arrow(cx,cy,cx+nx*sc(f.N),cy+ny*sc(f.N),COL.acc,'N',3); if(f.fat>1e-6) g.arrow(bx-ux*30,by-uy*30,bx-ux*(30+sc(f.fat)),by-uy*(30+sc(f.fat)),COL.force,'Fat',3);
-    g.text(s.p.th+'°',x1-40,y0-8,{size:13,c:COL.muted,align:'right'});
-    g.text(f.slides?'o bloco escorrega':'o atrito segura o bloco',g.W-12,24,{size:14,bold:true,align:'right',c:f.slides?COL.force:COL.ok}); },
-  reads:s=>{ const f=s.def.phys(s); return [['P·sen θ (puxa ladeira abaixo)',nt(f.Px)+' N'],['P·cos θ = N',nt(f.Py)+' N'],['Atrito máximo μ·N',nt(f.fmax)+' N'],['Aceleração',nt(f.a)+' m/s²'],['Ângulo em que começa a escorregar',nt(Math.atan(s.p.mu)*180/Math.PI)+'°']]; }});
 
 /* trabalho de uma força inclinada */
 SIMS.work=(host)=>Sim(host,{alt:'Caixa puxada por uma corda inclinada; só a componente horizontal realiza trabalho',anim:true,h:260,
@@ -1141,6 +1166,186 @@ SIMS.orbit=(host)=>Sim(host,{alt:'Planeta orbitando uma estrela; áreas varridas
     g.poly(s.tr.map(p=>[X(p[0]),Y(p[1])]),COL.line,1.5); g.circle(X(0),Y(0),12,COL.energy); g.circle(X(s.r[0]),Y(s.r[1]),6,COL.vel);
     const sp=Math.hypot(s.u[0],s.u[1]); g.arrow(X(s.r[0]),Y(s.r[1]),X(s.r[0])+s.u[0]/sp*clamp(sp*30,12,60),Y(s.r[1])-s.u[1]/sp*clamp(sp*30,12,60),COL.vel,null,2.5); },
   reads:s=>{ const r=Math.hypot(s.r[0],s.r[1]), sp=Math.hypot(s.u[0],s.u[1]); return [['Distância à estrela',nt(r)+' (raio inicial = 1)'],['Velocidade',nt(sp)+' × v<sub>circ</sub>'],['Órbita',s.esc?'aberta: o planeta escapa':Math.abs(s.p.v-1)<.01?'circular':'elíptica (a estrela fica num foco)'],['Mais perto → mais rápido',s.esc?'—':`no periélio: ${nt(Math.max(s.p.v,1/s.p.v*(2-s.p.v*s.p.v>0?1:1)))}`]].slice(0,3).concat(s.esc?[]:[['Período (cresce com a órbita)',nt(s.Tp/(2*Math.PI))+' × o da órbita circular']]); }});
+
+/* =====================================================================
+   Laboratórios de mecânica com cenário (substituem as versões simples)
+   A física e o estado (s.x, s.t, s.v…) são os mesmos das versões
+   anteriores; muda o desenho: cena, rastro estroboscópico, cronômetro.
+   ===================================================================== */
+
+/* km/h ↔ m/s: carro na estrada de 100 m */
+SIMS.conv=(host)=>Sim(host,{alt:'Carro andando numa estrada de 100 metros, com uma bandeira a cada segundo, velocímetro e cronômetro',anim:true,h:w=>w<560?270:250,
+  ctrls:[{k:'v',l:'Velocidade',min:0,max:180,step:1,v:72,u:'km/h'}],
+  init(s){ s.x=0; s.marks=[]; },
+  step(s,dt){ const ms=s.p.v/3.6; const before=Math.floor(s.t); s.x+=ms*dt; if(Math.floor(s.t+dt)>before) s.marks.push(s.x); if(s.x>=100){ s.x=100; s.play(false); } },
+  done:s=>s.x>=100,
+  draw(g,s){ const L=34,Rr=g.W-34,ry=g.H-82,rh=38,k=(Rr-L)/100,X=m=>L+m*k;
+    SK.sky(g,ry); SK.hills(g,ry,0); SK.tree(g,g.W*.62,ry,46); SK.tree(g,g.W*.86,ry,38); SK.grass(g,ry+rh,g.H-ry-rh); SK.road(g,ry,rh,0);
+    for(let m=0;m<=100;m+=10){ g.rect(X(m)-1.5,ry-10,3,10,'#e9edf2',null,1); g.text(m+' m',X(m),ry+rh+16,{size:11,c:COL.ink,align:'center',mono:true,bold:m%50===0}); }
+    s.marks.forEach((m,i)=>{ g.line(X(m),ry-34,X(m),ry+rh,COL.vel,1.5,[4,3]); g.tag((i+1)+' s',X(m),ry-42,COL.vel); });
+    SK.car(g,X(s.x),ry+rh*.62,Math.min(64,g.W*.14),COL.force,s.x/.3);
+    SK.gauge(g,52,62,30,s.p.v,180,'km/h',COL.force); SK.watch(g,g.W-46,52,22,s.t);
+    g.tag(`${nt(s.p.v)} km/h = ${nt(s.p.v/3.6)} m/s`,g.W/2,26,COL.ink,'center',15); },
+  reads:s=>[['Em km/h',nt(s.p.v)+' km/h'],['Em m/s',nt(s.p.v/3.6)+' m/s'],['A cada segundo anda',nt(s.p.v/3.6)+' m'],['Tempo para 100 m',s.p.v?nt(100/(s.p.v/3.6))+' s':'—']]});
+
+/* MU e MUV: carro na estrada com rastro a cada segundo e gráficos */
+SIMS.mov=(host,cfg)=>Sim(host,{alt:'Carro numa estrada com uma imagem a cada segundo, e os gráficos de posição e velocidade',anim:true,h:w=>w<560?480:420,
+  legend:[['vel','posição s(t)'],['acc','velocidade v(t): a área sob a curva é o deslocamento']],
+  ctrls:[{k:'s0',l:'Posição inicial s₀',min:-20,max:40,step:5,v:0,u:'m'},{k:'v0',l:'Velocidade inicial v₀',min:-10,max:20,step:1,v:cfg.acc?2:8,u:'m/s'}].concat(cfg.acc?[{k:'a',l:'Aceleração a',min:-4,max:4,step:.5,v:1.5,u:'m/s²'}]:[]),
+  init(s){ s.pos=[]; s.vel=[]; s.gh=[]; const a=s.p.a||0, f=t=>s.p.s0+s.p.v0*t+a*t*t/2; let lo=Infinity,hi=-Infinity; for(let t=0;t<=10;t+=.1){ lo=Math.min(lo,f(t)); hi=Math.max(hi,f(t)); } s.lo=Math.min(lo,0); s.hi=Math.max(hi,10); s.x=s.p.s0; s.v=s.p.v0; s.pos.push([0,s.x]); s.vel.push([0,s.v]); s.gh.push(s.x); },
+  step(s,dt){ const a=s.p.a||0, t=Math.min(10,s.t+dt); if(Math.floor(t+1e-9)>Math.floor(s.t+1e-9)) s.gh.push(s.p.s0+s.p.v0*Math.floor(t+1e-9)+a*Math.floor(t+1e-9)**2/2); s.x=s.p.s0+s.p.v0*t+a*t*t/2; s.v=s.p.v0+a*t; s.pos.push([t,s.x]); s.vel.push([t,s.v]); if(t>=10) s.play(false); },
+  done:s=>s.t>=10,
+  draw(g,s){ const L=40,Rr=g.W-40,span=s.hi-s.lo,X=m=>L+(m-s.lo)/span*(Rr-L), ry=78, rh=34, cw=Math.min(50,g.W*.11);
+    SK.sky(g,ry); SK.hills(g,ry); SK.road(g,ry,rh,0); g.rect(0,ry+rh,g.W,26,isDark()?mix(COL.paper,COL.ok,.2):mix(COL.ok,COL.paper,.55));
+    const st=span>200?50:span>80?20:10; for(let m=Math.ceil(s.lo/st)*st;m<=s.hi;m+=st){ g.line(X(m),ry+rh,X(m),ry+rh+5,COL.ink,1.2); g.text(m+' m',X(m),ry+rh+18,{size:10.5,c:COL.ink,align:'center',mono:true}); }
+    s.gh.forEach((x,i)=>{ if(i===s.gh.length-1&&Math.abs(x-s.x)<.01) return; g.ctx.save(); g.ctx.globalAlpha=.28; SK.car(g,X(x),ry+rh*.66,cw,COL.vel,0); g.ctx.restore(); g.tag(i+' s',X(x),ry-34,COL.vel,'center',11); });
+    const dir=s.v<0?-1:1; g.ctx.save(); if(dir<0){ g.ctx.translate(2*X(s.x),0); g.ctx.scale(-1,1); } SK.car(g,X(s.x),ry+rh*.66,cw,COL.vel,s.x/.3*dir); g.ctx.restore();
+    if(Math.abs(s.v)>.05) g.arrow(X(s.x),ry-12,X(s.x)+clamp(s.v*5,-90,90),ry-12,COL.acc,'v = '+nt(s.v)+' m/s',3);
+    SK.watch(g,g.W-30,26,13,Math.min(s.t,10));
+    const top=ry+rh+56, gh=g.H-top-44, narrow=g.W<560, gw=narrow?g.W-70:(g.W-110)/2;
+    const vr=[Math.min(0,s.p.v0,s.p.v0+(s.p.a||0)*10)-1,Math.max(0,s.p.v0,s.p.v0+(s.p.a||0)*10)+1];
+    if(narrow){ const h2=(gh-40)/2; g.plot(50,top,gw,h2,{xr:[0,10],yr:[s.lo,s.hi],series:[{pts:s.pos,c:COL.vel,dot:true}],yl:'s (m)'}); g.plot(50,top+h2+40,gw,h2,{xr:[0,10],yr:vr,series:[{pts:s.vel,c:COL.acc,dot:true,fill:alpha(COL.acc,.2)}],xl:'t (s)',yl:'v (m/s)'}); }
+    else { g.plot(50,top,gw,gh,{xr:[0,10],yr:[s.lo,s.hi],series:[{pts:s.pos,c:COL.vel,dot:true}],xl:'t (s)',yl:'posição s (m)'}); g.plot(100+gw,top,gw,gh,{xr:[0,10],yr:vr,series:[{pts:s.vel,c:COL.acc,dot:true,fill:alpha(COL.acc,.2)}],xl:'t (s)',yl:'velocidade v (m/s)'}); } },
+  reads:s=>[['Tempo t',nt(Math.min(s.t,10))+' s'],['Posição s',nt(s.x)+' m'],['Velocidade v',nt(s.v)+' m/s'],['Deslocamento Δs = s − s₀',nt(s.x-s.p.s0)+' m']]});
+
+/* queda livre: prédio, duas bolas e fotos a cada 0,5 s */
+const GS=[[9.8,'Terra'],[1.6,'Lua'],[3.7,'Marte'],[24.8,'Júpiter']];
+SIMS.fall=(host)=>Sim(host,{alt:'Duas bolas de massas diferentes caindo juntas ao lado de um prédio, com uma foto a cada meio segundo',anim:true,h:w=>w<560?400:380,
+  ctrls:[{k:'h',l:'Altura de queda',min:5,max:100,step:5,v:45,u:'m'},{k:'g',l:'Onde?',opts:GS.map(x=>[x[0],x[1]]),v:9.8}],
+  init(s){ s.y=0; s.v=0; s.tr=[[0,0]]; s.T=Math.sqrt(2*s.p.h/s.p.g); },
+  step(s,dt){ const t=Math.min(s.T,s.t+dt); s.y=s.p.g*t*t/2; s.v=s.p.g*t; s.tr.push([t,s.v]); if(t>=s.T) s.play(false); },
+  done:s=>s.t>=s.T,
+  draw(g,s){ const top=34,bot=g.H-34,cw=Math.min(230,g.W*.44),k=(bot-top)/s.p.h, moon=s.p.g<2;
+    if(moon){ g.rect(0,0,g.W,bot,isDark()?'#0b0f1a':'#1d2333'); for(let i=0;i<40;i++) g.rect((i*97)%g.W,(i*61)%bot,1.5,1.5,'#fff'); g.rect(0,bot,g.W,g.H-bot,'#9aa0a8'); }
+    else { SK.sky(g,bot); SK.grass(g,bot,g.H-bot); }
+    SK.building(g,8,top-6,cw*.32,bot-top+6);
+    for(let m=0;m<=s.p.h;m+=s.p.h>50?20:10){ const yy=top+m*k; g.line(cw*.32+8,yy,cw*.32+16,yy,moon?'#ddd':COL.ink,1.4); g.text(nt(s.p.h-m)+' m',cw*.32+19,yy+4,{size:10.5,c:moon?'#ddd':COL.ink,mono:true}); }
+    const xa=cw*.6, xb=cw*.85, n=Math.floor(Math.min(s.t,s.T)/.5);
+    for(let i=1;i<=n;i++){ const yy=top+s.p.g*(i*.5)**2/2*k; g.ctx.save(); g.ctx.globalAlpha=.25; SK.ball(g,xa,yy,11,COL.force); SK.ball(g,xb,yy,6,COL.vel); g.ctx.restore(); g.text(nt(i*.5)+' s',xb+12,yy+4,{size:10,c:moon?'#ccc':COL.muted,mono:true}); }
+    const yy=top+s.y*k; SK.ball(g,xa,yy,12,COL.force,s.t*3); SK.ball(g,xb,yy,6.5,COL.vel,s.t*5);
+    if(s.v>.3) g.arrow(xa-22,yy,xa-22,yy+clamp(s.v*2.2,10,90),COL.acc,null,2.5);
+    g.tag('10 kg',xa,yy-22,COL.force,'center',11); g.tag('0,1 kg',xb,yy-18,COL.vel,'center',11);
+    SK.watch(g,cw-6,top+14,14,Math.min(s.t,s.T));
+    const vmax=s.p.g*s.T; g.plot(cw+50,top,g.W-cw-70,bot-top-12,{xr:[0,Math.max(1,s.T)],yr:[0,vmax*1.05],series:[{pts:s.tr,c:COL.acc,dot:true}],xl:'t (s)',yl:'velocidade (m/s)'}); },
+  reads:s=>[['Tempo',nt(Math.min(s.t,s.T))+' s'],['Distância caída',nt(s.y)+' m'],['Velocidade',nt(s.v)+' m/s'],['Tempo total de queda',nt(s.T)+' s'],['Velocidade ao chegar',nt(s.p.g*s.T)+' m/s']]});
+
+/* lançamento oblíquo num campo de futebol (também é o experimento da página inicial) */
+SIMS.proj=(host,cfg)=>{ const hero=!!cfg.hero; const angs=[30,45,60];
+  return Sim(host,{alt:'Bola chutada num campo, com o rastro do voo; 30° e 60° caem no mesmo lugar',anim:true,autoplay:hero,h:hero?260:340,speed:hero?1.4:1,
+  legend:hero?[['force','30°'],['vel','45°'],['acc','60°']]:[['vel','vₓ (constante)'],['acc','v_y (muda por causa da gravidade)']],
+  ctrls:hero?[]:[{k:'v0',l:'Velocidade de lançamento',min:5,max:30,step:1,v:20,u:'m/s'},{k:'th',l:'Ângulo',min:10,max:80,step:5,v:cfg.th||45,u:'°'},{k:'g',l:'Onde?',opts:[[10,'Terra (g=10)'],[1.6,'Lua']],v:10}],
+  init(s){ if(hero){ s.p.v0=18; s.p.g=10; s.k=s.k||0; s.p.th=angs[s.k%3]; s.done=s.done||[]; s.wait=0; } s.tr=[]; s.x=0; s.y=0; s.top=null; },
+  step(s,dt){ if(hero&&s.wait>0){ s.wait-=dt; if(s.wait<=0){ s.k++; if(s.k%3===0) s.done=[]; s.t=0; s.def.init(s); } return; }
+    const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th), T=2*vy/s.p.g, t=Math.min(T,s.t+dt);
+    s.x=vx*t; s.y=vy*t-s.p.g*t*t/2; s.tr.push([s.x,Math.max(0,s.y),t]); if(!s.top&&t>=vy/s.p.g) s.top=[vx*vy/s.p.g,vy*vy/(2*s.p.g)];
+    if(t>=T){ if(hero){ s.done.push({tr:s.tr,k:s.k%3}); s.wait=.9; } else s.play(false); } },
+  done:s=>!hero&&s.tr.length>1&&s.y<=0,
+  draw(g,s){ const g0=s.p.g, R=s.p.v0**2/g0, H=s.p.v0**2/(2*g0), W=g.W, x0=40, base=g.H-(hero?30:38), k=Math.min((W-80)/(R*1.08),(base-34)/(H*1.12));
+    if(g0<2){ g.rect(0,0,W,base,isDark()?'#0b0f1a':'#1d2333'); g.rect(0,base,W,g.H-base,'#9aa0a8'); } else { SK.sky(g,base); SK.hills(g,base); SK.grass(g,base,g.H-base); for(let x=0;x<W;x+=60) g.rect(x,base,30,g.H-base,alpha('#ffffff',isDark()?.03:.12)); }
+    g.line(0,base,W,base,'#f4f6f8',2);
+    for(let m=0;m<=R*1.05;m+=R>60?20:R>25?10:5){ g.line(x0+m*k,base,x0+m*k,base+6,'#f4f6f8',1.4); g.text(m+' m',x0+m*k,base+19,{size:10.5,c:g0<2?'#eee':COL.ink,align:'center',mono:true}); }
+    SK.person(g,x0-16,base,34,isDark()?'#d0d6df':'#2b3340','push');
+    const cols=[COL.force,COL.vel,COL.acc], P=p=>[x0+p[0]*k,base-p[1]*k];
+    (s.done||[]).forEach(d=>g.poly(d.tr.map(P),cols[d.k],2.5));
+    const c=hero?cols[s.k%3]:COL.ink; g.ctx.save(); g.ctx.setLineDash([3,5]); g.poly(s.tr.map(P),hero?c:alpha(COL.ink,.6),2); g.ctx.restore();
+    if(!hero){ let nt0=0; s.tr.forEach(p=>{ if(p[2]>=nt0-1e-9){ nt0+=.25; const [px,py]=P(p); g.ctx.save(); g.ctx.globalAlpha=.3; SK.ball(g,px,py,6,COL.force); g.ctx.restore(); } }); }
+    if(!hero&&s.top){ const [tx,ty]=P(s.top); g.line(tx,ty,tx,base,COL.energy,1.2,[4,4]); g.tag('altura máx. '+nt(s.top[1])+' m',tx,ty-18,COL.energy,'center',11.5); }
+    const [px,py]=[x0+s.x*k,base-Math.max(0,s.y)*k]; SK.ball(g,px,py,7.5,hero?c:COL.force,s.t*6);
+    if(!hero&&s.tr.length){ const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th)-g0*Math.min(s.t,2*s.p.v0*Math.sin(th)/g0), sc=2.2; if(s.y>0||s.tr.length<3){ g.arrow(px,py,px+vx*sc,py,COL.vel,'vₓ',2.5); if(Math.abs(vy)>.5) g.arrow(px,py,px,py-vy*sc,COL.acc,'v_y',2.5); } }
+    if(!hero&&s.tr.length>2&&s.y<=0) SK.dim(g,x0,base-12,px,base-12,'alcance '+nt(s.x)+' m',COL.ink);
+    if(hero) g.tag('30° e 60° caem no mesmo lugar',W/2,18,COL.ink,'center',13); },
+  reads:s=>{ if(hero) return [['Velocidade de lançamento','18 m/s'],['Ângulo atual',s.p.th+'°'],['Alcance',nt(s.p.v0**2*Math.sin(2*s.p.th*Math.PI/180)/s.p.g)+' m']];
+    const th=s.p.th*Math.PI/180,v=s.p.v0,g0=s.p.g; return [['vₓ = v₀·cos θ',nt(v*Math.cos(th))+' m/s'],['v<sub>y</sub> inicial = v₀·sen θ',nt(v*Math.sin(th))+' m/s'],['Tempo de voo',nt(2*v*Math.sin(th)/g0)+' s'],['Altura máxima',nt((v*Math.sin(th))**2/(2*g0))+' m'],['Alcance',nt(v*v*Math.sin(2*th)/g0)+' m']]; }}); };
+
+/* movimento circular: roda-gigante (ou bola no barbante, quando há força) */
+SIMS.mcu=(host,cfg)=>Sim(host,{alt:cfg.force?'Bola girando presa num barbante; corte o barbante e veja para onde ela vai':'Roda-gigante girando com os vetores de velocidade e aceleração centrípeta',anim:true,h:340,
+  legend:[['vel','velocidade (tangente)'],['acc','aceleração centrípeta (para o centro)']].concat(cfg.force?[['force','força centrípeta (tração do barbante)']]:[]),
+  ctrls:[{k:'R',l:'Raio R',min:.5,max:3,step:.1,v:1.5,u:'m'},{k:'T',l:'Período T (uma volta)',min:.5,max:5,step:.1,v:2,u:'s'}].concat(cfg.force?[{k:'m',l:'Massa',min:.2,max:5,step:.1,v:1,u:'kg'}]:[]),
+  btns:cfg.force?[{l:'✂ Cortar o barbante',f(s){ if(!s.free){ s.free=true; const w=2*Math.PI/s.p.T; s.fv=[-Math.sin(s.ang)*w*s.p.R,Math.cos(s.ang)*w*s.p.R]; s.fp=[Math.cos(s.ang)*s.p.R,Math.sin(s.ang)*s.p.R]; if(!s.playing) s.play(true); } }}]:[],
+  init(s){ s.ang=0; s.free=false; s.tr=[]; s.hist=[]; },
+  step(s,dt){ if(s.free){ s.fp[0]+=s.fv[0]*dt; s.fp[1]+=s.fv[1]*dt; s.tr.push(s.fp.slice()); if(Math.hypot(...s.fp)>6) s.play(false); } else { s.ang+=2*Math.PI/s.p.T*dt; s.hist.push(s.ang); if(s.hist.length>40) s.hist.shift(); } },
+  draw(g,s){ const cx=g.W/2, cy=g.H/2-(cfg.force?0:14), k=(Math.min(g.W,g.H)/2-34)/3, R=s.p.R*k, w=2*Math.PI/s.p.T, v=w*s.p.R, ac=v*v/s.p.R;
+    if(!cfg.force){ SK.sky(g,g.H-26); SK.grass(g,g.H-26,26); g.poly([[cx,cy],[cx-R*.55-20,g.H-26],[cx-R*.55-8,g.H-26],[cx,cy+14]],null,0,isDark()?'#7d8796':'#5d6878',true); g.poly([[cx,cy],[cx+R*.55+20,g.H-26],[cx+R*.55+8,g.H-26],[cx,cy+14]],null,0,isDark()?'#7d8796':'#5d6878',true);
+      g.circle(cx,cy,R,null,isDark()?'#c7cfdb':'#46505f',3); for(let i=0;i<12;i++){ const a=s.ang+i*Math.PI/6; g.line(cx,cy,cx+Math.cos(a)*R,cy-Math.sin(a)*R,isDark()?'#8f99a8':'#7b8696',1.2); const hx=cx+Math.cos(a)*R, hy=cy-Math.sin(a)*R; if(i) g.rect(hx-6,hy+2,12,10,mix(COL.vel,COL.paper,.4),null,3); } g.circle(cx,cy,6,COL.ink); }
+    else { g.circle(cx,cy,R,null,COL.line,1.5,[4,4]); SK.person(g,cx,cy+44,40,isDark()?'#d0d6df':'#2b3340'); g.circle(cx,cy,5,COL.ink); }
+    const p=s.free?s.fp:[Math.cos(s.ang)*s.p.R,Math.sin(s.ang)*s.p.R], px=cx+p[0]*k, py=cy-p[1]*k;
+    if(!s.free&&s.hist.length>1){ g.ctx.save(); for(let i=1;i<s.hist.length;i++){ const a=s.hist[i]; g.ctx.globalAlpha=i/s.hist.length*.5; g.circle(cx+Math.cos(a)*R,cy-Math.sin(a)*R,3,COL.vel); } g.ctx.restore(); }
+    if(s.free) g.poly(s.tr.map(q=>[cx+q[0]*k,cy-q[1]*k]),COL.muted,1.5,null); else if(cfg.force) g.line(cx,cy,px,py,COL.force,2);
+    if(cfg.force) SK.ball(g,px,py,10,COL.energy,s.ang*3); else { g.rect(px-11,py-2,22,18,COL.energy,mix(COL.energy,'#000',.4),5,1.5); g.circle(px,py,3,COL.ink); }
+    const tv=s.free?[s.fv[0]/v,s.fv[1]/v]:[-Math.sin(s.ang),Math.cos(s.ang)], vs=clamp(v*10,18,90); g.arrow(px,py,px+tv[0]*vs,py-tv[1]*vs,COL.vel,'v',3);
+    if(!s.free){ const as=clamp(ac*4,14,R-12), u=[-Math.cos(s.ang),-Math.sin(s.ang)]; g.arrow(px,py,px+u[0]*as,py-u[1]*as,cfg.force?COL.force:COL.acc,cfg.force?'F':'a',3); }
+    if(s.free) g.tag('sem o barbante, a bola segue reto pela tangente (inércia)',g.W/2,g.H-14,COL.ink,'center',12.5);
+    g.tag('v = '+nt(v)+' m/s',14,18,COL.vel,'left',12); g.tag('a = '+nt(ac)+' m/s²',14,42,COL.acc,'left',12); },
+  reads:s=>{ const v=2*Math.PI*s.p.R/s.p.T, ac=v*v/s.p.R; return [['Frequência f = 1/T',nt(1/s.p.T)+' Hz'],['Velocidade v = 2πR/T',nt(v)+' m/s'],['Aceleração centrípeta v²/R',nt(ac)+' m/s²']].concat(cfg.force?[['Força centrípeta m·v²/R',nt(s.p.m*ac)+' N']]:[]); }});
+
+/* caixa empurrada: Newton e atrito (a câmera acompanha a caixa) */
+SIMS.block=(host,cfg)=>Sim(host,{alt:'Pessoa empurrando uma caixa de madeira, com o diagrama de forças e o gráfico da velocidade',anim:true,h:320,
+  legend:[['force','força aplicada e atrito'],['vel','peso e normal'],['acc','aceleração']],
+  ctrls:[{k:'m',l:'Massa',min:1,max:20,step:1,v:5,u:'kg'},{k:'F',l:'Força aplicada',min:0,max:100,step:1,v:20,u:'N'}].concat(cfg.fric?[{k:'ue',l:'Atrito estático μₑ',min:0,max:1,step:.05,v:.5},{k:'uc',l:'Atrito cinético μ_c',min:0,max:1,step:.05,v:.3}]:[]),
+  init(s){ s.x=0; s.v=0; s.vt=[[0,0]]; s.dust=[]; },
+  forces(s){ const N=s.p.m*GRAV, F=s.p.F; if(!cfg.fric) return {N,F,fat:0,kind:'sem atrito',a:F/s.p.m};
+    const ue=s.p.ue, uc=Math.min(s.p.uc,ue); if(s.v<1e-6&&F<=ue*N) return {N,F,fat:F,kind:'estático (segura a caixa)',a:0};
+    const fat=uc*N; return {N,F,fat,kind:'cinético',a:(F-fat)/s.p.m}; },
+  step(s,dt){ const f=s.def.forces(s); s.v=Math.max(0,s.v+f.a*dt); s.x+=s.v*dt; s.vt.push([s.t+dt,s.v]); if(cfg.fric&&s.v>0&&Math.random()<.5) s.dust.push({x:s.x,y:0,a:1}); s.dust.forEach(d=>{ d.a-=dt*1.5; d.y+=dt*14; }); s.dust=s.dust.filter(d=>d.a>0); if(s.t>8) s.play(false); },
+  done:s=>s.t>8,
+  draw(g,s){ const f=s.def.forces(s), y=g.H-56, W=g.W, k=26, bw=58+s.p.m*2.2, bh=40+s.p.m*1.4, bx=W*.34, cx=bx+bw/2, cy=y-bh/2;
+    g.rect(0,0,W,y,isDark()?mix(COL.paper,'#2a3550',.4):mix('#e9eef5',COL.paper,.2)); g.rect(0,y-90,W,4,alpha(COL.ink,.08));
+    const floor=isDark()?'#3b3f47':'#c9b79c'; g.rect(0,y,W,g.H-y,floor); const off=(s.x*k)%60;
+    for(let x=-60;x<W+60;x+=60){ const xx=x-off; g.line(xx,y,xx-20,g.H,alpha('#000',.15),1.5); }
+    for(let m=Math.floor((s.x*k-bx)/ (k*2))*2-2;m<=(s.x*k+W)/k;m+=2){ const xx=bx+(m-s.x)*k; if(xx<-20||xx>W+20) continue; g.line(xx,y,xx,y+7,COL.ink,1.2); g.text(m+' m',xx,y+20,{size:10,c:COL.ink,mono:true,align:'center'}); }
+    s.dust.forEach(d=>{ g.ctx.save(); g.ctx.globalAlpha=d.a*.6; g.circle(bx+(d.x-s.x)*k-2,y-4-d.y*.3,3+(1-d.a)*4,'#bfa98a'); g.ctx.restore(); });
+    if(s.p.F>0) SK.person(g,bx-30,y,74,isDark()?'#d0d6df':'#2b3340','push');
+    SK.crate(g,bx,y-bh,bw,bh,s.p.m+' kg');
+    const sc=v=>clamp(v*1.1,0,120);
+    g.arrow(cx-bw*.25,cy+10,cx-bw*.25,cy+10+sc(s.p.m*GRAV)+bh/2-10,COL.vel,'P = '+nt(s.p.m*GRAV)+' N',3); g.arrow(cx+bw*.25,y-bh,cx+bw*.25,y-bh-sc(f.N),COL.vel,'N',3);
+    if(s.p.F>0) g.arrow(bx+bw+2,cy,bx+bw+2+sc(s.p.F),cy,COL.force,'F = '+nt(s.p.F)+' N',3);
+    if(f.fat>0) g.arrow(bx,y-5,bx-sc(f.fat),y-5,COL.force,'Fat = '+nt(f.fat)+' N',3,[0,14]);
+    if(f.a>0) g.arrow(cx-24,y-bh-26,cx-24+clamp(f.a*10,12,90),y-bh-26,COL.acc,'a = '+nt(f.a)+' m/s²',2.5);
+    g.plot(W-190,22,170,104,{xr:[0,8],yr:[0,Math.max(5,(s.p.F/s.p.m)*8*.6)],series:[{pts:s.vt,c:COL.acc,dot:true}],yl:'v (m/s)',xl:'t (s)'}); },
+  reads:s=>{ const f=s.def.forces(s); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N',nt(f.N)+' N']].concat(cfg.fric?[['Atrito',nt(f.fat)+' N · '+f.kind],['Atrito máximo μₑ·N',nt(s.p.ue*f.N)+' N']]:[]).concat([['Força resultante',nt(s.p.F-f.fat)+' N'],['Aceleração a = F<sub>R</sub>/m',nt(f.a)+' m/s²'],['Velocidade',nt(s.v)+' m/s']]); }});
+
+/* elevador com balança */
+SIMS.elev=(host,cfg={})=>Sim(host,{alt:'Pessoa numa balança dentro de um elevador que acelera',anim:true,h:350,
+  legend:[['force','peso (a Terra puxa a pessoa)'],['vel','normal (a balança empurra a pessoa)'],['muted','reação: a pessoa empurra a balança']],
+  ctrls:[{k:'m',l:'Massa da pessoa',min:40,max:100,step:5,v:60,u:'kg'},{k:'a',l:'Aceleração do elevador (+ para cima)',min:-10,max:4,step:.5,v:cfg.a??2,u:'m/s²'}],
+  init(s){ s.y=0; s.v=0; },
+  step(s,dt){ s.v+=s.p.a*dt; s.y+=s.v*dt; if(Math.abs(s.y)>9) s.play(false); },
+  done:s=>Math.abs(s.y)>9,
+  draw(g,s){ const N=Math.max(0,s.p.m*(GRAV+s.p.a)), P=s.p.m*GRAV, cx=g.W*.34, ew=150, eh=200, ey=(g.H-eh)/2, fl=40;
+    const wall=isDark()?mix(COL.paper,'#5a6577',.35):mix('#d6dce4',COL.paper,.1); g.rect(cx-ew/2-26,0,ew+52,g.H,wall);
+    const off=((s.y*fl)%fl+fl)%fl; for(let yy=-fl+off;yy<g.H+fl;yy+=fl){ g.line(cx-ew/2-26,yy,cx+ew/2+26,yy,alpha(COL.ink,.18),1.2); const fn=Math.round((ey+eh-yy)/fl+s.y); g.text(fn+'º',cx-ew/2-14,yy-6,{size:10,c:COL.muted,mono:true,align:'center'}); }
+    g.line(cx-12,0,cx-12,ey,COL.muted,1.5); g.line(cx+12,0,cx+12,ey,COL.muted,1.5);
+    const cab=g.ctx.createLinearGradient(cx-ew/2,0,cx+ew/2,0); cab.addColorStop(0,isDark()?'#4b5566':'#c4ccd6'); cab.addColorStop(.5,isDark()?'#6b7688':'#eef2f6'); cab.addColorStop(1,isDark()?'#4b5566':'#c4ccd6');
+    g.rect(cx-ew/2,ey,ew,eh,cab,COL.ink,8,2); g.line(cx,ey+8,cx,ey+eh-8,alpha(COL.ink,.25),1.5);
+    const fy=ey+eh-16; g.rect(cx-34,fy,68,10,COL.sunk,COL.ink,3,1.5); g.rect(cx-14,fy+2,28,6,'#1f2933',null,2); g.text(nt(N/GRAV,3),cx,fy+7.5,{size:7,c:'#7CFC9A',mono:true,align:'center'});
+    SK.person(g,cx,fy,110,isDark()?'#d0d6df':'#2b3340');
+    const sc=v=>clamp(v*.1,0,110); g.arrow(cx+40,fy-56,cx+40,fy-56+sc(P),COL.force,'P',3); g.arrow(cx-40,fy-4,cx-40,fy-4-sc(N),COL.vel,'N',3); if(N>0) g.arrow(cx+62,fy+6,cx+62,fy+6+sc(N)*.45,COL.muted,"N'",2);
+    if(s.p.a) g.arrow(cx+ew/2+44,g.H/2,cx+ew/2+44,g.H/2-Math.sign(s.p.a)*clamp(Math.abs(s.p.a)*12,12,60),COL.acc,'a',3);
+    const x2=Math.min(g.W*.76,g.W-90); g.rect(x2-74,34,148,84,'#1f2933',COL.ink,12,2); g.text('a balança marca',x2,56,{size:11.5,c:'#b8c4d0',align:'center'}); g.text(nt(N/GRAV,3)+' kg',x2,96,{size:26,bold:true,c:'#7CFC9A',align:'center',mono:true});
+    g.tag(s.p.a>0?'acelerando para cima: N > P':s.p.a<0&&s.p.a>-10?'acelerando para baixo: N < P':s.p.a<=-10?'queda livre: "sem peso"':'a = 0: N = P',x2,140,s.p.a<=-10?COL.force:COL.ink,'center',12); },
+  reads:s=>{ const N=Math.max(0,s.p.m*(GRAV+s.p.a)); return [['Peso P = m·g',nt(s.p.m*GRAV)+' N'],['Normal N = m·(g + a)',nt(N)+' N'],['Resultante N − P = m·a',nt(N-s.p.m*GRAV)+' N'],['Balança marca N/g',nt(N/GRAV)+' kg']]; }});
+
+/* plano inclinado */
+SIMS.incl=(host)=>Sim(host,{alt:'Caixa numa rampa com o peso decomposto em duas partes',anim:true,h:340,
+  legend:[['vel','peso e suas componentes'],['force','atrito'],['acc','normal']],
+  ctrls:[{k:'th',l:'Inclinação θ',min:0,max:60,step:1,v:30,u:'°'},{k:'m',l:'Massa',min:1,max:10,step:1,v:2,u:'kg'},{k:'mu',l:'Coeficiente de atrito μ',min:0,max:1,step:.05,v:.3}],
+  init(s){ s.d=0; s.v=0; },
+  phys(s){ const th=s.p.th*Math.PI/180, P=s.p.m*GRAV, Px=P*Math.sin(th), Py=P*Math.cos(th), N=Py, fmax=s.p.mu*N; const slides=Px>fmax+1e-9; return {th,P,Px,Py,N,fmax,fat:slides?fmax:Px,slides,a:slides?(Px-fmax)/s.p.m:0}; },
+  step(s,dt){ const f=s.def.phys(s); if(f.slides){ s.v+=f.a*dt; s.d+=s.v*dt; } if(s.d>6||!f.slides) s.play(false); },
+  done:s=>s.d>6,
+  draw(g,s){ const f=s.def.phys(s), th=f.th, L=Math.min(g.W*.8,540), x0=g.W*.08, y0=g.H-30, x1=x0+L*Math.cos(th), y1=y0-L*Math.sin(th);
+    SK.sky(g,y0); SK.grass(g,y0,g.H-y0);
+    const ramp=g.ctx.createLinearGradient(0,y1,0,y0); ramp.addColorStop(0,isDark()?'#6b5a45':'#c7a57a'); ramp.addColorStop(1,isDark()?'#4d4033':'#a8865c');
+    g.poly([[x0,y0],[x1,y0],[x1,y1]],mix(isDark()?'#4d4033':'#a8865c','#000',.3),2,ramp,true);
+    if(th>.01){ g.ctx.save(); g.ctx.strokeStyle=COL.energy; g.ctx.lineWidth=2; g.ctx.beginPath(); g.ctx.arc(x0,y0,46,-th,0); g.ctx.stroke(); g.ctx.restore(); g.tag(s.p.th+'°',x0+60,y0-12,COL.energy,'left',12); }
+    const ux=-Math.cos(th), uy=Math.sin(th), nx=-Math.sin(th), ny=-Math.cos(th), t=clamp(.35+s.d/12,0,.95);
+    const bx=x1+ux*L*t, by=y1+uy*L*t, cx=bx+nx*24, cy=by+ny*24;
+    const c=g.ctx; c.save(); c.translate(cx,cy); c.rotate(-th); SK.crate(g,-32,-24,64,48); c.restore();
+    const sc=v=>clamp(v*2.2,0,110); g.arrow(cx,cy,cx,cy+sc(f.P),COL.vel,'P',3);
+    g.arrow(cx,cy,cx+ux*sc(f.Px),cy+uy*sc(f.Px),COL.vel,'P·sen θ',2); g.arrow(cx,cy,cx-nx*sc(f.Py),cy-ny*sc(f.Py),COL.vel,'P·cos θ',2);
+    g.arrow(cx,cy,cx+nx*sc(f.N),cy+ny*sc(f.N),COL.acc,'N',3); if(f.fat>1e-6) g.arrow(bx-ux*34,by-uy*34,bx-ux*(34+sc(f.fat)),by-uy*(34+sc(f.fat)),COL.force,'Fat',3);
+    g.tag(f.slides?'a caixa escorrega':'o atrito segura a caixa',g.W-14,24,f.slides?COL.force:COL.ok,'right',14); },
+  reads:s=>{ const f=s.def.phys(s); return [['P·sen θ (puxa ladeira abaixo)',nt(f.Px)+' N'],['P·cos θ = N',nt(f.Py)+' N'],['Atrito máximo μ·N',nt(f.fmax)+' N'],['Aceleração',nt(f.a)+' m/s²'],['Ângulo em que começa a escorregar',nt(Math.atan(s.p.mu)*180/Math.PI)+'°']]; }});
 
 /* =====================================================================
    Laboratórios de estática, fluidos, termologia e ondas
@@ -2702,6 +2907,84 @@ LX.centripeta.jor=[
  {t:'q',q:'Numa curva, o carro dobra a velocidade. A força de atrito que os pneus precisam fazer…',o:['quadruplica','dobra','fica igual'],why:'F cresce com v². É por isso que curvas fechadas têm placa de velocidade máxima.'},
  {t:'n',q:'Um carro de 1000 kg faz uma curva de raio 50 m a 10 m/s. Qual força centrípeta os pneus fazem?',a:2000,u:'N',why:'F = m·v²/R = 1000 × 100 / 50 = 2000 N, feita pelo atrito entre os pneus e o asfalto.'},
  {t:'mundo',h:'Força centrípeta na sua volta',itens:[['Curva de carro','Quem segura o carro na curva é o atrito dos pneus. Na pista molhada ele diminui, e o carro "sai pela tangente".'],['Satélites e a Lua','A gravidade da Terra é a força centrípeta que os mantém em órbita.'],['Globo da morte','A moto fica "grudada" na parede porque a parede faz a força centrípeta.']]}];
+
+/* =====================================================================
+   Exemplos animados — Ferramentas, Cinemática e Dinâmica
+   ===================================================================== */
+LX.grandezas.exa={q:'Um carro anda a <b>90 km/h</b>. Quanto é isso em m/s?',sim:'conv',set:{v:90},ty:58,passos:[
+ {txt:'Em 1 hora o carro anda 90 km. Em metros: 90 × 1000 = <b>90 000 m</b>.',tags:[['90 km = 90 000 m','ink']]},
+ {txt:'1 hora tem 60 × 60 = <b>3600 s</b>.',tags:[['1 h = 3600 s','ink']]},
+ {txt:'90 000 m em 3600 s: em cada segundo, 90 000 ÷ 3600 = <b>25 m</b>. Veja a bandeira do 1º segundo cair nos 25 m.',ask:{q:'Quantos metros o carro anda em 1 segundo?',a:25,u:'m'},ate:1,tags:[['em 1 s: 25 m','vel']]},
+ {txt:'Atalho: 90 ÷ 3,6 = <b>25 m/s</b>. Dá o mesmo porque 3600 ÷ 1000 = 3,6. Em 4 s o carro cruza os 100 m.',ate:4,tags:[['90 km/h = 25 m/s','force']]}]};
+
+LX.potencias.exa={q:'Calcule <b>(3 × 10⁸) × (2 × 10⁻³)</b>. Por exemplo: a luz anda 3×10⁸ m por segundo; quanto ela anda em 2 milissegundos?',sim:'pow10',set:{e:8},ty:176,passos:[
+ {txt:'3 × 10⁸ m é a distância que a luz percorre em 1 segundo: quase a distância até a Lua (10⁸ na régua).',set:{e:8},tags:[['10⁸ m','vel']]},
+ {txt:'2 × 10⁻³ s são 2 milissegundos, um piscar muito rápido.',set:{e:-3},tags:[['10⁻³','force']]},
+ {txt:'Multiplique os números da frente: 3 × 2 = <b>6</b>.',ask:{q:'Quanto é 3 × 2?',a:6}},
+ {txt:'Some os expoentes: 8 + (−3) = <b>5</b>. Resultado: <b>6 × 10⁵ m</b>, 600 km, mais ou menos de São Paulo ao Rio.',ask:{q:'Qual é o expoente final? (8 + (−3))',a:5},set:{e:5},tags:[['6 × 10⁵ m ≈ São Paulo–Rio','ok']]}]};
+
+LX.vetores.exa={q:'Duas cordas puxam uma caixa com forças <b>perpendiculares</b> de 6 N e 8 N. Qual é a força resultante? (cada quadrinho do desenho vale 2 N)',sim:'vec',set:{m:'s'},fn:s=>{ s.A=[3,0]; s.B=[0,4]; },tx:.68,ty:24,passos:[
+ {txt:'A seta A (6 N) aponta para a direita: 3 quadrinhos. A seta B (8 N) aponta para cima: 4 quadrinhos.',tags:[['A = 6 N, B = 8 N','ink']]},
+ {txt:'Encaixando B na ponta de A, as duas formam os catetos de um triângulo retângulo. A resultante R é a hipotenusa.'},
+ {txt:'R = √(6² + 8²) = √(36 + 64) = √100 = <b>10 N</b>.',ask:{q:'Qual é o módulo da resultante?',a:10,u:'N'},tags:[['R = 10 N (5 quadrinhos)','acc']]},
+ {txt:'Repare: <b>não</b> é 6 + 8 = 14 N. Só dá 14 se as cordas puxarem para o mesmo lado. Agora com as duas para a direita:',fn:s=>{ s.A=[3,0]; s.B=[4,0]; },tags:[['mesma direção: R = 14 N','force']]}]};
+
+LX.mu.exa={q:'Um ciclista passa pelo marco <b>20 m</b> da ciclovia andando a <b>6 m/s</b>, sem mudar a velocidade. Onde ele estará 5 s depois?',sim:'mov',cfg:{acc:false},set:{s0:20,v0:6},ty:150,passos:[
+ {txt:'Dados: s₀ = 20 m e v = 6 m/s. Velocidade constante: movimento uniforme. Repare no rastro: um carro por segundo, sempre igualmente espaçados.',ate:2,tags:[['s₀ = 20 m · v = 6 m/s','ink']]},
+ {txt:'Em 5 s ele anda Δs = v·t = 6 × 5 = <b>30 m</b>.',ask:{q:'Quantos metros ele anda em 5 s?',a:30,u:'m'},ate:5,tags:[['em 5 s andou 30 m','vel']]},
+ {txt:'Posição: s = s₀ + v·t = 20 + 30 = <b>50 m</b>.',ask:{q:'Em que marco ele está?',a:50,u:'m'},tags:[['s = 50 m','acc']]},
+ {txt:'A mesma regra prevê qualquer instante: em 10 s, s = 20 + 60 = 80 m. No gráfico s × t, uma reta.',ate:10,tags:[['t = 10 s → s = 80 m','acc']]}]};
+
+LX.muv.exa={q:'Um carro a <b>20 m/s</b> (72 km/h) freia com aceleração de <b>−5 m/s²</b>. Quanto tempo leva para parar e quanto anda até parar?',sim:'mov',cfg:{acc:true},set:{s0:0,v0:20,a:-5},ty:150,passos:[
+ {txt:'Frear = perder velocidade: a cada segundo, 5 m/s a menos. Veja 1 s de freada: a velocidade caiu de 20 para 15 m/s.',ate:1,tags:[['t = 1 s: v = 15 m/s','acc']]},
+ {txt:'Parar é v = 0. Pela função da velocidade: 0 = 20 − 5·t → <b>t = 4 s</b>.',ask:{q:'Em quantos segundos o carro para?',a:4,u:'s'},ate:4,tags:[['parou em t = 4 s','force']]},
+ {txt:'A distância é a área do triângulo no gráfico v × t: base 4 s, altura 20 m/s → 4 × 20 / 2 = <b>40 m</b>.',ask:{q:'Quantos metros ele andou freando?',a:40,u:'m'},tags:[['Δs = 40 m','vel']]},
+ {txt:'Confira com Torricelli: 0² = 20² + 2·(−5)·Δs → 0 = 400 − 10·Δs → Δs = 40 m. Com o dobro da velocidade, seriam 160 m!'}]};
+
+LX.queda.exa={q:'Uma pedra é solta do alto de um prédio e leva <b>3 s</b> para chegar ao chão. Qual a altura do prédio e a velocidade ao tocar o solo? (g = 10 m/s²)',sim:'fall',set:{h:45,g:10},tx:.72,ty:22,passos:[
+ {txt:'Solta do repouso: a cada segundo, a velocidade aumenta 10 m/s. Depois de 1 s: v = 10 m/s e caiu h = 10 × 1²/2 = 5 m.',ate:1,tags:[['t = 1 s: caiu 5 m, v = 10 m/s','acc']]},
+ {txt:'Depois de 2 s: v = 20 m/s e h = 10 × 2²/2 = 20 m. A distância cresce com o quadrado do tempo.',ate:2,tags:[['t = 2 s: caiu 20 m, v = 20 m/s','acc']]},
+ {txt:'Em 3 s: h = g·t²/2 = 10 × 9 / 2 = <b>45 m</b>, um prédio de uns 15 andares.',ask:{q:'Qual é a altura do prédio?',a:45,u:'m'},ate:3,tags:[['h = 45 m','force']]},
+ {txt:'Velocidade ao chegar: v = g·t = 10 × 3 = <b>30 m/s</b>, ou 108 km/h.',ask:{q:'Com que velocidade a pedra chega ao chão?',a:30,u:'m/s'},tags:[['v = 30 m/s = 108 km/h','vel']]}]};
+
+LX.lancamento.exa={q:'Um chute sai a <b>25 m/s</b> fazendo 37° com o chão (cos 37° = 0,8; sen 37° = 0,6). Quanto tempo a bola fica no ar e a que distância cai?',sim:'proj',cfg:{th:35},set:{v0:25,th:36.87,g:10},ty:22,passos:[
+ {txt:'Separe a velocidade: vₓ = 25 × 0,8 = <b>20 m/s</b> (horizontal) e v₀<sub>y</sub> = 25 × 0,6 = <b>15 m/s</b> (vertical).',tags:[['vₓ = 20 m/s · v₀y = 15 m/s','ink']]},
+ {txt:'Na vertical a gravidade tira 10 m/s por segundo: v<sub>y</sub> zera em 15/10 = <b>1,5 s</b>. É o topo do voo.',ask:{q:'Em quantos segundos a bola chega ao ponto mais alto?',a:1.5,u:'s'},ate:1.5,tags:[['topo em t = 1,5 s','acc']]},
+ {txt:'A descida demora o mesmo que a subida: tempo total no ar = <b>3 s</b>.',ask:{q:'Quanto tempo a bola fica no ar?',a:3,u:'s'},ate:3,tags:[['no ar por 3 s','acc']]},
+ {txt:'Na horizontal ela andou o tempo todo a 20 m/s: alcance = 20 × 3 = <b>60 m</b>.',ask:{q:'A que distância a bola cai?',a:60,u:'m'},tags:[['alcance = 60 m','vel']]}]};
+
+LX.mcu.exa={q:'Um carrossel de raio <b>3 m</b> dá uma volta a cada <b>6 s</b>. Qual é a velocidade de quem está na borda, e a aceleração centrípeta? (π ≈ 3,14)',sim:'mcu',cfg:{force:false},set:{R:3,T:6},ty:22,passos:[
+ {txt:'Numa volta a cadeira percorre o comprimento do círculo: 2πR = 2 × 3,14 × 3 = <b>18,84 m</b>.',ask:{q:'Quantos metros a cadeira anda numa volta?',a:18.84,u:'m'},tags:[['uma volta = 18,84 m','vel']]},
+ {txt:'Essa volta leva 6 s. Veja uma volta completa.',ate:6,tags:[['T = 6 s','ink']]},
+ {txt:'v = 2πR/T = 18,84/6 ≈ <b>3,14 m/s</b>.',ask:{q:'Qual é a velocidade?',a:3.14,u:'m/s'},tags:[['v ≈ 3,14 m/s','vel']]},
+ {txt:'Aceleração para o centro: a = v²/R = 3,14²/3 ≈ <b>3,3 m/s²</b>. É ela que muda a direção da velocidade o tempo todo.',ask:{q:'Qual é a aceleração centrípeta?',a:3.29,u:'m/s²',tol:.03},ate:9,tags:[['a ≈ 3,3 m/s² (para o centro)','acc']]}]};
+
+LX.newton.exa={q:'Duas crianças brincam com um carrinho de <b>20 kg</b>: uma empurra com <b>70 N</b> para a frente e a outra segura com <b>30 N</b> para trás. Qual é a aceleração? (sem atrito)',sim:'block',cfg:{fric:false},set:{m:20,F:40},tx:.36,ty:24,passos:[
+ {txt:'As duas forças estão na mesma direção, em sentidos opostos: a resultante é 70 − 30 = <b>40 N</b> para a frente.',ask:{q:'Qual é a força resultante?',a:40,u:'N'},tags:[['70 N − 30 N = 40 N','force']]},
+ {txt:'Pela 2ª lei: a = F<sub>R</sub>/m = 40/20 = <b>2 m/s²</b>.',ask:{q:'Qual é a aceleração?',a:2,u:'m/s²'},ate:1,tags:[['a = 2 m/s²','acc']]},
+ {txt:'Com 2 m/s², a cada segundo ele ganha 2 m/s. Depois de 3 s, v = <b>6 m/s</b>. Veja no gráfico, em cima, a reta subindo.',ask:{q:'Qual a velocidade depois de 3 s?',a:6,u:'m/s'},ate:3,tags:[['t = 3 s: v = 6 m/s','acc']]}]};
+
+LX.forcas.exa={q:'Uma pessoa de <b>50 kg</b> está numa balança dentro de um elevador que acelera <b>para baixo a 2 m/s²</b> (por exemplo, começando a descer). Quanto a balança marca?',sim:'elev',set:{m:50,a:-2},tx:.34,ty:22,passos:[
+ {txt:'Na pessoa agem o peso P = 50 × 10 = <b>500 N</b> (para baixo) e a normal N da balança (para cima).',ask:{q:'Qual é o peso da pessoa?',a:500,u:'N'},tags:[['P = 500 N','force']]},
+ {txt:'Ela acelera para baixo, então N é <b>menor</b> que P. Pela 2ª lei: N − P = m·a → N = 50 × (10 − 2) = <b>400 N</b>.',ask:{q:'Quanto vale a normal N?',a:400,u:'N'},ate:1,tags:[['N = 400 N','vel']]},
+ {txt:'A balança divide por g e mostra 400 ÷ 10 = <b>40 kg</b>. É aquele "frio na barriga" de ficar mais leve.',ask:{q:'Quanto a balança marca?',a:40,u:'kg'},tags:[['a balança marca 40 kg','ok']]}]};
+
+LX.atrito.exa={q:'Uma caixa de <b>20 kg</b> está no chão (μₑ = 0,4; μ<sub>c</sub> = 0,3). Você empurra com <b>100 N</b>. Ela se move? Com que aceleração?',sim:'block',cfg:{fric:true},set:{m:20,F:100,ue:.4,uc:.3},tx:.36,ty:24,passos:[
+ {txt:'No chão plano, a normal é igual ao peso: N = 20 × 10 = <b>200 N</b>.',ask:{q:'Quanto vale a normal?',a:200,u:'N'},tags:[['N = 200 N','vel']]},
+ {txt:'O atrito estático aguenta no máximo μₑ·N = 0,4 × 200 = <b>80 N</b>.',ask:{q:'Qual é o atrito estático máximo?',a:80,u:'N'},tags:[['atrito máximo = 80 N','force']]},
+ {txt:'100 N é mais que 80 N: a caixa <b>desgruda e escorrega</b>. Andando, o atrito passa a ser o cinético: 0,3 × 200 = <b>60 N</b>.',ate:.6,tags:[['100 N > 80 N: escorrega!','force'],['atrito cinético = 60 N','force']]},
+ {txt:'Resultante: 100 − 60 = 40 N. Aceleração: a = 40/20 = <b>2 m/s²</b>.',ask:{q:'Qual é a aceleração da caixa?',a:2,u:'m/s²'},ate:3,tags:[['a = 2 m/s²','acc']]}]};
+
+LX.plano.exa={q:'Uma caixa de <b>2 kg</b> desce uma rampa de 37° com atrito μ = 0,25. Qual é a aceleração? (sen 37° = 0,6; cos 37° = 0,8)',sim:'incl',set:{th:36.87,m:2,mu:.25},tx:.36,ty:24,passos:[
+ {txt:'Peso: P = 2 × 10 = 20 N. A parte que puxa ladeira abaixo é P·sen θ = 20 × 0,6 = <b>12 N</b>.',ask:{q:'Quanto vale P·sen θ?',a:12,u:'N'},tags:[['P·sen θ = 12 N','vel']]},
+ {txt:'A parte que aperta a rampa é P·cos θ = 20 × 0,8 = 16 N, e a normal equilibra: N = <b>16 N</b>.',tags:[['N = 16 N','acc']]},
+ {txt:'Atrito: μ·N = 0,25 × 16 = <b>4 N</b>, contra o movimento.',ask:{q:'Quanto vale o atrito?',a:4,u:'N'},tags:[['atrito = 4 N','force']]},
+ {txt:'Resultante ladeira abaixo: 12 − 4 = 8 N. Aceleração: a = 8/2 = <b>4 m/s²</b>.',ask:{q:'Qual é a aceleração?',a:4,u:'m/s²'},ate:1.6,tags:[['a = 4 m/s²','acc']]}]};
+
+LX.centripeta.exa={q:'Uma bola de <b>2 kg</b> gira presa a um barbante de <b>2 m</b>, a <b>4 m/s</b>. Qual é a força que o barbante faz? E se ele arrebentar?',sim:'mcu',cfg:{force:true},set:{m:2,R:2,T:Math.PI},ty:22,passos:[
+ {txt:'A velocidade muda de direção o tempo todo: há aceleração para o centro, a = v²/R = 16/2 = <b>8 m/s²</b>.',ask:{q:'Qual é a aceleração centrípeta?',a:8,u:'m/s²'},ate:1.2,tags:[['a = 8 m/s² (para o centro)','acc']]},
+ {txt:'Quem produz essa aceleração é o barbante: F = m·a = 2 × 8 = <b>16 N</b>, sempre puxando para o centro.',ask:{q:'Qual é a força do barbante?',a:16,u:'N'},ate:2.4,tags:[['F = 16 N','force']]},
+ {txt:'Se o barbante arrebenta, a força some. Sem força, a bola segue <b>em linha reta</b>, pela tangente: inércia.',fn:s=>{ if(!s.free){ s.def.btns[0].f(s); s.playing=false; } },ate:3.4,tags:[['sem força: linha reta','vel']]}]};
 
 if(document.body) boot(); else addEventListener('DOMContentLoaded',boot);
 </script>

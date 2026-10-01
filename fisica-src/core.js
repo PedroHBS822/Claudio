@@ -99,10 +99,16 @@ function G(ctx,W,H){ const g={ctx,W,H,
   poly(pts,c=COL.ink,w=2,fill,close){ if(pts.length<2) return; ctx.save(); ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]); if(close) ctx.closePath(); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(c){ ctx.strokeStyle=c; ctx.lineWidth=w; ctx.lineJoin='round'; ctx.stroke(); } ctx.restore(); },
   circle(x,y,r,fill,stroke,w=2){ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=w; ctx.stroke(); } },
   rect(x,y,w,h,fill,stroke,r=0,lw=2){ ctx.beginPath(); if(ctx.roundRect&&r) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h); if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=lw; ctx.stroke(); } },
-  arrow(x1,y1,x2,y2,c,label,w=3,lpos){ const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); if(L<2) return; const ux=dx/L,uy=dy/L,hs=Math.min(11,L*.45);
-    ctx.save(); ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=w; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hs*.8,y2-uy*hs*.8); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*hs-uy*hs*.55,y2-uy*hs+ux*hs*.55); ctx.lineTo(x2-ux*hs+uy*hs*.55,y2-uy*hs-ux*hs*.55); ctx.closePath(); ctx.fill(); ctx.restore();
-    if(label){ const lx=x2+ux*12+(lpos||[0,0])[0], ly=y2+uy*12+(lpos||[0,0])[1]; g.text(label,lx,ly,{c,size:13,bold:true,align:ux<-.3?'right':ux>.3?'left':'center',base:'middle'}); } },
+  arrow(x1,y1,x2,y2,c,label,w=3,lpos){ const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy); if(L<2) return; const ux=dx/L,uy=dy/L,hs=Math.min(11+w,L*.45);
+    const path=()=>{ ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hs*.8,y2-uy*hs*.8); };
+    const head=()=>{ ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-ux*hs-uy*hs*.55,y2-uy*hs+ux*hs*.55); ctx.lineTo(x2-ux*hs+uy*hs*.55,y2-uy*hs-ux*hs*.55); ctx.closePath(); };
+    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.strokeStyle=COL.paper; ctx.globalAlpha=.85; ctx.lineWidth=w+4; path(); ctx.stroke(); head(); ctx.stroke(); ctx.globalAlpha=1;
+    ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=w; path(); ctx.stroke(); head(); ctx.fill(); ctx.restore();
+    if(label){ const lx=x2+ux*14+(lpos||[0,0])[0], ly=y2+uy*14+(lpos||[0,0])[1]; g.tag(label,lx,ly,c,ux<-.3?'right':ux>.3?'left':'center'); } },
+  /* etiqueta legível sobre qualquer fundo */
+  tag(t,x,y,c,align='center',size=12.5){ g.font(size,'display',true); const w=ctx.measureText(t).width+10, h=size+7, x0=align==='left'?x-3:align==='right'?x-w+3:x-w/2;
+    ctx.save(); ctx.globalAlpha=.88; g.rect(x0,y-h/2,w,h,COL.card,null,h/2); ctx.restore(); g.text(t,x0+w/2,y+1,{c,size,bold:true,align:'center',base:'middle'}); },
   /* gráfico: caixa (x,y,w,h), faixas xr/yr, séries [{pts:[[x,y]...],c}] */
   plot(x,y,w,h,o){ const xr=o.xr,yr=o.yr; const X=v=>x+(v-xr[0])/(xr[1]-xr[0])*w, Y=v=>y+h-(v-yr[0])/(yr[1]-yr[0])*h;
     g.rect(x,y,w,h,COL.card,COL.line,0,1);
@@ -123,32 +129,45 @@ function G(ctx,W,H){ const g={ctx,W,H,
 /* ---------- laboratório genérico ---------- */
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function Sim(host,def){
-  const s={p:{},t:0,playing:false,def}; (def.ctrls||[]).forEach(c=>s.p[c.k]=c.v);
+  const s={p:{},t:0,playing:false,def,rate:1,host}; (def.ctrls||[]).forEach(c=>s.p[c.k]=c.v);
   const ctrlHTML=(def.ctrls||[]).map(c=>c.opts
     ?`<div class="ctrl"><label>${c.l}</label><div class="seg" role="group" aria-label="${c.l}">${c.opts.map(o=>`<button type="button" data-k="${c.k}" data-v="${o[0]}" class="${o[0]===c.v?'on':''}">${o[1]}</button>`).join('')}</div></div>`
     :`<div class="ctrl"><label for="${host.id}-${c.k}"><span>${c.l}</span><output id="${host.id}-${c.k}-o">${fmtC(c,c.v)}</output></label><input type="range" id="${host.id}-${c.k}" data-k="${c.k}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.v}"></div>`).join('');
-  host.innerHTML=`<div class="lab"><div class="labcv"><canvas aria-label="${esc(def.alt||'Simulação')}" role="img"></canvas></div>${def.legend?`<div class="legend">${def.legend.map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join('')}</div>`:''}<div class="labui${ctrlHTML||def.drag?'':' solo'}">${ctrlHTML||def.drag?`<div class="ctrls">${ctrlHTML||'<p class="eyebrow" style="margin:0">Arraste os elementos no desenho</p>'}</div>`:''}<div class="reads" aria-live="polite"></div></div>${def.anim?`<div class="labbar"><button class="btn sm" type="button" data-act="play">▶ Iniciar</button><button class="btn sm ghost" type="button" data-act="reset">↺ Reiniciar</button>${(def.btns||[]).map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('')}</div>`:(def.btns?`<div class="labbar">${def.btns.map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('')}</div>`:'')}</div>`;
-  const cv=$('canvas',host), ctx=cv.getContext('2d'), rdEl=$('.reads',host); let lastR='';
+  const xb=(def.btns||[]).map((b,i)=>`<button class="btn sm ghost" type="button" data-act="x${i}">${b.l}</button>`).join('');
+  const spd=def.anim?`<span class="spd" role="group" aria-label="Velocidade da simulação"><span class="spdl">câmera lenta</span>${[[.25,'¼×'],[.5,'½×'],[1,'1×']].map(([r,t])=>`<button type="button" data-rate="${r}" class="${r===1?'on':''}" aria-label="${t}">${t}</button>`).join('')}</span>`:'';
+  host.innerHTML=`<div class="lab"><div class="labcv"><canvas aria-label="${esc(def.alt||'Simulação')}" role="img"></canvas></div>${def.legend?`<div class="legend">${def.legend.map(([c,t])=>`<span><i style="background:var(--${c})"></i>${t}</span>`).join('')}</div>`:''}<div class="labui${ctrlHTML||def.drag?'':' solo'}">${ctrlHTML||def.drag?`<div class="ctrls">${ctrlHTML||'<p class="eyebrow" style="margin:0">Arraste os elementos no desenho</p>'}</div>`:''}<div class="reads" aria-live="polite"></div></div><div class="labbar">${def.anim?`<button class="btn sm" type="button" data-act="play">▶ Iniciar</button><button class="btn sm ghost" type="button" data-act="reset">↺ Reiniciar</button>`:''}${xb}${spd}<button class="btn sm ghost labx" type="button" data-act="big" aria-label="Ampliar o laboratório">⤢ Ampliar</button></div></div>`;
+  const lab=$('.lab',host), cv=$('canvas',host), ctx=cv.getContext('2d'), rdEl=$('.reads',host); let lastR='', prevVals=[];
   function fmtC(c,v){ return c.f?c.f(v):(nsig(v,4)+(c.u?' '+c.u:'')); }
-  function size(){ const w=cv.clientWidth||600; const h=typeof def.h==='function'?def.h(w):(def.h||300); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
-  s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); def.draw(G(ctx,s.W,s.H),s); if(def.reads){ const r=def.reads(s).map(([a,b])=>`<div class="rd"><span>${a}</span><b>${b}</b></div>`).join(''); if(r!==lastR){ rdEl.innerHTML=r; lastR=r; } } };
-  s.reset=()=>{ s.t=0; s.playing=false; setPlay(); def.init&&def.init(s); s.render(); };
+  function size(){ const w=cv.clientWidth||600; let h=typeof def.h==='function'?def.h(w):(def.h||300); if(lab.classList.contains('big')) h=Math.max(h,Math.min(innerHeight-230,w*.62)); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
+  s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); const g=G(ctx,s.W,s.H); def.draw(g,s); if(s.overlay) s.overlay(g,s);
+    if(def.reads){ const rows=def.reads(s), vals=rows.map(r=>r[1]); const r=rows.map(([a,b],i)=>`<div class="rd${!s.playing&&prevVals.length&&prevVals[i]!==b?' chg':''}"><span>${a}</span><b>${b}</b></div>`).join(''); if(vals.join('|')!==prevVals.join('|')||!lastR){ rdEl.innerHTML=r; lastR=r; prevVals=vals; } } };
+  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; setPlay(); def.init&&def.init(s); s.render(); };
   let raf=0,last=0;
-  function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now; if(s.playing){ const k=def.speed||1, n=def.sub||1; for(let i=0;i<n;i++){ def.step(s,dt*k/n); s.t+=dt*k/n; } } s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
+  function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now;
+    if(s.playing){ const n=def.sub||1; let tot=dt*(def.speed||1)*s.rate; if(s.until!=null) tot=Math.min(tot,Math.max(0,s.until-s.t));
+      for(let i=0;i<n;i++){ def.step(s,tot/n); s.t+=tot/n; }
+      if(s.until!=null&&s.t>=s.until-1e-9){ s.t=s.until; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; } }
+    s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
   s.play=on=>{ s.playing=on; setPlay(); if(on&&!raf){ last=performance.now(); raf=requestAnimationFrame(frame); } };
+  /* roda a animação até o instante t (usado nos exemplos animados) */
+  s.runTo=(t,cb)=>{ if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
   function setPlay(){ const b=$('[data-act=play]',host); if(b) b.textContent=s.playing?'❚❚ Pausar':(s.t>0?'▶ Continuar':'▶ Iniciar'); }
   host.addEventListener('input',e=>{ const k=e.target.dataset.k; if(!k) return; const c=def.ctrls.find(x=>x.k===k); s.p[k]=+e.target.value; $(`#${host.id}-${k}-o`).textContent=fmtC(c,s.p[k]); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); });
   host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!host.contains(b)) return;
+    if(b.dataset.rate){ s.rate=+b.dataset.rate; $$('[data-rate]',host).forEach(x=>x.classList.toggle('on',x===b)); return; }
     if(b.dataset.k){ const k=b.dataset.k,c=def.ctrls.find(x=>x.k===k); const raw=b.dataset.v; s.p[k]=isNaN(+raw)?raw:+raw; $$(`button[data-k="${k}"]`,host).forEach(x=>x.classList.toggle('on',x===b)); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); return; }
-    const a=b.dataset.act; if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
+    const a=b.dataset.act; if(a==='big'){ const on=!lab.classList.contains('big'); lab.classList.toggle('big',on); document.body.classList.toggle('noscroll',on); b.textContent=on?'✕ Fechar':'⤢ Ampliar'; b.setAttribute('aria-label',on?'Fechar a tela ampliada':'Ampliar o laboratório'); size(); s.render(); return; }
+    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
   if(def.drag){ const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }; let dragging=false;
-    cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); s.render(); e.preventDefault(); } });
-    cv.addEventListener('pointermove',e=>{ if(!dragging) return; const [x,y]=pos(e); def.drag.move(s,x,y); s.render(); });
-    const up=()=>{ if(dragging){ dragging=false; def.drag.up&&def.drag.up(s); s.render(); } }; cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); cv.style.cursor='grab'; }
+    cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); cv.style.cursor='grabbing'; s.render(); e.preventDefault(); } });
+    cv.addEventListener('pointermove',e=>{ const [x,y]=pos(e); if(!dragging){ if(def.drag.hover) cv.style.cursor=def.drag.down({...s,dr:null,def},x,y)?'grab':'default'; return; } def.drag.move(s,x,y); s.render(); });
+    const up=()=>{ if(dragging){ dragging=false; cv.style.cursor='grab'; def.drag.up&&def.drag.up(s); s.render(); } }; cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); cv.style.cursor='grab'; }
+  /* atalhos de teclado: espaço inicia/pausa, R reinicia, Esc fecha a tela ampliada */
+  lab.tabIndex=-1; lab.addEventListener('keydown',e=>{ if(e.target.matches('input,textarea')) return; if(e.key===' '&&def.anim){ e.preventDefault(); $('[data-act=play]',host)?.click(); } else if((e.key==='r'||e.key==='R')&&def.anim) s.reset(); else if(e.key==='Escape'&&lab.classList.contains('big')) $('[data-act=big]',host).click(); });
   new ResizeObserver(()=>{ size(); if(def.onResize) def.onResize(s); s.render(); }).observe(cv);
   size(); def.init&&def.init(s); LIVE.add(s); s.render();
   if(def.anim&&def.autoplay&&!REDUCED) s.play(true);
-  s.dispose=()=>{ s.playing=false; LIVE.delete(s); };
+  s.dispose=()=>{ s.playing=false; LIVE.delete(s); if(lab.classList.contains('big')) document.body.classList.remove('noscroll'); };
   return s; }
 
 /* ---------- blocos de conteúdo ---------- */
@@ -296,7 +315,7 @@ function viewHome(){
 
 function chipCls(id){ const x=P.l[id]; return isDue(id)?'due':x&&x.s===2?'ok':''; }
 function stepsHTML(l){ const x=P.l[l.id]||{};
-  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
+  return (l.jor?[['jor','Descobrir',!!x.jd,true],['ex','Ver o exemplo',!!x.ex,!!(l.ex||l.exa)],['prac','Dominar',x.s===2,true]]:[['pred','Prever',x.pr!=null,!!l.pred],['lab','Experimentar',!!x.lab,true],['ex','Ver o exemplo',!!x.ex,!!l.ex],['prac','Dominar',x.s===2,true]]).filter(s=>s[3])
     .map(([k,t,d])=>`<li><button type="button" class="${d?'done':''}" data-go="${k}"><span class="ck" aria-hidden="true">${d?'✓':''}</span>${t}${d?'<span class="sr"> (feito)</span>':''}</button></li>`).join(''); }
 function updateHead(l){ const s=$('#steps'); if(s) s.innerHTML=stepsHTML(l); const c=$('#lstat'); if(c){ c.textContent=statusText(l.id); c.className='chip '+chipCls(l.id); } }
 
@@ -334,7 +353,7 @@ function viewJourneyLesson(l){
   <section class="sec">${H('Resumo da lição')}<details class="fold" id="resumo"${x.jd?' open':''}><summary>${x.jd?'O que você descobriu':'Abrir o resumo (melhor depois da jornada)'}</summary><div class="prose">${l.idea}${l.f.map(f=>formulaCard(f)).join('')}${l.fn?`<div>${l.fn}</div>`:''}${l.keep?`<div class="note"><b>Para lembrar</b><ul style="margin:6px 0 0">${l.keep.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</div>
     <div class="ai aiask" id="aiidea"><span>Ainda confuso? Peça ao tutor:</span><button class="btn sm ghost" type="button" data-ai="simples">Explique mais simples</button><button class="btn sm ghost" type="button" data-ai="analogia">Dê uma analogia</button><button class="btn sm ghost" type="button" data-ai="fundo">Quero ir mais fundo</button></div><div class="aiout"></div></details></section>
   <section class="sec">${H('Laboratório livre')}<details class="fold" id="livre"><summary>Abrir o laboratório para explorar à vontade</summary><div id="lab"></div>${l.tasks?`<div class="note" style="margin-top:12px"><b>Ideias para testar:</b><ul class="tasks">${l.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}</details></section>
-  ${l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
+  ${l.exa?`<section class="sec">${H('Exemplo animado')}<p class="lead2">Um problema resolvido acontecendo na tela. Antes de cada conta, tente prever o número.</p><div id="exa"></div></section>`:l.ex?`<section class="sec">${H('Exemplo resolvido')}<div class="note ex"><div class="q">${l.ex.q}</div><ol class="st"></ol><div class="row" style="margin-top:12px"><button class="btn sm" type="button" data-ex="1">Mostrar o primeiro passo</button></div></div></section>`:''}
   <section class="sec">${H('Pratique')}<p class="lead2">Os números mudam a cada questão. Três acertos seguidos de primeira dominam a lição; se errar, você ganha uma pista e uma segunda chance.</p><div id="prac"></div>
     <div class="ai aigen"><button class="btn sm ghost" type="button" id="aigen">${AIPILL} Criar uma questão estilo ENEM</button><span class="aitag">Treino extra; não conta para o domínio.</span></div><div id="aiq"></div></section>
   ${l.traps?`<section class="sec prose">${H('Erros comuns')}<ul>${l.traps.map(t=>`<li>${t}</li>`).join('')}</ul></section>`:''}
@@ -363,7 +382,7 @@ function mountLesson(l){
     const lv=$('#livre'); lv.addEventListener('toggle',()=>{ if(lv.open&&!lv.dataset.m){ lv.dataset.m=1; SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{})); } }); }
   else { SIMNOW.push(SIMS[l.lab.sim]($('#lab'),l.lab.cfg||{}));
     const lab=$('#lab'), touch=()=>{ if(!x().lab){ ls(l.id).lab=1; save(); upd(); } }; ['input','pointerdown','click'].forEach(ev=>lab.addEventListener(ev,touch)); }
-  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
+  $('#steps').addEventListener('click',e=>{ const b=e.target.closest('[data-go]'); if(!b) return; const el=$({pred:'#pred',lab:'#lab',ex:'.ex, #exa',prac:'#prac',jor:'#jor'}[b.dataset.go]); if(el) el.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'}); });
   const pr=$('#pred'); if(pr){
     const reveal=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; if(j===l.pred.a) b.classList.add('right'); else if(j===x().pr) b.classList.add('wrong'); }); $('.pfb',pr).innerHTML=`<div class="fb ${x().pr===l.pred.a?'ok':'info'}"><b>${x().pr===l.pred.a?'Previsão certa.':'A resposta é '+'ABCD'[l.pred.a]+'.'}</b> ${l.pred.why}</div>`; };
     const pend=()=>{ $$('.opt',pr).forEach((b,j)=>{ b.disabled=true; b.classList.toggle('pick',j===x().pr); }); $('.pfb',pr).innerHTML=`<div class="fb info">Previsão anotada. Agora confira no laboratório abaixo e depois veja a resposta.<div class="row" style="margin-top:8px"><button class="btn sm" type="button" data-rev="1">Ver a resposta</button></div></div>`; };
@@ -371,6 +390,7 @@ function mountLesson(l){
     pr.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.dataset.p!=null&&x().pr==null){ ls(l.id).pr=+b.dataset.p; save(); pend(); upd(); } else if(b.dataset.rev){ ls(l.id).prr=1; save(); reveal(); } }); }
   const ex=$('.ex'); if(ex){ let k=0; const ol=$('ol',ex), bt=$('[data-ex]',ex);
     bt.addEventListener('click',()=>{ if(k<l.ex.s.length){ ol.insertAdjacentHTML('beforeend',`<li><span>${l.ex.s[k]}</span></li>`); k++; } bt.textContent=k<l.ex.s.length?'Próximo passo':'Pronto'; if(k>=l.ex.s.length){ bt.disabled=true; if(!x().ex){ ls(l.id).ex=1; save(); upd(); } } }); }
+  if(l.exa&&$('#exa')) ExPlayer($('#exa'),l,upd);
   Practice($('#prac'),[l],{onChange:()=>{ renderSide(); upd(); },focus:false});
   const ai=$('#aiidea'); ai.addEventListener('click',e=>{ const b=e.target.closest('[data-ai]'); if(!b) return; const k=b.dataset.ai;
     aiAsk(ai.nextElementSibling,TUTOR+'\n\n'+lessonCtx(l)+'\n\nPedido do aluno: '+IDEA_ASK[k],{tier:k==='fundo'?'default':'quick'}); });
