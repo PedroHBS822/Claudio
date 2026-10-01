@@ -16,7 +16,7 @@ function ExPlayer(host,l,onDone){
   tick=setInterval(()=>{ if(!s.playing&&host.isConnected) s.render(); },120); SIMNOW.push({dispose(){ clearInterval(tick); }});
   const applySets=upto=>{ Object.assign(s.p,E.set||{}); if(E.fn) E.fn(s); for(let i=0;i<=upto;i++){ const P=E.passos[i]; if(P&&P.set) Object.assign(s.p,P.set); } };
   const lastAte=upto=>{ for(let i=upto;i>=0;i--) if(E.passos[i].ate!=null) return E.passos[i].ate; return 0; };
-  function ff(t){ s.reset(); const n=s.def.sub||1; let guard=0; while(s.t<t-1e-9&&guard++<5000){ const d=Math.min(.01,t-s.t); for(let i=0;i<n;i++) s.def.step(s,d/n); s.t+=d; } s.playing=false; s.render(); }
+  function ff(t){ s.reset(); const n=s.def.sub||1; let guard=0; if(typeof t==='function'){ while(!t(s)&&guard++<6000){ for(let i=0;i<n;i++) s.def.step(s,.01/n); s.t+=.01; } s.playing=false; s.render(); return; } while(s.t<t-1e-9&&guard++<5000){ const d=Math.min(.01,t-s.t); for(let i=0;i<n;i++) s.def.step(s,d/n); s.t+=d; } s.playing=false; s.render(); }
   function overlay(i){ const P=E.passos[i]; s.overlay=P&&(P.tags||P.ov)?(g,st)=>{ (P.tags||[]).forEach(([t,c],j)=>g.tag(t,g.W*(E.tx??.5),(E.ty??22)+j*26,COL[c]||c||COL.ink,'center',13.5)); P.ov&&P.ov(g,st); }:null; }
   /* monta o laboratório no estado do passo i (sem animar) */
   function settle(i){ applySets(i); ff(i>=0?lastAte(i):0); for(let j=0;j<=i;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(i); s.render(); }
@@ -37,5 +37,5 @@ function ExPlayer(host,l,onDone){
   host.addEventListener('click',e=>{ const b=e.target.closest('[data-x]'); if(!b||b.disabled) return; const a=b.dataset.x;
     if(a==='next'&&k<E.passos.length-1){ k++; if(k===0) settle(-1); show(true); }
     else if(a==='prev'&&k>0){ k--; settle(k); show(false); }
-    else if(a==='replay'){ settle(-1); applySets(k); for(let j=0;j<=k;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(k); const t=lastAte(k); if(t>0) s.runTo(t); } });
+    else if(a==='replay'){ settle(-1); applySets(k); for(let j=0;j<=k;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(k); const t=lastAte(k); if(t) s.runTo(t); } });
   settle(-1); }

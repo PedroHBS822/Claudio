@@ -2,50 +2,6 @@
    Laboratórios de estática, fluidos, termologia e ondas
    ===================================================================== */
 
-/* gangorra: torque (momento) */
-SIMS.lever=(host)=>Sim(host,{alt:'Gangorra com duas massas em distâncias ajustáveis',h:280,
-  legend:[['vel','lado esquerdo'],['force','lado direito']],
-  ctrls:[{k:'m1',l:'Massa esquerda',min:1,max:10,step:.5,v:4,u:'kg'},{k:'d1',l:'Distância esquerda',min:.5,max:3,step:.25,v:1.5,u:'m'},{k:'m2',l:'Massa direita',min:1,max:10,step:.5,v:2,u:'kg'},{k:'d2',l:'Distância direita',min:.5,max:3,step:.25,v:3,u:'m'}],
-  draw(g,s){ const M1=s.p.m1*GRAV*s.p.d1, M2=s.p.m2*GRAV*s.p.d2, diff=M1-M2, ang=clamp(diff/40,-1,1)*.2, cx=g.W/2, cy=g.H-80, k=Math.min(70,(g.W-60)/6.4);
-    g.poly([[cx,cy],[cx-22,cy+46],[cx+22,cy+46]],COL.ink,2,COL.sunk,true); g.ground(cy+46);
-    const c=g.ctx; c.save(); c.translate(cx,cy); c.rotate(ang); g.rect(-3.2*k,-6,6.4*k,10,COL.energy,COL.ink,3,1.5);
-    for(let d=-3;d<=3;d++){ g.line(d*k,-6,d*k,4,COL.ink,1); }
-    const b=(d,m,col,sgn)=>{ const sz=16+m*2.6; g.rect(sgn*d*k-sz/2,-6-sz,sz,sz,col,COL.ink,4,1.5); g.text(nt(m)+' kg',sgn*d*k,-6-sz-6,{size:11.5,align:'center',bold:true}); };
-    b(s.p.d1,s.p.m1,COL.vel,-1); b(s.p.d2,s.p.m2,COL.force,1); c.restore();
-    g.text(Math.abs(diff)<1e-9?'equilíbrio: os momentos se anulam':diff>0?'gira para a esquerda':'gira para a direita',cx,24,{size:15,bold:true,align:'center',c:Math.abs(diff)<1e-9?COL.ok:COL.ink});
-    const bw=Math.min(160,g.W*.3); [[M1,COL.vel,20],[M2,COL.force,g.W-20-bw]].forEach(([M,col,x])=>{ g.rect(x,40,bw,12,COL.sunk,null,3); g.rect(x,40,bw*clamp(M/300,0,1),12,col,null,3); g.text('M = '+nt(M)+' N·m',x,68,{size:12,mono:true}); }); },
-  reads:s=>{ const M1=s.p.m1*GRAV*s.p.d1, M2=s.p.m2*GRAV*s.p.d2; return [['Momento esquerdo m₁·g·d₁',nt(M1)+' N·m'],['Momento direito m₂·g·d₂',nt(M2)+' N·m'],['Para equilibrar, a massa direita deveria ser',nt(s.p.m1*s.p.d1/s.p.d2)+' kg'],['Força no apoio',nt((s.p.m1+s.p.m2)*GRAV)+' N']]; }});
-
-/* pressão hidrostática: Stevin */
-const LIQ=[[1000,'água'],[800,'álcool'],[13600,'mercúrio']];
-SIMS.press=(host)=>Sim(host,{alt:'Tanque com um sensor de pressão que desce na água',h:320,
-  ctrls:[{k:'rho',l:'Líquido',opts:LIQ.map(x=>[x[0],x[1]]),v:1000},{k:'h',l:'Profundidade do sensor',min:0,max:10,step:.5,v:4,u:'m',live:true},{k:'atm',l:'Somar a pressão do ar?',opts:[[1,'sim'],[0,'não']],v:1,live:true}],
-  draw(g,s){ const tw=Math.min(200,g.W*.36), x0=24, y0=30, th=g.H-60, k=th/10, ph=v=>s.p.rho*GRAV*v+(s.p.atm?1e5:0);
-    const lc=s.p.rho>5000?COL.muted:COL.vel; g.rect(x0,y0,tw,th,lc+'33',COL.ink,4); g.line(x0,y0,x0+tw,y0,lc,3);
-    for(let m=0;m<=10;m+=2){ g.line(x0+tw,y0+m*k,x0+tw+6,y0+m*k,COL.muted,1.2); g.text(m+' m',x0+tw+10,y0+m*k+4,{size:11,c:COL.muted,mono:true}); }
-    const sy=y0+s.p.h*k; g.line(x0+tw/2,y0-16,x0+tw/2,sy,COL.ink,1.5); g.circle(x0+tw/2,sy,9,COL.energy,COL.ink,2);
-    for(let a=0;a<8;a++){ const an=a/8*Math.PI*2, L=6+ph(s.p.h)/2e4; g.arrow(x0+tw/2+Math.cos(an)*(L+14),sy+Math.sin(an)*(L+14),x0+tw/2+Math.cos(an)*12,sy+Math.sin(an)*12,COL.force,null,1.5); }
-    const px=x0+tw+60, pw=g.W-px-20, pmax=ph(10)*1.05; const pts=[]; for(let v=0;v<=10;v+=.5) pts.push([v,ph(v)/1e5]);
-    const r=g.plot(px,y0,pw,th,{xr:[0,10],yr:[0,pmax/1e5],series:[{pts,c:COL.force}],xl:'profundidade (m)',yl:'pressão (×10⁵ Pa ≈ atm)'}); g.circle(r.X(s.p.h),r.Y(ph(s.p.h)/1e5),6,COL.energy,COL.ink,1.5); },
-  reads:s=>{ const ph=s.p.rho*GRAV*s.p.h, pt=ph+(s.p.atm?1e5:0); return [['Pressão da coluna ρ·g·h',nf(ph)+' Pa'],['Pressão do ar na superfície',s.p.atm?'1,0×10<sup>5</sup> Pa':'não somada'],['Pressão total no sensor',nf(pt)+' Pa'],['Em atmosferas',nt(pt/1e5)+' atm'],['Cada 10 m de água somam','1 atm']]; }});
-
-/* empuxo: Arquimedes */
-SIMS.buoy=(host)=>Sim(host,{alt:'Bloco colocado num líquido: flutua ou afunda',anim:true,h:310,
-  legend:[['force','peso'],['vel','empuxo']],
-  ctrls:[{k:'rb',l:'Densidade do bloco',min:200,max:3000,step:50,v:600,u:'kg/m³'},{k:'V',l:'Volume do bloco',min:1,max:20,step:1,v:8,u:'L'},{k:'rf',l:'Líquido',opts:[[1000,'água'],[1030,'água do mar'],[800,'álcool']],v:1000}],
-  init(s){ s.y=-1.4; s.v=0; },
-  eq:s=>s.p.rb<s.p.rf?s.p.rb/s.p.rf:1.2,
-  step(s,dt){ const V=s.p.V/1000, side=Math.cbrt(V), sub=clamp(s.y,0,1), P=s.p.rb*V*GRAV, E=s.p.rf*V*sub*GRAV, m=s.p.rb*V; let a=(P-E)/m-2.2*s.v; if(s.y>=2.2&&a>0){ a=0; s.v=0; } s.v+=a*dt; s.y=Math.min(2.2,s.y+s.v*dt/(side*4)); if(s.t>12) s.play(false); },
-  done:s=>s.t>12,
-  draw(g,s){ const V=s.p.V/1000, side=Math.cbrt(V), bs=40+side*150, tx=40, tw=Math.min(g.W*.55,340), wl=110, bot=g.H-20;
-    g.rect(tx,wl,tw,bot-wl,COL.vel+'2a',null,0); g.line(tx,wl,tx+tw,wl,COL.vel,2.5); g.poly([[tx,40],[tx,bot],[tx+tw,bot],[tx+tw,40]],COL.ink,2);
-    const top=wl-bs+s.y*bs, cx=tx+tw/2; const yb=Math.min(top,bot-bs); g.rect(cx-bs/2,yb,bs,bs,COL.energy+'dd',COL.ink,6);
-    const sub=clamp((yb+bs-wl)/bs,0,1), P=s.p.rb*V*GRAV, E=s.p.rf*V*sub*GRAV, sc=v=>clamp(v*.9,0,120);
-    g.arrow(cx+10,yb+bs/2,cx+10,yb+bs/2+sc(P),COL.force,'P',3); if(E>0) g.arrow(cx-10,yb+bs/2,cx-10,yb+bs/2-sc(E),COL.vel,'E',3);
-    g.text(s.p.rb<s.p.rf?'flutua: menos denso que o líquido':s.p.rb===s.p.rf?'fica parado em qualquer altura':'afunda: mais denso que o líquido',tx+tw+20,60,{size:14,bold:true});
-    g.text('parte submersa: '+nt(sub*100,3)+'%',tx+tw+20,86,{size:13,c:COL.muted}); },
-  reads:s=>{ const V=s.p.V/1000, P=s.p.rb*V*GRAV, fr=Math.min(1,s.p.rb/s.p.rf), E=s.p.rf*V*fr*GRAV; return [['Peso P = ρ<sub>bloco</sub>·V·g',nt(P)+' N'],['Empuxo máximo (todo submerso) ρ<sub>líq</sub>·V·g',nt(s.p.rf*V*GRAV)+' N'],['No equilíbrio',s.p.rb<=s.p.rf?`flutua com ${nt(fr*100,3)}% submerso (E = P = ${nt(E)} N)`:`afunda; peso aparente ${nt(P-s.p.rf*V*GRAV)} N`]]; }});
-
 /* termômetros: Celsius, Fahrenheit e Kelvin */
 SIMS.temp=(host)=>Sim(host,{alt:'Três termômetros nas escalas Celsius, Fahrenheit e Kelvin',h:320,
   ctrls:[{k:'C',l:'Temperatura',min:-273,max:200,step:1,v:37,u:'°C',live:true}],

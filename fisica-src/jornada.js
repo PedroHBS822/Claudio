@@ -49,13 +49,13 @@ const JSTEP={
     const win=()=>{ clearInterval(ctx.timer); const gl=$('.jgoal',b); gl.classList.add('won'); $('.gt',gl).textContent='Desafio cumprido'; $('[data-hint]',gl)?.remove(); $('.jfb',b).innerHTML=`<div class="fb ok"><b>Conseguiu!</b> ${st.ok||''}</div>`; done(); };
     ctx.timer=setInterval(()=>{ try{ if(st.goal(s)) win(); }catch(e){} },250);
     $('[data-hint]',b).addEventListener('click',e=>{ hints++; if(hints===1){ $('.jfb',b).innerHTML=`<div class="fb info hint"><b>Dica:</b> ${st.dica||'Mexa nos controles e observe o que muda.'}</div>`; e.target.textContent='Pular este desafio'; } else { $('.jfb',b).innerHTML=`<div class="fb info">${st.ok||''}</div>`; clearInterval(ctx.timer); done(); } }); },
-  medir(b,st,done,ctx){ const rows=[]; b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jrec"><button class="btn" type="button" data-rec>Anotar medida</button><span class="jneed">0 de ${st.need} medidas</span></div><div class="jfb" aria-live="polite"></div>
+  medir(b,st,done,ctx){ const rows=[], keys=[]; b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jrec"><button class="btn" type="button" data-rec>Anotar medida</button><span class="jneed">0 de ${st.need} medidas</span></div><div class="jfb" aria-live="polite"></div>
     <div class="tblw"><table class="jtab"><thead><tr>${st.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody></tbody></table></div><div class="jplot"></div><div class="jafter"></div>`;
     const s=SIMS[st.sim]($(`#jl${ctx.i}`),st.cfg||{}); ctx.sims.push(s);
     $('[data-rec]',b).addEventListener('click',()=>{ const fb=$('.jfb',b); let r=null; try{ r=st.rec(s); }catch(e){}
       if(!r){ fb.innerHTML=`<div class="fb info">${st.recMsg||'Ainda não dá para anotar: faça o experimento primeiro.'}</div>`; return; }
-      r=r.map(v=>+(+v).toFixed(st.dec??2)); if(rows.some(x=>x.every((v,j)=>v===r[j]))){ fb.innerHTML='<div class="fb info">Essa medida você já anotou. Mude alguma coisa e anote outra.</div>'; return; }
-      fb.innerHTML=''; rows.push(r); $('tbody',b).insertAdjacentHTML('beforeend',`<tr>${r.map(v=>`<td>${nsig(v,4)}</td>`).join('')}</tr>`); $('.jneed',b).textContent=`${rows.length} de ${st.need} medidas`;
+      r=r.map(v=>+(+v).toFixed(st.dec??2)); const key=JSON.stringify(st.key?st.key(s):r); if(keys.includes(key)){ fb.innerHTML='<div class="fb info">Essa medida você já anotou. Mude alguma coisa e anote outra.</div>'; return; }
+      fb.innerHTML=''; rows.push(r); keys.push(key); $('tbody',b).insertAdjacentHTML('beforeend',`<tr>${r.map(v=>`<td>${nsig(v,4)}</td>`).join('')}</tr>`); $('.jneed',b).textContent=`${rows.length} de ${st.need} medidas`;
       if(rows.length===st.need){ $('[data-rec]',b).disabled=true; if(st.plot!==false) jPlot($('.jplot',b),rows.map(r=>[r[st.px||0],r[st.py??1]]),[st.cols[st.px||0],st.cols[st.py??1]]);
         const a=document.createElement('div'); $('.jafter',b).append(a); JSTEP.q(a,st.depois,done); } }); },
   deduz(b,st,done){ let k=0; b.innerHTML=`${st.p?`<div class="jtext">${st.p}</div>`:''}<ol class="jder"></ol><div class="jfim"></div>`; const ol=$('.jder',b);

@@ -141,23 +141,24 @@ function Sim(host,def){
   function size(){ const w=cv.clientWidth||600; let h=typeof def.h==='function'?def.h(w):(def.h||300); if(lab.classList.contains('big')) h=Math.max(h,Math.min(innerHeight-230,w*.62)); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
   s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); const g=G(ctx,s.W,s.H); def.draw(g,s); if(s.overlay) s.overlay(g,s);
     if(def.reads){ const rows=def.reads(s), vals=rows.map(r=>r[1]); const r=rows.map(([a,b],i)=>`<div class="rd${!s.playing&&prevVals.length&&prevVals[i]!==b?' chg':''}"><span>${a}</span><b>${b}</b></div>`).join(''); if(vals.join('|')!==prevVals.join('|')||!lastR){ rdEl.innerHTML=r; lastR=r; prevVals=vals; } } };
-  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; setPlay(); def.init&&def.init(s); s.render(); };
+  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; s.stopWhen=null; setPlay(); def.init&&def.init(s); s.render(); };
   let raf=0,last=0;
   function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now;
     if(s.playing){ const n=def.sub||1; let tot=dt*(def.speed||1)*s.rate; if(s.until!=null) tot=Math.min(tot,Math.max(0,s.until-s.t));
       for(let i=0;i<n;i++){ def.step(s,tot/n); s.t+=tot/n; }
+      if(s.stopWhen&&s.stopWhen(s)){ s.stopWhen=null; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; }
       if(s.until!=null&&s.t>=s.until-1e-9){ s.t=s.until; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; } }
     s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
   s.play=on=>{ s.playing=on; setPlay(); if(on&&!raf){ last=performance.now(); raf=requestAnimationFrame(frame); } };
   /* roda a animação até o instante t (usado nos exemplos animados) */
-  s.runTo=(t,cb)=>{ if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
+  s.runTo=(t,cb)=>{ if(typeof t==='function'){ s.stopWhen=t; s.until=null; s.onUntil=cb; if(t(s)){ s.stopWhen=null; cb&&cb(); return; } s.play(true); return; } s.stopWhen=null; if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
   function setPlay(){ const b=$('[data-act=play]',host); if(b) b.textContent=s.playing?'❚❚ Pausar':(s.t>0?'▶ Continuar':'▶ Iniciar'); }
   host.addEventListener('input',e=>{ const k=e.target.dataset.k; if(!k) return; const c=def.ctrls.find(x=>x.k===k); s.p[k]=+e.target.value; $(`#${host.id}-${k}-o`).textContent=fmtC(c,s.p[k]); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); });
   host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!host.contains(b)) return;
     if(b.dataset.rate){ s.rate=+b.dataset.rate; $$('[data-rate]',host).forEach(x=>x.classList.toggle('on',x===b)); return; }
     if(b.dataset.k){ const k=b.dataset.k,c=def.ctrls.find(x=>x.k===k); const raw=b.dataset.v; s.p[k]=isNaN(+raw)?raw:+raw; $$(`button[data-k="${k}"]`,host).forEach(x=>x.classList.toggle('on',x===b)); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); return; }
     const a=b.dataset.act; if(a==='big'){ const on=!lab.classList.contains('big'); lab.classList.toggle('big',on); document.body.classList.toggle('noscroll',on); b.textContent=on?'✕ Fechar':'⤢ Ampliar'; b.setAttribute('aria-label',on?'Fechar a tela ampliada':'Ampliar o laboratório'); size(); s.render(); return; }
-    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
+    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.stopWhen=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
   if(def.drag){ const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }; let dragging=false;
     cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); cv.style.cursor='grabbing'; s.render(); e.preventDefault(); } });
     cv.addEventListener('pointermove',e=>{ const [x,y]=pos(e); if(!dragging){ if(def.drag.hover) cv.style.cursor=def.drag.down({...s,dr:null,def},x,y)?'grab':'default'; return; } def.drag.move(s,x,y); s.render(); });

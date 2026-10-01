@@ -528,23 +528,24 @@ function Sim(host,def){
   function size(){ const w=cv.clientWidth||600; let h=typeof def.h==='function'?def.h(w):(def.h||300); if(lab.classList.contains('big')) h=Math.max(h,Math.min(innerHeight-230,w*.62)); cv.style.height=h+'px'; const d=Math.min(2,window.devicePixelRatio||1); cv.width=Math.round(w*d); cv.height=Math.round(h*d); ctx.setTransform(d,0,0,d,0,0); s.W=w; s.H=h; }
   s.render=()=>{ if(!s.W) return; ctx.clearRect(0,0,s.W,s.H); const g=G(ctx,s.W,s.H); def.draw(g,s); if(s.overlay) s.overlay(g,s);
     if(def.reads){ const rows=def.reads(s), vals=rows.map(r=>r[1]); const r=rows.map(([a,b],i)=>`<div class="rd${!s.playing&&prevVals.length&&prevVals[i]!==b?' chg':''}"><span>${a}</span><b>${b}</b></div>`).join(''); if(vals.join('|')!==prevVals.join('|')||!lastR){ rdEl.innerHTML=r; lastR=r; prevVals=vals; } } };
-  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; setPlay(); def.init&&def.init(s); s.render(); };
+  s.reset=()=>{ s.t=0; s.playing=false; s.until=null; s.stopWhen=null; setPlay(); def.init&&def.init(s); s.render(); };
   let raf=0,last=0;
   function frame(now){ raf=0; const dt=Math.min(.05,(now-last)/1000||0); last=now;
     if(s.playing){ const n=def.sub||1; let tot=dt*(def.speed||1)*s.rate; if(s.until!=null) tot=Math.min(tot,Math.max(0,s.until-s.t));
       for(let i=0;i<n;i++){ def.step(s,tot/n); s.t+=tot/n; }
+      if(s.stopWhen&&s.stopWhen(s)){ s.stopWhen=null; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; }
       if(s.until!=null&&s.t>=s.until-1e-9){ s.t=s.until; s.until=null; s.playing=false; setPlay(); const cb=s.onUntil; s.onUntil=null; s.render(); cb&&cb(); return; } }
     s.render(); if(s.playing) raf=requestAnimationFrame(frame); }
   s.play=on=>{ s.playing=on; setPlay(); if(on&&!raf){ last=performance.now(); raf=requestAnimationFrame(frame); } };
   /* roda a animação até o instante t (usado nos exemplos animados) */
-  s.runTo=(t,cb)=>{ if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
+  s.runTo=(t,cb)=>{ if(typeof t==='function'){ s.stopWhen=t; s.until=null; s.onUntil=cb; if(t(s)){ s.stopWhen=null; cb&&cb(); return; } s.play(true); return; } s.stopWhen=null; if(t<s.t-1e-9) s.reset(); s.until=t; s.onUntil=cb; if(REDUCED){ while(s.t<t-1e-9){ const d=Math.min(.02,t-s.t); def.step(s,d); s.t+=d; } s.t=t; s.until=null; s.onUntil=null; s.render(); cb&&cb(); } else s.play(true); };
   function setPlay(){ const b=$('[data-act=play]',host); if(b) b.textContent=s.playing?'❚❚ Pausar':(s.t>0?'▶ Continuar':'▶ Iniciar'); }
   host.addEventListener('input',e=>{ const k=e.target.dataset.k; if(!k) return; const c=def.ctrls.find(x=>x.k===k); s.p[k]=+e.target.value; $(`#${host.id}-${k}-o`).textContent=fmtC(c,s.p[k]); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); });
   host.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||!host.contains(b)) return;
     if(b.dataset.rate){ s.rate=+b.dataset.rate; $$('[data-rate]',host).forEach(x=>x.classList.toggle('on',x===b)); return; }
     if(b.dataset.k){ const k=b.dataset.k,c=def.ctrls.find(x=>x.k===k); const raw=b.dataset.v; s.p[k]=isNaN(+raw)?raw:+raw; $$(`button[data-k="${k}"]`,host).forEach(x=>x.classList.toggle('on',x===b)); if(c.live){ def.onParam&&def.onParam(s,k); s.render(); } else s.reset(); return; }
     const a=b.dataset.act; if(a==='big'){ const on=!lab.classList.contains('big'); lab.classList.toggle('big',on); document.body.classList.toggle('noscroll',on); b.textContent=on?'✕ Fechar':'⤢ Ampliar'; b.setAttribute('aria-label',on?'Fechar a tela ampliada':'Ampliar o laboratório'); size(); s.render(); return; }
-    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
+    if(a==='play'){ if(!s.playing&&def.done&&def.done(s)) s.reset(); s.until=null; s.stopWhen=null; s.play(!s.playing); } else if(a==='reset') s.reset(); else if(a&&a[0]==='x'){ def.btns[+a.slice(1)].f(s); s.render(); } });
   if(def.drag){ const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }; let dragging=false;
     cv.addEventListener('pointerdown',e=>{ const [x,y]=pos(e); if(def.drag.down(s,x,y)){ dragging=true; cv.setPointerCapture(e.pointerId); cv.style.cursor='grabbing'; s.render(); e.preventDefault(); } });
     cv.addEventListener('pointermove',e=>{ const [x,y]=pos(e); if(!dragging){ if(def.drag.hover) cv.style.cursor=def.drag.down({...s,dr:null,def},x,y)?'grab':'default'; return; } def.drag.move(s,x,y); s.render(); });
@@ -880,13 +881,13 @@ const JSTEP={
     const win=()=>{ clearInterval(ctx.timer); const gl=$('.jgoal',b); gl.classList.add('won'); $('.gt',gl).textContent='Desafio cumprido'; $('[data-hint]',gl)?.remove(); $('.jfb',b).innerHTML=`<div class="fb ok"><b>Conseguiu!</b> ${st.ok||''}</div>`; done(); };
     ctx.timer=setInterval(()=>{ try{ if(st.goal(s)) win(); }catch(e){} },250);
     $('[data-hint]',b).addEventListener('click',e=>{ hints++; if(hints===1){ $('.jfb',b).innerHTML=`<div class="fb info hint"><b>Dica:</b> ${st.dica||'Mexa nos controles e observe o que muda.'}</div>`; e.target.textContent='Pular este desafio'; } else { $('.jfb',b).innerHTML=`<div class="fb info">${st.ok||''}</div>`; clearInterval(ctx.timer); done(); } }); },
-  medir(b,st,done,ctx){ const rows=[]; b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jrec"><button class="btn" type="button" data-rec>Anotar medida</button><span class="jneed">0 de ${st.need} medidas</span></div><div class="jfb" aria-live="polite"></div>
+  medir(b,st,done,ctx){ const rows=[], keys=[]; b.innerHTML=`<div class="jtext">${st.p}</div><div class="jlab" id="jl${ctx.i}"></div><div class="jrec"><button class="btn" type="button" data-rec>Anotar medida</button><span class="jneed">0 de ${st.need} medidas</span></div><div class="jfb" aria-live="polite"></div>
     <div class="tblw"><table class="jtab"><thead><tr>${st.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody></tbody></table></div><div class="jplot"></div><div class="jafter"></div>`;
     const s=SIMS[st.sim]($(`#jl${ctx.i}`),st.cfg||{}); ctx.sims.push(s);
     $('[data-rec]',b).addEventListener('click',()=>{ const fb=$('.jfb',b); let r=null; try{ r=st.rec(s); }catch(e){}
       if(!r){ fb.innerHTML=`<div class="fb info">${st.recMsg||'Ainda não dá para anotar: faça o experimento primeiro.'}</div>`; return; }
-      r=r.map(v=>+(+v).toFixed(st.dec??2)); if(rows.some(x=>x.every((v,j)=>v===r[j]))){ fb.innerHTML='<div class="fb info">Essa medida você já anotou. Mude alguma coisa e anote outra.</div>'; return; }
-      fb.innerHTML=''; rows.push(r); $('tbody',b).insertAdjacentHTML('beforeend',`<tr>${r.map(v=>`<td>${nsig(v,4)}</td>`).join('')}</tr>`); $('.jneed',b).textContent=`${rows.length} de ${st.need} medidas`;
+      r=r.map(v=>+(+v).toFixed(st.dec??2)); const key=JSON.stringify(st.key?st.key(s):r); if(keys.includes(key)){ fb.innerHTML='<div class="fb info">Essa medida você já anotou. Mude alguma coisa e anote outra.</div>'; return; }
+      fb.innerHTML=''; rows.push(r); keys.push(key); $('tbody',b).insertAdjacentHTML('beforeend',`<tr>${r.map(v=>`<td>${nsig(v,4)}</td>`).join('')}</tr>`); $('.jneed',b).textContent=`${rows.length} de ${st.need} medidas`;
       if(rows.length===st.need){ $('[data-rec]',b).disabled=true; if(st.plot!==false) jPlot($('.jplot',b),rows.map(r=>[r[st.px||0],r[st.py??1]]),[st.cols[st.px||0],st.cols[st.py??1]]);
         const a=document.createElement('div'); $('.jafter',b).append(a); JSTEP.q(a,st.depois,done); } }); },
   deduz(b,st,done){ let k=0; b.innerHTML=`${st.p?`<div class="jtext">${st.p}</div>`:''}<ol class="jder"></ol><div class="jfim"></div>`; const ol=$('.jder',b);
@@ -947,7 +948,7 @@ function ExPlayer(host,l,onDone){
   tick=setInterval(()=>{ if(!s.playing&&host.isConnected) s.render(); },120); SIMNOW.push({dispose(){ clearInterval(tick); }});
   const applySets=upto=>{ Object.assign(s.p,E.set||{}); if(E.fn) E.fn(s); for(let i=0;i<=upto;i++){ const P=E.passos[i]; if(P&&P.set) Object.assign(s.p,P.set); } };
   const lastAte=upto=>{ for(let i=upto;i>=0;i--) if(E.passos[i].ate!=null) return E.passos[i].ate; return 0; };
-  function ff(t){ s.reset(); const n=s.def.sub||1; let guard=0; while(s.t<t-1e-9&&guard++<5000){ const d=Math.min(.01,t-s.t); for(let i=0;i<n;i++) s.def.step(s,d/n); s.t+=d; } s.playing=false; s.render(); }
+  function ff(t){ s.reset(); const n=s.def.sub||1; let guard=0; if(typeof t==='function'){ while(!t(s)&&guard++<6000){ for(let i=0;i<n;i++) s.def.step(s,.01/n); s.t+=.01; } s.playing=false; s.render(); return; } while(s.t<t-1e-9&&guard++<5000){ const d=Math.min(.01,t-s.t); for(let i=0;i<n;i++) s.def.step(s,d/n); s.t+=d; } s.playing=false; s.render(); }
   function overlay(i){ const P=E.passos[i]; s.overlay=P&&(P.tags||P.ov)?(g,st)=>{ (P.tags||[]).forEach(([t,c],j)=>g.tag(t,g.W*(E.tx??.5),(E.ty??22)+j*26,COL[c]||c||COL.ink,'center',13.5)); P.ov&&P.ov(g,st); }:null; }
   /* monta o laboratório no estado do passo i (sem animar) */
   function settle(i){ applySets(i); ff(i>=0?lastAte(i):0); for(let j=0;j<=i;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(i); s.render(); }
@@ -968,7 +969,7 @@ function ExPlayer(host,l,onDone){
   host.addEventListener('click',e=>{ const b=e.target.closest('[data-x]'); if(!b||b.disabled) return; const a=b.dataset.x;
     if(a==='next'&&k<E.passos.length-1){ k++; if(k===0) settle(-1); show(true); }
     else if(a==='prev'&&k>0){ k--; settle(k); show(false); }
-    else if(a==='replay'){ settle(-1); applySets(k); for(let j=0;j<=k;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(k); const t=lastAte(k); if(t>0) s.runTo(t); } });
+    else if(a==='replay'){ settle(-1); applySets(k); for(let j=0;j<=k;j++) if(E.passos[j].fn) E.passos[j].fn(s); overlay(k); const t=lastAte(k); if(t) s.runTo(t); } });
   settle(-1); }
 
 /* =====================================================================
@@ -1086,86 +1087,6 @@ SIMS.vec=(host)=>Sim(host,{alt:'Dois vetores arrastáveis e a resultante',h:w=>M
     g.text('arraste as bolinhas nas pontas',10,20,{c:COL.muted,size:12.5}); },
   reads:s=>{ const B=s.p.m==='s'?s.B:[-s.B[0],-s.B[1]], Rv=[s.A[0]+B[0],s.A[1]+B[1]], m=v=>nt(Math.hypot(v[0],v[1])), ang=v=>nt(Math.atan2(v[1],v[0])*180/Math.PI,3)+'°';
     return [['A = (Aₓ, A<sub>y</sub>)',`(${nt(s.A[0])}, ${nt(s.A[1])}) · módulo ${m(s.A)}`],['B',`(${nt(s.B[0])}, ${nt(s.B[1])}) · módulo ${m(s.B)}`],['R (componentes somadas)',`(${nt(Rv[0])}, ${nt(Rv[1])})`],['Módulo de R',m(Rv)],['Ângulo de R com o eixo x',ang(Rv)]]; }});
-
-/* trabalho de uma força inclinada */
-SIMS.work=(host)=>Sim(host,{alt:'Caixa puxada por uma corda inclinada; só a componente horizontal realiza trabalho',anim:true,h:260,
-  legend:[['force','força F'],['vel','Fₓ = F·cos θ (realiza trabalho)'],['muted','F_y (não realiza trabalho)']],
-  ctrls:[{k:'F',l:'Força F',min:0,max:50,step:1,v:20,u:'N'},{k:'th',l:'Ângulo da corda θ',min:0,max:90,step:5,v:30,u:'°'},{k:'d',l:'Distância d',min:1,max:10,step:1,v:5,u:'m'}],
-  init(s){ s.x=0; s.v=0; },
-  step(s,dt){ const m=2, a=s.p.F*Math.cos(s.p.th*Math.PI/180)/m; s.v+=a*dt; s.x=Math.min(s.p.d,s.x+s.v*dt); if(s.x>=s.p.d||a<=0) s.play(false); },
-  done:s=>s.x>=s.p.d,
-  draw(g,s){ const th=s.p.th*Math.PI/180, y=g.H-50, x0=40, k=(g.W-160)/10, bx=x0+s.x*k;
-    g.ground(y); g.line(x0,y+22,x0+s.p.d*k,y+22,COL.muted,1.5); g.line(x0,y+16,x0,y+28,COL.muted,1.5); g.line(x0+s.p.d*k,y+16,x0+s.p.d*k,y+28,COL.muted,1.5); g.text('d = '+s.p.d+' m',x0+s.p.d*k/2,y+40,{size:12,c:COL.muted,align:'center'});
-    g.rect(bx,y-44,60,44,COL.sunk,COL.ink,6); g.text('2 kg',bx+30,y-17,{size:12,align:'center',bold:true});
-    const ox=bx+60, oy=y-30, L=clamp(s.p.F*3.2,0,150); g.arrow(ox,oy,ox+L*Math.cos(th),oy-L*Math.sin(th),COL.force,'F',3);
-    g.arrow(ox,oy,ox+L*Math.cos(th),oy,COL.vel,'Fₓ',2.5); g.line(ox+L*Math.cos(th),oy,ox+L*Math.cos(th),oy-L*Math.sin(th),COL.muted,1.5,[4,4]);
-    const W=s.p.F*Math.cos(th)*s.x, Wm=Math.max(1,s.p.F*s.p.d); g.rect(g.W-40,30,18,y-60,COL.sunk,COL.line,4,1); const hh=(y-60)*clamp(W/Wm,0,1); g.rect(g.W-40,y-30-hh,18,hh,COL.energy,null,4); g.text('W',g.W-31,22,{size:12,align:'center',c:COL.muted}); },
-  reads:s=>{ const th=s.p.th*Math.PI/180, Fx=s.p.F*Math.cos(th), W=Fx*s.p.d, a=Fx/2, t=a>0?Math.sqrt(2*s.p.d/a):Infinity; return [['Fₓ = F·cos θ',nt(Fx)+' N'],['Trabalho W = F·d·cos θ',nt(W)+' J'],['Trabalho feito até agora',nt(Fx*s.x)+' J'],['Tempo gasto (sem atrito, 2 kg)',isFinite(t)?nt(t)+' s':'—'],['Potência média W/Δt',isFinite(t)?nt(W/t)+' W':'—']]; }});
-
-/* pista em U: energia cinética, potencial e térmica */
-SIMS.ramp=(host,cfg)=>Sim(host,{alt:'Skatista numa pista em U com barras de energia',anim:true,h:320,sub:8,
-  legend:[['vel','cinética'],['acc','potencial'],['force','térmica (dissipada)']],
-  ctrls:[{k:'h0',l:'Altura de partida',min:2,max:10,step:.5,v:8,u:'m'},{k:'m',l:'Massa',min:30,max:90,step:5,v:60,u:'kg'}].concat(cfg.fric?[{k:'mu',l:'Atrito',min:0,max:.3,step:.02,v:.06}]:[]),
-  init(s){ const L=10,Hm=10; s.L=L; s.Hm=Hm; s.x=-L*Math.sqrt(s.p.h0/Hm); s.v=0; s.E0=s.p.m*GRAV*s.p.h0; s.stopped=false; },
-  yx:(s,x)=>s.Hm*(x/s.L)**2,
-  step(s,dt){ if(s.stopped) return; const mu=s.p.mu||0, sl=2*s.Hm*s.x/s.L**2, ph=Math.atan(sl), sn=Math.sin(ph), cs=Math.cos(ph);
-    let a=-GRAV*sn; if(Math.abs(s.v)>1e-3) a-=Math.sign(s.v)*mu*GRAV*cs; else if(Math.abs(sn)<=mu*cs){ s.v=0; s.stopped=true; s.play(false); return; } else a-=Math.sign(-sn)*mu*GRAV*cs;
-    const v0=s.v; s.v+=a*dt; if(mu>0&&v0!==0&&Math.sign(s.v)!==Math.sign(v0)) s.v=0; s.x=clamp(s.x+s.v*cs*dt,-s.L,s.L); if(s.t>40) s.play(false); },
-  draw(g,s){ const L=s.L, W=g.W*.68, x0=18, base=g.H-24, k=Math.min(W/(2*L),(base-30)/s.Hm), X=x=>x0+(x+L)*k, Y=y=>base-y*k;
-    const pts=[]; for(let x=-L;x<=L+1e-9;x+=L/40) pts.push([X(x),Y(s.def.yx(s,x))]); g.poly(pts,COL.ink,3);
-    g.line(X(-L)-4,Y(s.p.h0),X(-L)+60,Y(s.p.h0),COL.muted,1,[4,4]); g.text('h₀',X(-L)+64,Y(s.p.h0)+4,{size:12,c:COL.muted});
-    const y=s.def.yx(s,s.x), sl=2*s.Hm*s.x/L**2, nx=-sl/Math.hypot(1,sl), ny=1/Math.hypot(1,sl); g.circle(X(s.x)+nx*9,Y(y)-ny*9,9,COL.force);
-    const Ep=s.p.m*GRAV*y, Ec=.5*s.p.m*s.v*s.v, Et=Math.max(0,s.E0-Ep-Ec), bx=g.W*.74, bw=(g.W-bx-16)/4-6, bh=g.H-70, E0=s.E0;
-    [[Ec,COL.vel,'Ec'],[Ep,COL.acc,'Ep'],[Et,COL.force,'Térm.'],[E0,COL.ink,'Total']].forEach(([v,c,l],i)=>{ const x=bx+i*(bw+6), h=bh*v/E0; g.rect(x,30,bw,bh,COL.sunk,null,4); g.rect(x,30+bh-h,bw,h,c,null,4); g.text(l,x+bw/2,g.H-22,{size:11,align:'center',c:COL.muted}); }); },
-  reads:s=>{ const y=s.def.yx(s,s.x), Ep=s.p.m*GRAV*y, Ec=.5*s.p.m*s.v*s.v; return [['Altura',nt(y)+' m'],['Velocidade',nt(Math.abs(s.v))+' m/s'],['Energia cinética ½mv²',nt(Ec)+' J'],['Energia potencial mgh',nt(Ep)+' J'],['Energia mecânica Ec + Ep',nt(Ec+Ep)+' J'].concat([])].concat(cfg.fric?[['Energia virou calor',nt(Math.max(0,s.E0-Ec-Ep))+' J']]:[]); }});
-
-/* impulso: a área do gráfico F×t muda a quantidade de movimento */
-SIMS.impulse=(host)=>Sim(host,{alt:'Chute numa bola: gráfico da força no tempo e a velocidade final',anim:true,h:300,
-  legend:[['force','força durante o contato'],['energy','área = impulso']],
-  ctrls:[{k:'F',l:'Força máxima',min:100,max:2000,step:50,v:800,u:'N'},{k:'dt',l:'Tempo de contato',min:.005,max:.05,step:.005,v:.02,u:'s',f:v=>nsig(v*1000,3)+' ms'},{k:'m',l:'Massa da bola',min:.2,max:1,step:.05,v:.45,u:'kg'}],
-  init(s){ s.x=0; s.ph=0; },
-  step(s,dt){ s.ph+=dt; if(s.ph>1) s.x+=s.def.vf(s)*dt*.12; if(s.x>60) s.play(false); },
-  vf:s=>.5*s.p.F*s.p.dt/s.p.m, done:s=>s.x>60,
-  draw(g,s){ const w=Math.min(g.W*.52,380), x=46, y=24, h=g.H-80, I=.5*s.p.F*s.p.dt, frac=clamp(s.ph,0,1);
-    const tri=[[0,0],[s.p.dt/2,s.p.F],[s.p.dt,0]].map(p=>p), pts=[]; for(let i=0;i<=40*frac;i++){ const t=i/40*s.p.dt; pts.push([t*1000,t<=s.p.dt/2?2*s.p.F*t/s.p.dt:2*s.p.F*(1-t/s.p.dt)]); }
-    g.plot(x,y,w,h,{xr:[0,50],yr:[0,2000],series:[{pts,c:COL.force,fill:COL.energy+'55',dot:frac<1}],xl:'t (ms)',yl:'força (N)'});
-    const bx=x+w+30+Math.min(s.x*4,g.W-x-w-60), by=g.H-60; g.ground(by+14); g.circle(bx,by,14,COL.card,COL.ink,2.5);
-    if(frac>=1) g.arrow(bx+16,by-26,bx+16+clamp(s.def.vf(s)*2,10,90),by-26,COL.vel,'v',3);
-    g.text('I = área = '+nt(I)+' N·s',x+w/2,y+20,{size:14,bold:true,align:'center'}); },
-  reads:s=>{ const I=.5*s.p.F*s.p.dt; return [['Impulso I = área do gráfico',nt(I)+' N·s'],['Força média (metade da máxima)',nt(s.p.F/2)+' N'],['Quantidade de movimento final Q = I',nt(I)+' kg·m/s'],['Velocidade final v = Q/m',nt(I/s.p.m)+' m/s'],['Em km/h',nt(I/s.p.m*3.6)+' km/h']]; }});
-
-/* colisões em uma dimensão */
-SIMS.coll=(host)=>Sim(host,{alt:'Dois carrinhos que colidem, com barras de quantidade de movimento e energia',anim:true,h:300,
-  legend:[['vel','carrinho 1'],['force','carrinho 2'],['acc','total']],
-  ctrls:[{k:'m1',l:'Massa 1',min:1,max:5,step:.5,v:2,u:'kg'},{k:'v1',l:'Velocidade 1',min:-4,max:8,step:1,v:5,u:'m/s'},{k:'m2',l:'Massa 2',min:1,max:5,step:.5,v:2,u:'kg'},{k:'v2',l:'Velocidade 2',min:-6,max:4,step:1,v:0,u:'m/s'},{k:'e',l:'Coeficiente de restituição e',min:0,max:1,step:.1,v:1,f:v=>nsig(v,2)+(v===1?' (elástica)':v===0?' (grudam)':'')}],
-  init(s){ s.x1=-5; s.x2=1.5; s.u1=s.p.v1; s.u2=s.p.v2; s.hit=false; },
-  step(s,dt){ s.x1+=s.u1*dt; s.x2+=s.u2*dt; const w1=.5+s.p.m1*.12, w2=.5+s.p.m2*.12;
-    if(!s.hit&&s.x1+w1/2>=s.x2-w2/2&&s.u1>s.u2){ s.hit=true; const {m1,m2,e}=s.p, Q=m1*s.u1+m2*s.u2, d=s.u1-s.u2; s.u1=(Q-m2*e*d)/(m1+m2); s.u2=(Q+m1*e*d)/(m1+m2); }
-    if(s.t>6||Math.abs(s.x1)>14&&Math.abs(s.x2)>14) s.play(false); },
-  done:s=>s.t>6,
-  draw(g,s){ const y=90, k=g.W/24, X=x=>g.W/2+x*k, w1=(.5+s.p.m1*.12)*k, w2=(.5+s.p.m2*.12)*k; g.ground(y+16);
-    g.rect(X(s.x1)-w1/2,y-26,w1,30,COL.vel,null,6); g.text(nt(s.p.m1)+' kg',X(s.x1),y-6,{size:12,bold:true,align:'center',c:COL.card});
-    g.rect(X(s.x2)-w2/2,y-26,w2,30,COL.force,null,6); g.text(nt(s.p.m2)+' kg',X(s.x2),y-6,{size:12,bold:true,align:'center',c:COL.card});
-    [[s.x1,s.u1,COL.vel],[s.x2,s.u2,COL.force]].forEach(([x,u,c])=>{ if(Math.abs(u)>.05) g.arrow(X(x),y-36,X(x)+u*9,y-36,c,null,2.5); });
-    const Q0=[s.p.m1*s.p.v1,s.p.m2*s.p.v2], Q=[s.p.m1*s.u1,s.p.m2*s.u2], E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2, top=150, mid=g.W/2, qs=Math.max(1,Math.abs(Q0[0])+Math.abs(Q0[1]),Math.abs(Q[0])+Math.abs(Q[1]));
-    g.text('quantidade de movimento Q = m·v',16,top,{size:12.5,c:COL.muted}); g.line(mid*.5,top+10,mid*.5,top+86,COL.line,1);
-    [[Q[0],COL.vel],[Q[1],COL.force],[Q[0]+Q[1],COL.acc]].forEach(([q,c],i)=>{ const yy=top+18+i*24, ww=q/qs*mid*.45; g.rect(Math.min(mid*.5,mid*.5+ww),yy,Math.abs(ww),16,c,null,3); });
-    g.text('energia cinética',mid+16,top,{size:12.5,c:COL.muted}); const es=Math.max(E0,1); g.rect(mid+16,top+18,(g.W-mid-40)*E0/es,16,COL.line,null,3); g.rect(mid+16,top+42,(g.W-mid-40)*E/es,16,COL.energy,null,3); g.text('antes',mid+20,top+30,{size:11}); g.text('agora',mid+20,top+54,{size:11}); },
-  reads:s=>{ const Q0=s.p.m1*s.p.v1+s.p.m2*s.p.v2, Q=s.p.m1*s.u1+s.p.m2*s.u2, E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2;
-    return [['Q total antes',nt(Q0)+' kg·m/s'],['Q total agora',nt(Q)+' kg·m/s'],['Energia cinética antes → agora',nt(E0)+' → '+nt(E)+' J'],['Velocidades agora',nt(s.u1)+' e '+nt(s.u2)+' m/s'],['Colisão',s.p.v1<=s.p.v2?'não acontece (o 1 não alcança o 2)':s.p.e===1?'elástica: conserva a energia':s.p.e===0?'perfeitamente inelástica: saem juntos':'parcialmente elástica']]; }});
-
-/* órbitas: leis de Kepler */
-SIMS.orbit=(host)=>Sim(host,{alt:'Planeta orbitando uma estrela; áreas varridas em tempos iguais',anim:true,autoplay:false,h:340,sub:20,speed:1.6,
-  legend:[['energy','estrela'],['vel','planeta'],['acc','áreas varridas em intervalos iguais de tempo']],
-  ctrls:[{k:'v',l:'Velocidade inicial (1 = órbita circular)',min:.6,max:1.5,step:.05,v:.8,f:v=>nsig(v,3)+' × v<sub>circ</sub>'.replace(/<[^>]+>/g,'')},{k:'ar',l:'Mostrar áreas',opts:[[1,'sim'],[0,'não']],v:1,live:true}],
-  init(s){ s.r=[1,0]; s.u=[0,s.p.v]; s.tr=[[1,0]]; s.marks=[[1,0]]; s.acc=0; const v=s.p.v; s.esc=v*v>=2; if(!s.esc){ s.a=1/(2-v*v); s.other=2*s.a-1; s.Tp=2*Math.PI*s.a**1.5; s.dtM=s.Tp/12; } else { s.dtM=.6; } },
-  step(s,dt){ const r=Math.hypot(s.r[0],s.r[1]), a=[-s.r[0]/r**3,-s.r[1]/r**3]; s.u[0]+=a[0]*dt; s.u[1]+=a[1]*dt; s.r[0]+=s.u[0]*dt; s.r[1]+=s.u[1]*dt;
-    s.tr.push(s.r.slice()); if(s.tr.length>4000) s.tr.shift(); s.acc+=dt; if(s.acc>=s.dtM){ s.acc-=s.dtM; s.marks.push(s.r.slice()); if(s.marks.length>13) s.marks.shift(); } if(s.esc&&r>8) s.play(false); },
-  draw(g,s){ const xmin=s.esc?-2:-s.other, xmax=s.esc?6:1, b=s.esc?3:s.a*Math.sqrt(1-((s.a-1)/s.a)**2), cx0=(xmin+xmax)/2, k=Math.min((g.W-40)/(xmax-xmin),(g.H-40)/(2*Math.max(b,.3))), X=x=>g.W/2+(x-cx0)*k, Y=y=>g.H/2-y*k;
-    if(s.p.ar){ for(let i=0;i+1<s.marks.length;i++){ const a=s.marks[i],bb=s.marks[i+1]; g.poly([[X(0),Y(0)],[X(a[0]),Y(a[1])],[X(bb[0]),Y(bb[1])]],null,0,i%2?COL.acc+'40':COL.acc+'22',true); } }
-    g.poly(s.tr.map(p=>[X(p[0]),Y(p[1])]),COL.line,1.5); g.circle(X(0),Y(0),12,COL.energy); g.circle(X(s.r[0]),Y(s.r[1]),6,COL.vel);
-    const sp=Math.hypot(s.u[0],s.u[1]); g.arrow(X(s.r[0]),Y(s.r[1]),X(s.r[0])+s.u[0]/sp*clamp(sp*30,12,60),Y(s.r[1])-s.u[1]/sp*clamp(sp*30,12,60),COL.vel,null,2.5); },
-  reads:s=>{ const r=Math.hypot(s.r[0],s.r[1]), sp=Math.hypot(s.u[0],s.u[1]); return [['Distância à estrela',nt(r)+' (raio inicial = 1)'],['Velocidade',nt(sp)+' × v<sub>circ</sub>'],['Órbita',s.esc?'aberta: o planeta escapa':Math.abs(s.p.v-1)<.01?'circular':'elíptica (a estrela fica num foco)'],['Mais perto → mais rápido',s.esc?'—':`no periélio: ${nt(Math.max(s.p.v,1/s.p.v*(2-s.p.v*s.p.v>0?1:1)))}`]].slice(0,3).concat(s.esc?[]:[['Período (cresce com a órbita)',nt(s.Tp/(2*Math.PI))+' × o da órbita circular']]); }});
 
 /* =====================================================================
    Laboratórios de mecânica com cenário (substituem as versões simples)
@@ -1349,52 +1270,162 @@ SIMS.incl=(host)=>Sim(host,{alt:'Caixa numa rampa com o peso decomposto em duas 
   reads:s=>{ const f=s.def.phys(s); return [['P·sen θ (puxa ladeira abaixo)',nt(f.Px)+' N'],['P·cos θ = N',nt(f.Py)+' N'],['Atrito máximo μ·N',nt(f.fmax)+' N'],['Aceleração',nt(f.a)+' m/s²'],['Ângulo em que começa a escorregar',nt(Math.atan(s.p.mu)*180/Math.PI)+'°']]; }});
 
 /* =====================================================================
-   Laboratórios de estática, fluidos, termologia e ondas
+   Laboratórios com cenário: energia, momento, gravitação, estática e fluidos
    ===================================================================== */
 
-/* gangorra: torque (momento) */
-SIMS.lever=(host)=>Sim(host,{alt:'Gangorra com duas massas em distâncias ajustáveis',h:280,
+/* trabalho: pessoa puxa uma caixa com uma corda inclinada */
+SIMS.work=(host,cfg={})=>Sim(host,{alt:'Pessoa puxando uma caixa com uma corda inclinada; só a parte horizontal da força realiza trabalho',anim:true,h:290,
+  legend:[['force','força F (na corda)'],['vel','Fₓ = F·cos θ (realiza trabalho)'],['muted','F_y (não realiza trabalho)']],
+  ctrls:[{k:'F',l:'Força F',min:0,max:50,step:1,v:cfg.F??20,u:'N'},{k:'th',l:'Ângulo da corda θ',min:0,max:90,step:5,v:cfg.th??30,u:'°'},{k:'d',l:'Distância d',min:1,max:10,step:1,v:cfg.d??5,u:'m'}],
+  init(s){ s.x=0; s.v=0; },
+  step(s,dt){ const m=2, a=s.p.F*Math.cos(s.p.th*Math.PI/180)/m; s.v+=a*dt; s.x=Math.min(s.p.d,s.x+s.v*dt); if(s.x>=s.p.d||a<=0) s.play(false); },
+  done:s=>s.x>=s.p.d,
+  draw(g,s){ const th=s.p.th*Math.PI/180, y=g.H-56, x0=36, k=(g.W-250)/10, bw=56, bh=44, bx=x0+s.x*k;
+    SK.sky(g,y); SK.hills(g,y); SK.grass(g,y,g.H-y); g.rect(0,y,g.W,10,isDark()?'#5b4a36':'#c9a978');
+    SK.dim(g,x0,y+26,x0+s.p.d*k,y+26,'d = '+s.p.d+' m',COL.ink); g.rect(x0+s.p.d*k+bw-2,y-60,3,60,COL.ink); g.poly([[x0+s.p.d*k+bw+1,y-60],[x0+s.p.d*k+bw+22,y-53],[x0+s.p.d*k+bw+1,y-46]],null,0,COL.force,true);
+    SK.crate(g,bx,y-bh,bw,bh,'2 kg');
+    const ox=bx+bw, oy=y-bh*.6, L=40+clamp(s.p.F*2.6,0,130), hx=ox+L*Math.cos(th), hy=oy-L*Math.sin(th);
+    g.line(ox,oy,hx,hy,isDark()?'#e8d9b0':'#8a6a2f',2.5); const arm=[Math.cos(th),-Math.sin(th)]; g.line(hx,hy,hx+arm[0]*34,hy+arm[1]*34,isDark()?'#d0d6df':'#2b3340',9); g.circle(hx,hy,8,'#e0a87a',isDark()?'#d0d6df':'#2b3340',2);
+    const A=clamp(s.p.F*2.2,0,110); if(s.p.F>0){ g.arrow(ox,oy,ox+A*Math.cos(th),oy-A*Math.sin(th),COL.force,'F = '+nt(s.p.F)+' N',3); g.arrow(ox,oy,ox+A*Math.cos(th),oy,COL.vel,'Fₓ',2.5,[0,14]); g.line(ox+A*Math.cos(th),oy,ox+A*Math.cos(th),oy-A*Math.sin(th),COL.muted,1.5,[4,4]); }
+    const W=s.p.F*Math.cos(th)*s.x, Wm=Math.max(1,s.p.F*s.p.d), tx=g.W-48, th2=y-70; g.rect(tx,30,26,th2,COL.card,COL.line,8,1.5); const hh=th2*clamp(W/Wm,0,1); g.rect(tx,30+th2-hh,26,hh,COL.energy,null,8); g.tag('W = '+nt(W)+' J',tx+13,18,COL.energy,'center',11.5); },
+  reads:s=>{ const th=s.p.th*Math.PI/180, Fx=s.p.F*Math.cos(th), W=Fx*s.p.d, a=Fx/2, t=a>0?Math.sqrt(2*s.p.d/a):Infinity; return [['Fₓ = F·cos θ',nt(Fx)+' N'],['Trabalho W = F·d·cos θ',nt(W)+' J'],['Trabalho feito até agora',nt(Fx*s.x)+' J'],['Tempo gasto (sem atrito, 2 kg)',isFinite(t)?nt(t)+' s':'—'],['Potência média W/Δt',isFinite(t)?nt(W/t)+' W':'—']]; }});
+
+/* pista de skate em U: energia cinética, potencial e térmica */
+SIMS.ramp=(host,cfg)=>Sim(host,{alt:'Skatista numa pista em U com barras de energia cinética, potencial e térmica',anim:true,h:340,sub:8,
+  legend:[['vel','cinética'],['acc','potencial'],['force','térmica (dissipada)']],
+  ctrls:[{k:'h0',l:'Altura de partida',min:2,max:10,step:.5,v:cfg.h0??8,u:'m'},{k:'m',l:'Massa',min:30,max:90,step:5,v:60,u:'kg'}].concat(cfg.fric?[{k:'mu',l:'Atrito',min:0,max:.3,step:.02,v:cfg.mu??.06}]:[]),
+  init(s){ const L=10,Hm=10; s.L=L; s.Hm=Hm; s.x=-L*Math.sqrt(s.p.h0/Hm); s.v=0; s.E0=s.p.m*GRAV*s.p.h0; s.stopped=false; s.peak=s.p.h0; },
+  yx:(s,x)=>s.Hm*(x/s.L)**2,
+  step(s,dt){ if(s.stopped) return; const mu=s.p.mu||0, sl=2*s.Hm*s.x/s.L**2, ph=Math.atan(sl), sn=Math.sin(ph), cs=Math.cos(ph);
+    let a=-GRAV*sn; if(Math.abs(s.v)>1e-3) a-=Math.sign(s.v)*mu*GRAV*cs; else if(Math.abs(sn)<=mu*cs){ s.v=0; s.stopped=true; s.play(false); return; } else a-=Math.sign(-sn)*mu*GRAV*cs;
+    const v0=s.v; s.v+=a*dt; if(mu>0&&v0!==0&&Math.sign(s.v)!==Math.sign(v0)){ s.v=0; s.peak=s.def.yx(s,s.x); } s.x=clamp(s.x+s.v*cs*dt,-s.L,s.L); if(s.t>40) s.play(false); },
+  draw(g,s){ const L=s.L, W=g.W*.66, x0=18, base=g.H-26, k=Math.min(W/(2*L),(base-34)/s.Hm), X=x=>x0+(x+L)*k, Y=y=>base-y*k;
+    SK.sky(g,base); SK.grass(g,base,g.H-base);
+    const pts=[]; for(let x=-L;x<=L+1e-9;x+=L/50) pts.push([X(x),Y(s.def.yx(s,x))]);
+    const conc=g.ctx.createLinearGradient(0,Y(s.Hm),0,base); conc.addColorStop(0,isDark()?'#5c6370':'#c8ccd2'); conc.addColorStop(1,isDark()?'#3f454f':'#a7adb6');
+    g.poly(pts.concat([[X(L),base],[X(-L),base]]),null,0,conc,true); g.poly(pts,isDark()?'#d9dde3':'#59606b',4);
+    g.line(X(-L)-4,Y(s.p.h0),X(-L)+64,Y(s.p.h0),COL.energy,1.5,[5,4]); g.tag('h₀ = '+nt(s.p.h0)+' m',X(-L)+70,Y(s.p.h0),COL.energy,'left',11.5);
+    const y=s.def.yx(s,s.x), sl=2*s.Hm*s.x/L**2, an=Math.atan2(-sl,1), nx=-sl/Math.hypot(1,sl), ny=1/Math.hypot(1,sl), bx=X(s.x)+nx*5, by=Y(y)-ny*5;
+    const c=g.ctx; c.save(); c.translate(bx,by); c.rotate(an); g.rect(-16,-3,32,5,COL.force,null,3); g.circle(-10,4,3,COL.ink); g.circle(10,4,3,COL.ink); c.restore();
+    c.save(); c.translate(bx,by); c.rotate(an*.6); SK.person(g,0,-4,46,isDark()?'#d0d6df':'#2b3340'); c.restore();
+    if(Math.abs(s.v)>.2) g.arrow(bx,by-56,bx+Math.sign(s.v)*clamp(Math.abs(s.v)*5,14,70),by-56,COL.vel,'v = '+nt(Math.abs(s.v))+' m/s',2.5);
+    const Ep=s.p.m*GRAV*y, Ec=.5*s.p.m*s.v*s.v, Et=Math.max(0,s.E0-Ep-Ec), bxx=g.W*.71, bw=(g.W-bxx-16)/4-8, bh=g.H-84, E0=s.E0;
+    [[Ec,COL.vel,'Ec'],[Ep,COL.acc,'Ep'],[Et,COL.force,'calor'],[E0,COL.ink,'total']].forEach(([v,col,l],i)=>{ const x=bxx+i*(bw+8), h=bh*clamp(v/E0,0,1); g.rect(x,34,bw,bh,COL.card,COL.line,6,1); g.rect(x,34+bh-h,bw,h,col,null,6); g.text(l,x+bw/2,g.H-30,{size:11,align:'center',c:COL.ink,bold:true}); g.text((v/1000).toFixed(1).replace('.',',')+' kJ',x+bw/2,26,{size:10,align:'center',c:COL.muted,mono:true}); }); },
+  reads:s=>{ const y=s.def.yx(s,s.x), Ep=s.p.m*GRAV*y, Ec=.5*s.p.m*s.v*s.v; return [['Altura',nt(y)+' m'],['Velocidade',nt(Math.abs(s.v))+' m/s'],['Energia cinética ½mv²',nt(Ec)+' J'],['Energia potencial mgh',nt(Ep)+' J'],['Energia mecânica Ec + Ep',nt(Ec+Ep)+' J']].concat(cfg.fric?[['Energia virou calor',nt(Math.max(0,s.E0-Ec-Ep))+' J']]:[]); }});
+
+/* impulso: chute; a área do gráfico F×t muda a quantidade de movimento */
+SIMS.impulse=(host)=>Sim(host,{alt:'Chute numa bola: gráfico da força durante o contato e a bola saindo do campo',anim:true,h:310,
+  legend:[['force','força durante o contato'],['energy','área = impulso']],
+  ctrls:[{k:'F',l:'Força máxima',min:100,max:2000,step:50,v:800,u:'N'},{k:'dt',l:'Tempo de contato',min:.005,max:.05,step:.005,v:.02,u:'s',f:v=>nsig(v*1000,3)+' ms'},{k:'m',l:'Massa da bola',min:.2,max:1,step:.05,v:.45,u:'kg'}],
+  init(s){ s.x=0; s.ph=0; },
+  step(s,dt){ s.ph+=dt; if(s.ph>1) s.x+=s.def.vf(s)*dt*.12; if(s.x>60) s.play(false); },
+  vf:s=>.5*s.p.F*s.p.dt/s.p.m, done:s=>s.x>60,
+  draw(g,s){ const narrow=g.W<560, w=narrow?g.W-70:Math.min(g.W*.48,380), x=50, y=24, h=narrow?120:g.H-80, I=.5*s.p.F*s.p.dt, frac=clamp(s.ph,0,1), base=g.H-26;
+    SK.sky(g,base); SK.grass(g,base,g.H-base);
+    const gx0=narrow?20:x+w+30, gx1=g.W-20; g.rect(gx1-8,base-70,6,70,'#f4f6f8'); g.rect(gx1-60,base-70,58,5,'#f4f6f8');
+    const pts=[]; for(let i=0;i<=40*frac;i++){ const t=i/40*s.p.dt; pts.push([t*1000,t<=s.p.dt/2?2*s.p.F*t/s.p.dt:2*s.p.F*(1-t/s.p.dt)]); }
+    g.plot(x,y,w,h,{xr:[0,50],yr:[0,2000],series:[{pts,c:COL.force,fill:alpha(COL.energy,.35),dot:frac<1}],xl:'t (ms)',yl:'força (N)'});
+    g.tag('I = área = '+nt(I)+' N·s',x+w/2,y+18,COL.ink,'center',13);
+    const bx=gx0+30+Math.min(s.x*4,gx1-gx0-90), by=base-11; SK.person(g,gx0+6,base,54,isDark()?'#d0d6df':'#2b3340',frac<1?'push':'stand'); SK.shadow(g,bx,base,20); SK.ball(g,bx,by,11,'#f4f6f8',s.x*.8);
+    if(frac>=1) g.arrow(bx+14,by-24,bx+14+clamp(s.def.vf(s)*2,10,90),by-24,COL.vel,'v = '+nt(s.def.vf(s))+' m/s',3); },
+  reads:s=>{ const I=.5*s.p.F*s.p.dt; return [['Impulso I = área do gráfico',nt(I)+' N·s'],['Força média (metade da máxima)',nt(s.p.F/2)+' N'],['Quantidade de movimento final Q = I',nt(I)+' kg·m/s'],['Velocidade final v = Q/m',nt(I/s.p.m)+' m/s'],['Em km/h',nt(I/s.p.m*3.6)+' km/h']]; }});
+
+/* colisões em uma dimensão: carrinhos num trilho */
+function cart(g,x,y,w,col,label){ const h=26; SK.shadow(g,x,y+2,w); g.rect(x-w/2,y-h-6,w,h,col,mix(col,'#000',.35),7,1.5); g.rect(x-w/2+6,y-h,w-12,8,alpha('#ffffff',.25),null,3); g.circle(x-w*.3,y-4,5,'#1c1f24'); g.circle(x+w*.3,y-4,5,'#1c1f24'); g.circle(x-w*.3,y-4,2,'#9aa3ad'); g.circle(x+w*.3,y-4,2,'#9aa3ad'); g.text(label,x,y-h/2-2,{size:12,bold:true,align:'center',c:'#fff'}); }
+SIMS.coll=(host,cfg={})=>Sim(host,{alt:'Dois carrinhos num trilho que colidem, com barras de quantidade de movimento e de energia',anim:true,h:330,
+  legend:[['vel','carrinho 1'],['force','carrinho 2'],['acc','total']],
+  ctrls:[{k:'m1',l:'Massa 1',min:1,max:5,step:.5,v:cfg.m1??2,u:'kg'},{k:'v1',l:'Velocidade 1',min:-4,max:8,step:1,v:cfg.v1??5,u:'m/s'},{k:'m2',l:'Massa 2',min:1,max:5,step:.5,v:cfg.m2??2,u:'kg'},{k:'v2',l:'Velocidade 2',min:-6,max:4,step:1,v:cfg.v2??0,u:'m/s'},{k:'e',l:'Coeficiente de restituição e',min:0,max:1,step:.1,v:cfg.e??1,f:v=>nsig(v,2)+(v===1?' (elástica)':v===0?' (grudam)':'')}],
+  init(s){ s.x1=-5; s.x2=1.5; s.u1=s.p.v1; s.u2=s.p.v2; s.hit=false; s.hitT=-9; },
+  step(s,dt){ s.x1+=s.u1*dt; s.x2+=s.u2*dt; const w1=.5+s.p.m1*.12, w2=.5+s.p.m2*.12;
+    if(!s.hit&&s.x1+w1/2>=s.x2-w2/2&&s.u1>s.u2){ s.hit=true; s.hitT=s.t; s.hx=(s.x1+w1/2); const {m1,m2,e}=s.p, Q=m1*s.u1+m2*s.u2, d=s.u1-s.u2; s.u1=(Q-m2*e*d)/(m1+m2); s.u2=(Q+m1*e*d)/(m1+m2); }
+    if(s.t>6||Math.abs(s.x1)>14&&Math.abs(s.x2)>14) s.play(false); },
+  done:s=>s.t>6,
+  draw(g,s){ const y=118, k=g.W/24, X=x=>g.W/2+x*k, w1=(.5+s.p.m1*.12)*k, w2=(.5+s.p.m2*.12)*k;
+    g.rect(0,0,g.W,y+30,isDark()?mix(COL.paper,'#2a3550',.4):mix('#e9eef5',COL.paper,.2)); g.rect(0,y,g.W,8,isDark()?'#8f99a8':'#6b7686',null,2); g.rect(0,y+8,g.W,22,isDark()?'#2a2f37':'#d5d9df');
+    for(let x=-12;x<=12;x+=2){ g.line(X(x),y+8,X(x),y+14,COL.muted,1); }
+    const flash=s.t-s.hitT; if(flash>=0&&flash<.35){ const r=10+flash*90; g.ctx.save(); g.ctx.globalAlpha=1-flash/.35; g.circle(X(s.hx),y-18,r,null,COL.energy,4); g.ctx.restore(); }
+    cart(g,X(s.x1),y,Math.max(36,w1),COL.vel,nt(s.p.m1)+' kg'); cart(g,X(s.x2),y,Math.max(36,w2),COL.force,nt(s.p.m2)+' kg');
+    [[s.x1,s.u1,COL.vel],[s.x2,s.u2,COL.force]].forEach(([x,u,c])=>{ if(Math.abs(u)>.05) g.arrow(X(x),y-46,X(x)+u*9,y-46,c,nt(u)+' m/s',2.5); });
+    const Q=[s.p.m1*s.u1,s.p.m2*s.u2], Q0=[s.p.m1*s.p.v1,s.p.m2*s.p.v2], E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2, top=y+50, mid=g.W/2, qs=Math.max(1,Math.abs(Q0[0])+Math.abs(Q0[1]),Math.abs(Q[0])+Math.abs(Q[1]));
+    g.text('quantidade de movimento Q = m·v',16,top,{size:12.5,c:COL.ink,bold:true}); const zx=mid*.5; g.line(zx,top+8,zx,top+84,COL.muted,1);
+    [[Q[0],COL.vel,'carrinho 1'],[Q[1],COL.force,'carrinho 2'],[Q[0]+Q[1],COL.acc,'total']].forEach(([q,c,l],i)=>{ const yy=top+14+i*24, ww=q/qs*mid*.42; g.rect(Math.min(zx,zx+ww),yy,Math.abs(ww),16,c,null,4); g.text(nt(q)+' kg·m/s',zx+(ww>=0?Math.max(ww,0)+6:6),yy+12,{size:10.5,mono:true,c:COL.ink}); });
+    g.text('energia cinética',mid+16,top,{size:12.5,c:COL.ink,bold:true}); const es=Math.max(E0,1), bw=g.W-mid-40;
+    g.rect(mid+16,top+14,bw*E0/es,16,COL.line,null,4); g.rect(mid+16,top+38,bw*E/es,16,COL.energy,null,4); g.text('antes: '+nt(E0)+' J',mid+20,top+26,{size:10.5,c:COL.ink}); g.text('agora: '+nt(E)+' J',mid+20,top+50,{size:10.5,c:COL.ink}); },
+  reads:s=>{ const Q0=s.p.m1*s.p.v1+s.p.m2*s.p.v2, Q=s.p.m1*s.u1+s.p.m2*s.u2, E0=.5*s.p.m1*s.p.v1**2+.5*s.p.m2*s.p.v2**2, E=.5*s.p.m1*s.u1**2+.5*s.p.m2*s.u2**2;
+    return [['Q total antes',nt(Q0)+' kg·m/s'],['Q total agora',nt(Q)+' kg·m/s'],['Energia cinética antes → agora',nt(E0)+' → '+nt(E)+' J'],['Velocidades agora',nt(s.u1)+' e '+nt(s.u2)+' m/s'],['Colisão',s.p.v1<=s.p.v2?'não acontece (o 1 não alcança o 2)':s.p.e===1?'elástica: conserva a energia':s.p.e===0?'perfeitamente inelástica: saem juntos':'parcialmente elástica']]; }});
+
+/* órbitas no espaço: leis de Kepler */
+SIMS.orbit=(host,cfg={})=>Sim(host,{alt:'Planeta orbitando uma estrela no espaço; áreas varridas em tempos iguais',anim:true,autoplay:false,h:360,sub:20,speed:1.6,
+  legend:[['energy','estrela'],['vel','planeta'],['acc','áreas varridas em intervalos iguais de tempo']],
+  ctrls:[{k:'v',l:'Velocidade inicial (1 = órbita circular)',min:.6,max:1.5,step:.05,v:cfg.v??.8,f:v=>nsig(v,3)+' × v circular'},{k:'ar',l:'Mostrar áreas',opts:[[1,'sim'],[0,'não']],v:1,live:true}],
+  init(s){ s.r=[1,0]; s.u=[0,s.p.v]; s.tr=[[1,0]]; s.marks=[[1,0]]; s.acc=0; const v=s.p.v; s.esc=v*v>=2; if(!s.esc){ s.a=1/(2-v*v); s.other=2*s.a-1; s.Tp=2*Math.PI*s.a**1.5; s.dtM=s.Tp/12; } else { s.dtM=.6; } },
+  step(s,dt){ const r=Math.hypot(s.r[0],s.r[1]), a=[-s.r[0]/r**3,-s.r[1]/r**3]; s.u[0]+=a[0]*dt; s.u[1]+=a[1]*dt; s.r[0]+=s.u[0]*dt; s.r[1]+=s.u[1]*dt;
+    s.tr.push(s.r.slice()); if(s.tr.length>4000) s.tr.shift(); s.acc+=dt; if(s.acc>=s.dtM){ s.acc-=s.dtM; s.marks.push(s.r.slice()); if(s.marks.length>13) s.marks.shift(); } if(s.esc&&r>8) s.play(false); },
+  draw(g,s){ const c=g.ctx, bg=c.createRadialGradient(g.W/2,g.H/2,10,g.W/2,g.H/2,g.W*.7); bg.addColorStop(0,'#1a2140'); bg.addColorStop(1,'#070a16'); c.fillStyle=bg; c.fillRect(0,0,g.W,g.H);
+    for(let i=0;i<70;i++){ const x=(i*157.3)%g.W, y=(i*91.7)%g.H; c.fillStyle=`rgba(255,255,255,${.25+.5*((i*7)%10)/10})`; c.fillRect(x,y,i%9?1.2:2,i%9?1.2:2); }
+    const xmin=s.esc?-2:-s.other, xmax=s.esc?6:1, b=s.esc?3:s.a*Math.sqrt(1-((s.a-1)/s.a)**2), cx0=(xmin+xmax)/2, k=Math.min((g.W-40)/(xmax-xmin),(g.H-40)/(2*Math.max(b,.3))), X=x=>g.W/2+(x-cx0)*k, Y=y=>g.H/2-y*k;
+    if(s.p.ar){ for(let i=0;i+1<s.marks.length;i++){ const a=s.marks[i],bb=s.marks[i+1]; g.poly([[X(0),Y(0)],[X(a[0]),Y(a[1])],[X(bb[0]),Y(bb[1])]],null,0,i%2?'rgba(183,148,255,.38)':'rgba(183,148,255,.2)',true); } }
+    g.poly(s.tr.map(p=>[X(p[0]),Y(p[1])]),'rgba(255,255,255,.35)',1.5);
+    const glow=c.createRadialGradient(X(0),Y(0),2,X(0),Y(0),46); glow.addColorStop(0,'rgba(255,214,102,1)'); glow.addColorStop(.3,'rgba(255,170,40,.55)'); glow.addColorStop(1,'rgba(255,150,0,0)'); c.fillStyle=glow; c.beginPath(); c.arc(X(0),Y(0),46,0,7); c.fill(); SK.ball(g,X(0),Y(0),13,'#ffc94a');
+    SK.ball(g,X(s.r[0]),Y(s.r[1]),7.5,'#4f9cff');
+    const sp=Math.hypot(s.u[0],s.u[1]), L=clamp(sp*30,12,60); g.arrow(X(s.r[0]),Y(s.r[1]),X(s.r[0])+s.u[0]/sp*L,Y(s.r[1])-s.u[1]/sp*L,'#7cc4ff','v = '+nt(sp),2.5);
+    g.text('estrela',X(0),Y(0)+30,{size:11,c:'#ffd98a',align:'center'}); },
+  reads:s=>{ const r=Math.hypot(s.r[0],s.r[1]), sp=Math.hypot(s.u[0],s.u[1]); return [['Distância à estrela',nt(r)+' (raio inicial = 1)'],['Velocidade',nt(sp)+' × v circular'],['Órbita',s.esc?'aberta: o planeta escapa':Math.abs(s.p.v-1)<.01?'circular':'elíptica (a estrela fica num foco)']].concat(s.esc?[]:[['Período (cresce com a órbita)',nt(s.Tp/(2*Math.PI))+' × o da órbita circular']]); }});
+
+/* gangorra no parquinho: momento de uma força */
+SIMS.lever=(host,cfg={})=>Sim(host,{alt:'Gangorra num parquinho com duas crianças em distâncias ajustáveis',h:310,
   legend:[['vel','lado esquerdo'],['force','lado direito']],
-  ctrls:[{k:'m1',l:'Massa esquerda',min:1,max:10,step:.5,v:4,u:'kg'},{k:'d1',l:'Distância esquerda',min:.5,max:3,step:.25,v:1.5,u:'m'},{k:'m2',l:'Massa direita',min:1,max:10,step:.5,v:2,u:'kg'},{k:'d2',l:'Distância direita',min:.5,max:3,step:.25,v:3,u:'m'}],
-  draw(g,s){ const M1=s.p.m1*GRAV*s.p.d1, M2=s.p.m2*GRAV*s.p.d2, diff=M1-M2, ang=clamp(diff/40,-1,1)*.2, cx=g.W/2, cy=g.H-80, k=Math.min(70,(g.W-60)/6.4);
-    g.poly([[cx,cy],[cx-22,cy+46],[cx+22,cy+46]],COL.ink,2,COL.sunk,true); g.ground(cy+46);
-    const c=g.ctx; c.save(); c.translate(cx,cy); c.rotate(ang); g.rect(-3.2*k,-6,6.4*k,10,COL.energy,COL.ink,3,1.5);
-    for(let d=-3;d<=3;d++){ g.line(d*k,-6,d*k,4,COL.ink,1); }
-    const b=(d,m,col,sgn)=>{ const sz=16+m*2.6; g.rect(sgn*d*k-sz/2,-6-sz,sz,sz,col,COL.ink,4,1.5); g.text(nt(m)+' kg',sgn*d*k,-6-sz-6,{size:11.5,align:'center',bold:true}); };
-    b(s.p.d1,s.p.m1,COL.vel,-1); b(s.p.d2,s.p.m2,COL.force,1); c.restore();
-    g.text(Math.abs(diff)<1e-9?'equilíbrio: os momentos se anulam':diff>0?'gira para a esquerda':'gira para a direita',cx,24,{size:15,bold:true,align:'center',c:Math.abs(diff)<1e-9?COL.ok:COL.ink});
-    const bw=Math.min(160,g.W*.3); [[M1,COL.vel,20],[M2,COL.force,g.W-20-bw]].forEach(([M,col,x])=>{ g.rect(x,40,bw,12,COL.sunk,null,3); g.rect(x,40,bw*clamp(M/300,0,1),12,col,null,3); g.text('M = '+nt(M)+' N·m',x,68,{size:12,mono:true}); }); },
+  ctrls:[{k:'m1',l:'Massa esquerda',min:10,max:80,step:5,v:cfg.m1??40,u:'kg'},{k:'d1',l:'Distância esquerda',min:.5,max:3,step:.25,v:cfg.d1??1.5,u:'m'},{k:'m2',l:'Massa direita',min:10,max:80,step:5,v:cfg.m2??20,u:'kg'},{k:'d2',l:'Distância direita',min:.5,max:3,step:.25,v:cfg.d2??2.5,u:'m'}],
+  draw(g,s){ const M1=s.p.m1*GRAV*s.p.d1, M2=s.p.m2*GRAV*s.p.d2, diff=M1-M2, ang=clamp(diff/300,-1,1)*.2, cx=g.W/2, base=g.H-26, cy=base-50, k=Math.min(80,(g.W-60)/6.6);
+    SK.sky(g,base); SK.hills(g,base); SK.tree(g,40,base,70); SK.grass(g,base,g.H-base);
+    g.poly([[cx,cy],[cx-24,base],[cx+24,base]],mix(COL.force,'#000',.3),2,COL.force,true);
+    const c=g.ctx; c.save(); c.translate(cx,cy); c.rotate(ang); g.rect(-3.3*k,-7,6.6*k,11,isDark()?'#a0703f':'#c98d4f',isDark()?'#5b3d1e':'#7a5025',4,1.5);
+    for(let d=-3;d<=3;d++) g.line(d*k,-7,d*k,4,alpha('#000',.35),1);
+    const kid=(d,m,col,sgn)=>{ const h=34+m*.45; SK.person(g,sgn*d*k,-7,h,col); g.tag(nt(m)+' kg',sgn*d*k,-7-h-12,col,'center',11.5); };
+    kid(s.p.d1,s.p.m1,COL.vel,-1); kid(s.p.d2,s.p.m2,COL.force,1);
+    SK.dim(g,0,16,-s.p.d1*k,16,nt(s.p.d1)+' m',COL.vel); SK.dim(g,0,16,s.p.d2*k,16,nt(s.p.d2)+' m',COL.force); c.restore();
+    g.tag(Math.abs(diff)<1e-9?'equilíbrio: os momentos se anulam':diff>0?'gira para a esquerda':'gira para a direita',cx,22,Math.abs(diff)<1e-9?COL.ok:COL.ink,'center',14);
+    const bw=Math.min(150,g.W*.28); [[M1,COL.vel,16],[M2,COL.force,g.W-16-bw]].forEach(([M,col,x])=>{ g.rect(x,44,bw,12,COL.card,COL.line,4,1); g.rect(x,44,bw*clamp(M/2400,0,1),12,col,null,4); g.tag('M = '+nt(M)+' N·m',x+bw/2,70,col,'center',11); }); },
   reads:s=>{ const M1=s.p.m1*GRAV*s.p.d1, M2=s.p.m2*GRAV*s.p.d2; return [['Momento esquerdo m₁·g·d₁',nt(M1)+' N·m'],['Momento direito m₂·g·d₂',nt(M2)+' N·m'],['Para equilibrar, a massa direita deveria ser',nt(s.p.m1*s.p.d1/s.p.d2)+' kg'],['Força no apoio',nt((s.p.m1+s.p.m2)*GRAV)+' N']]; }});
 
-/* pressão hidrostática: Stevin */
+/* pressão hidrostática: mergulhador com um sensor */
 const LIQ=[[1000,'água'],[800,'álcool'],[13600,'mercúrio']];
-SIMS.press=(host)=>Sim(host,{alt:'Tanque com um sensor de pressão que desce na água',h:320,
-  ctrls:[{k:'rho',l:'Líquido',opts:LIQ.map(x=>[x[0],x[1]]),v:1000},{k:'h',l:'Profundidade do sensor',min:0,max:10,step:.5,v:4,u:'m',live:true},{k:'atm',l:'Somar a pressão do ar?',opts:[[1,'sim'],[0,'não']],v:1,live:true}],
-  draw(g,s){ const tw=Math.min(200,g.W*.36), x0=24, y0=30, th=g.H-60, k=th/10, ph=v=>s.p.rho*GRAV*v+(s.p.atm?1e5:0);
-    const lc=s.p.rho>5000?COL.muted:COL.vel; g.rect(x0,y0,tw,th,lc+'33',COL.ink,4); g.line(x0,y0,x0+tw,y0,lc,3);
-    for(let m=0;m<=10;m+=2){ g.line(x0+tw,y0+m*k,x0+tw+6,y0+m*k,COL.muted,1.2); g.text(m+' m',x0+tw+10,y0+m*k+4,{size:11,c:COL.muted,mono:true}); }
-    const sy=y0+s.p.h*k; g.line(x0+tw/2,y0-16,x0+tw/2,sy,COL.ink,1.5); g.circle(x0+tw/2,sy,9,COL.energy,COL.ink,2);
-    for(let a=0;a<8;a++){ const an=a/8*Math.PI*2, L=6+ph(s.p.h)/2e4; g.arrow(x0+tw/2+Math.cos(an)*(L+14),sy+Math.sin(an)*(L+14),x0+tw/2+Math.cos(an)*12,sy+Math.sin(an)*12,COL.force,null,1.5); }
-    const px=x0+tw+60, pw=g.W-px-20, pmax=ph(10)*1.05; const pts=[]; for(let v=0;v<=10;v+=.5) pts.push([v,ph(v)/1e5]);
-    const r=g.plot(px,y0,pw,th,{xr:[0,10],yr:[0,pmax/1e5],series:[{pts,c:COL.force}],xl:'profundidade (m)',yl:'pressão (×10⁵ Pa ≈ atm)'}); g.circle(r.X(s.p.h),r.Y(ph(s.p.h)/1e5),6,COL.energy,COL.ink,1.5); },
+SIMS.press=(host,cfg={})=>Sim(host,{alt:'Mergulhador descendo num lago com um sensor de pressão; gráfico da pressão pela profundidade',h:340,
+  ctrls:[{k:'rho',l:'Líquido',opts:LIQ.map(x=>[x[0],x[1]]),v:1000},{k:'h',l:'Profundidade do sensor',min:0,max:10,step:.5,v:cfg.h??4,u:'m',live:true},{k:'atm',l:'Somar a pressão do ar?',opts:[[1,'sim'],[0,'não']],v:1,live:true}],
+  draw(g,s){ const narrow=g.W<560, tw=narrow?g.W*.48:Math.min(260,g.W*.4), x0=0, y0=40, th=g.H-60, k=th/10, ph=v=>s.p.rho*GRAV*v+(s.p.atm?1e5:0);
+    SK.sky(g,y0); const base=s.p.rho>5000?'#9aa3ad':s.p.rho<900?'#9fd8c8':'#3f8fd8', wg=g.ctx.createLinearGradient(0,y0,0,y0+th); wg.addColorStop(0,mix(base,COL.paper,.35)); wg.addColorStop(1,mix(base,'#04122b',.45)); g.rect(x0,y0,tw,th,wg); g.rect(x0,y0+th,tw,g.H-y0-th,isDark()?'#4d4033':'#c9b183');
+    g.ctx.save(); g.ctx.strokeStyle='rgba(255,255,255,.6)'; g.ctx.lineWidth=2; g.ctx.beginPath(); for(let x=0;x<=tw;x+=6) g.ctx.lineTo(x0+x,y0+2*Math.sin(x/12)); g.ctx.stroke(); g.ctx.restore();
+    for(let m=0;m<=10;m+=2){ g.line(x0+tw-10,y0+m*k,x0+tw,y0+m*k,'#fff',1.4); g.text(m+' m',x0+tw-14,y0+m*k+4,{size:10.5,c:'#fff',mono:true,align:'right',bold:true}); }
+    const sx=x0+tw*.42, sy=y0+s.p.h*k; g.line(sx,y0-30,sx,sy,isDark()?'#ddd':'#333',1.5); g.rect(sx-16,y0-34,32,8,'#5b6472',null,3);
+    for(let a=0;a<12;a++){ const an=a/12*Math.PI*2, L=8+ph(s.p.h)/1.8e4; g.arrow(sx+Math.cos(an)*(L+14),sy+Math.sin(an)*(L+14),sx+Math.cos(an)*12,sy+Math.sin(an)*12,'#ff7a5c',null,1.6); }
+    SK.ball(g,sx,sy,10,COL.energy); g.tag(nt(ph(s.p.h)/1e5)+' atm',sx+22,sy-18,COL.ink,'left',12);
+    const px=x0+tw+56, pw=g.W-px-18, pmax=ph(10)*1.05; const pts=[]; for(let v=0;v<=10;v+=.5) pts.push([v,ph(v)/1e5]);
+    const r=g.plot(px,y0,pw,th,{xr:[0,10],yr:[0,pmax/1e5],series:[{pts,c:COL.force}],xl:'profundidade (m)',yl:'pressão (atm)'}); g.circle(r.X(s.p.h),r.Y(ph(s.p.h)/1e5),6,COL.energy,COL.ink,1.5); },
   reads:s=>{ const ph=s.p.rho*GRAV*s.p.h, pt=ph+(s.p.atm?1e5:0); return [['Pressão da coluna ρ·g·h',nf(ph)+' Pa'],['Pressão do ar na superfície',s.p.atm?'1,0×10<sup>5</sup> Pa':'não somada'],['Pressão total no sensor',nf(pt)+' Pa'],['Em atmosferas',nt(pt/1e5)+' atm'],['Cada 10 m de água somam','1 atm']]; }});
 
-/* empuxo: Arquimedes */
-SIMS.buoy=(host)=>Sim(host,{alt:'Bloco colocado num líquido: flutua ou afunda',anim:true,h:310,
+/* empuxo num lago: flutua ou afunda */
+SIMS.buoy=(host,cfg={})=>Sim(host,{alt:'Bloco colocado num lago: flutua ou afunda, com as setas de peso e empuxo',anim:true,h:320,
   legend:[['force','peso'],['vel','empuxo']],
-  ctrls:[{k:'rb',l:'Densidade do bloco',min:200,max:3000,step:50,v:600,u:'kg/m³'},{k:'V',l:'Volume do bloco',min:1,max:20,step:1,v:8,u:'L'},{k:'rf',l:'Líquido',opts:[[1000,'água'],[1030,'água do mar'],[800,'álcool']],v:1000}],
+  ctrls:[{k:'rb',l:'Densidade do bloco',min:200,max:3000,step:50,v:cfg.rb??600,u:'kg/m³'},{k:'V',l:'Volume do bloco',min:1,max:20,step:1,v:cfg.V??8,u:'L'},{k:'rf',l:'Líquido',opts:[[1000,'água'],[1030,'água do mar'],[800,'álcool']],v:1000}],
   init(s){ s.y=-1.4; s.v=0; },
-  eq:s=>s.p.rb<s.p.rf?s.p.rb/s.p.rf:1.2,
   step(s,dt){ const V=s.p.V/1000, side=Math.cbrt(V), sub=clamp(s.y,0,1), P=s.p.rb*V*GRAV, E=s.p.rf*V*sub*GRAV, m=s.p.rb*V; let a=(P-E)/m-2.2*s.v; if(s.y>=2.2&&a>0){ a=0; s.v=0; } s.v+=a*dt; s.y=Math.min(2.2,s.y+s.v*dt/(side*4)); if(s.t>12) s.play(false); },
   done:s=>s.t>12,
-  draw(g,s){ const V=s.p.V/1000, side=Math.cbrt(V), bs=40+side*150, tx=40, tw=Math.min(g.W*.55,340), wl=110, bot=g.H-20;
-    g.rect(tx,wl,tw,bot-wl,COL.vel+'2a',null,0); g.line(tx,wl,tx+tw,wl,COL.vel,2.5); g.poly([[tx,40],[tx,bot],[tx+tw,bot],[tx+tw,40]],COL.ink,2);
-    const top=wl-bs+s.y*bs, cx=tx+tw/2; const yb=Math.min(top,bot-bs); g.rect(cx-bs/2,yb,bs,bs,COL.energy+'dd',COL.ink,6);
+  draw(g,s){ const V=s.p.V/1000, side=Math.cbrt(V), bs=40+side*150, tw=Math.min(g.W*.58,380), wl=118, bot=g.H-18, cx=tw/2+10;
+    SK.sky(g,wl); SK.hills(g,wl); g.rect(tw+20,wl,g.W-tw-20,g.H-wl,isDark()?mix(COL.paper,COL.ok,.25):mix(COL.ok,COL.paper,.5));
+    const wg=g.ctx.createLinearGradient(0,wl,0,bot); wg.addColorStop(0,isDark()?'#1f5a8c':'#6db6ef'); wg.addColorStop(1,isDark()?'#0d2a46':'#2a6fb3'); g.rect(0,wl,tw+20,bot-wl,wg); g.rect(0,bot,tw+20,g.H-bot,isDark()?'#4d4033':'#c9b183');
+    const top=wl-bs+s.y*bs, yb=Math.min(top,bot-bs), wood=s.p.rb<1000, col=wood?(isDark()?'#a0703f':'#c98d4f'):s.p.rb>2000?'#8f99a8':'#b9a07a';
+    if(wood) SK.crate(g,cx-bs/2,yb,bs,bs); else { g.rect(cx-bs/2,yb,bs,bs,col,mix(col,'#000',.4),6,2); g.rect(cx-bs/2+6,yb+6,bs*.35,bs*.12,alpha('#ffffff',.35),null,3); }
+    g.ctx.save(); g.ctx.globalAlpha=.35; g.rect(0,Math.max(wl,yb),tw+20,Math.max(0,Math.min(bot,yb+bs)-Math.max(wl,yb)),isDark()?'#1f5a8c':'#6db6ef'); g.ctx.restore();
+    g.ctx.save(); g.ctx.strokeStyle='rgba(255,255,255,.75)'; g.ctx.lineWidth=2; g.ctx.beginPath(); for(let x=0;x<=tw+20;x+=6) g.ctx.lineTo(x,wl+2*Math.sin(x/14+s.t*2)); g.ctx.stroke(); g.ctx.restore();
     const sub=clamp((yb+bs-wl)/bs,0,1), P=s.p.rb*V*GRAV, E=s.p.rf*V*sub*GRAV, sc=v=>clamp(v*.9,0,120);
-    g.arrow(cx+10,yb+bs/2,cx+10,yb+bs/2+sc(P),COL.force,'P',3); if(E>0) g.arrow(cx-10,yb+bs/2,cx-10,yb+bs/2-sc(E),COL.vel,'E',3);
-    g.text(s.p.rb<s.p.rf?'flutua: menos denso que o líquido':s.p.rb===s.p.rf?'fica parado em qualquer altura':'afunda: mais denso que o líquido',tx+tw+20,60,{size:14,bold:true});
-    g.text('parte submersa: '+nt(sub*100,3)+'%',tx+tw+20,86,{size:13,c:COL.muted}); },
+    g.arrow(cx+14,yb+bs/2,cx+14,yb+bs/2+sc(P),COL.force,'P = '+nt(P)+' N',3); if(E>0) g.arrow(cx-14,yb+bs/2,cx-14,yb+bs/2-sc(E),COL.vel,'E = '+nt(E)+' N',3);
+    const tx=tw+30; g.tag(s.p.rb<s.p.rf?'flutua':s.p.rb===s.p.rf?'fica parado em qualquer altura':'afunda',tx+(g.W-tx)/2,40,s.p.rb<s.p.rf?COL.ok:COL.force,'center',14);
+    g.tag('submerso: '+nt(sub*100,3)+'%',tx+(g.W-tx)/2,68,COL.ink,'center',12); },
   reads:s=>{ const V=s.p.V/1000, P=s.p.rb*V*GRAV, fr=Math.min(1,s.p.rb/s.p.rf), E=s.p.rf*V*fr*GRAV; return [['Peso P = ρ<sub>bloco</sub>·V·g',nt(P)+' N'],['Empuxo máximo (todo submerso) ρ<sub>líq</sub>·V·g',nt(s.p.rf*V*GRAV)+' N'],['No equilíbrio',s.p.rb<=s.p.rf?`flutua com ${nt(fr*100,3)}% submerso (E = P = ${nt(E)} N)`:`afunda; peso aparente ${nt(P-s.p.rf*V*GRAV)} N`]]; }});
+
+/* =====================================================================
+   Laboratórios de estática, fluidos, termologia e ondas
+   ===================================================================== */
 
 /* termômetros: Celsius, Fahrenheit e Kelvin */
 SIMS.temp=(host)=>Sim(host,{alt:'Três termômetros nas escalas Celsius, Fahrenheit e Kelvin',h:320,
@@ -2159,7 +2190,7 @@ mod('flu','Estática e fluidos','equilíbrio, alavancas, pressão e empuxo',[
  <p>Para um corpo ficar em equilíbrio total, duas condições precisam valer ao mesmo tempo: a <b>força resultante é zero</b> (não translada) e o <b>momento resultante é zero</b> (não gira). Alavancas, tesouras, alicates e pés de cabra usam o braço longo para multiplicar a força.</p>`,
  pred:{q:'Numa gangorra, uma criança de 20 kg senta a 3 m do apoio. Onde deve sentar um adulto de 60 kg para equilibrar?',o:['a 1 m do apoio','a 3 m do apoio','a 9 m do apoio','em qualquer lugar do outro lado'],a:0,why:'20 × 3 = 60 × d → d = 1 m. Com o triplo da massa, o adulto precisa de um terço da distância.'},
  lab:{sim:'lever'},
- tasks:['Coloque 4 kg a 1,5 m. Onde 2 kg equilibram?','Use a leitura "para equilibrar, a massa direita deveria ser" para conferir sua conta.','Com a gangorra equilibrada, dobre as duas distâncias. Continua equilibrada?'],
+ tasks:['Coloque 40 kg a 1,5 m. Onde uma criança de 20 kg equilibra a gangorra?','Use a leitura "para equilibrar, a massa direita deveria ser" para conferir sua conta.','Com a gangorra equilibrada, dobre as duas distâncias. Continua equilibrada?'],
  f:[{f:'M = F·d',s:[['M','momento (torque)','N·m'],['F','força perpendicular à barra','N'],['d','distância ao ponto de apoio (braço)','m']]},{f:'Equilíbrio: F<sub class="up">R</sub> = 0  e  M<sub class="up">horário</sub> = M<sub class="up">anti-horário</sub>',n:'Numa gangorra: m₁·d₁ = m₂·d₂.'}],
  ex:{q:'Com um pé de cabra de 1 m, apoiado a 10 cm da ponta que está sob uma pedra, você faz 100 N na outra ponta. Qual força chega à pedra?',s:['Braço do seu lado: 1 − 0,1 = 0,9 m. Braço do lado da pedra: 0,1 m.','Momentos iguais: 100 × 0,9 = F × 0,1.','<b>F = 900 N</b>: a alavanca multiplicou sua força por 9.']},
  probs:[
@@ -2986,6 +3017,184 @@ LX.centripeta.exa={q:'Uma bola de <b>2 kg</b> gira presa a um barbante de <b>2 m
  {txt:'A velocidade muda de direção o tempo todo: há aceleração para o centro, a = v²/R = 16/2 = <b>8 m/s²</b>.',ask:{q:'Qual é a aceleração centrípeta?',a:8,u:'m/s²'},ate:1.2,tags:[['a = 8 m/s² (para o centro)','acc']]},
  {txt:'Quem produz essa aceleração é o barbante: F = m·a = 2 × 8 = <b>16 N</b>, sempre puxando para o centro.',ask:{q:'Qual é a força do barbante?',a:16,u:'N'},ate:2.4,tags:[['F = 16 N','force']]},
  {txt:'Se o barbante arrebenta, a força some. Sem força, a bola segue <b>em linha reta</b>, pela tangente: inércia.',fn:s=>{ if(!s.free){ s.def.btns[0].f(s); s.playing=false; } },ate:3.4,tags:[['sem força: linha reta','vel']]}]};
+
+/* =====================================================================
+   Jornadas de descoberta — Energia, Quantidade de movimento,
+   Gravitação, Estática e fluidos
+   ===================================================================== */
+const ymid=s=>s.def.yx(s,s.x);
+
+LX.trabalho.jor=[
+ {t:'cena',h:'A mala de rodinhas',p:`<p>Você arrasta uma caixa por uma corda. Puxando a corda bem inclinada para cima, parece que a força "rende" menos. Puxando mais deitada, a caixa vai mais fácil.</p><p>Na física, a energia que uma força transfere ao empurrar ou puxar algo ao longo de um caminho se chama <b>trabalho</b>. Vamos medir quanto trabalho a corda faz.</p>`},
+ {t:'aposta',q:'Com a mesma força de 20 N, em qual ângulo da corda a caixa recebe mais energia nos 5 m?',o:['corda na horizontal (0°)','corda a 45°','corda na vertical (90°)'],depois:'Agora meça no laboratório.'},
+ {t:'medir',sim:'work',p:'Mantenha <b>F = 20 N</b> e <b>d = 5 m</b>. Puxe a caixa até a bandeira com ângulos diferentes (por exemplo 0°, 30°, 60° e 90°) e anote o trabalho em cada um.',rec:s=>s.p.F===20&&s.p.d===5&&(s.x>=s.p.d||s.p.th===90)?[s.p.th,20*Math.cos(s.p.th*Math.PI/180)*5]:null,recMsg:'Use F = 20 N e d = 5 m e deixe a caixa chegar à bandeira (em 90° ela nem sai do lugar: pode anotar direto).',cols:['ângulo (°)','trabalho (J)'],need:4,dec:1,
+  depois:{q:'Quanto mais inclinada a corda, o trabalho…',o:['diminui: só a parte horizontal da força empurra a caixa para a frente','aumenta','não muda'],why:'Em 0° são 100 J; em 60°, metade; em 90°, nada. A parte vertical da força não ajuda a caixa a andar para a frente.'}},
+ {t:'deduz',p:'Monte a fórmula do trabalho.',linhas:[
+   {txt:'A parte da força na direção do movimento é ___',o:['F·cos θ','F·sen θ','F']},
+   {txt:'Trabalho = força na direção do movimento × deslocamento: W = ___',o:['F·d·cos θ','F·d','F/d']},
+   {txt:'Com a força perpendicular (θ = 90°), cos 90° = 0, então W = ___',o:['0','F·d','−F·d']}],fim:'W = F·d·cos θ'},
+ {t:'q',q:'Você carrega uma mochila andando num corredor plano, com velocidade constante. A força para cima que você faz para segurá-la realiza trabalho?',o:['não: ela é perpendicular ao deslocamento','sim, um trabalho grande','sim, negativo'],why:'Força para cima, movimento para a frente: θ = 90° e W = 0. Seu braço cansa por outros motivos (músculos), mas, para a física, a mochila não ganhou energia.'},
+ {t:'nota',h:'E a potência?',p:'<p>Subir uma escada correndo ou andando exige o <b>mesmo trabalho</b>: você ergue o mesmo peso até a mesma altura. O que muda é a <b>rapidez</b> com que a energia é transferida: a <b>potência</b>, P = W/Δt, medida em watts (1 W = 1 J por segundo).</p>'},
+ {t:'n',q:'Um motor ergue 200 kg a 10 m de altura em 20 s, com velocidade constante. Qual é a potência? (g = 10 m/s²)',a:1000,u:'W',why:'Força = peso = 2000 N. W = 2000 × 10 = 20 000 J. P = 20 000/20 = 1000 W, ou 1 kW.',dica:'Primeiro o trabalho (peso × altura), depois divida pelo tempo.'},
+ {t:'mundo',h:'Trabalho e potência na sua volta',itens:[['Mala de rodinhas','Puxar com a alça mais baixa deixa mais força na direção do movimento.'],['Rampa x escada','A rampa pede menos força, por uma distância maior: o trabalho para subir é o mesmo.'],['Potência do carro','1 cv ≈ 735 W. Um carro de 100 cv entrega uns 73 000 J por segundo.'],['Chuveiro','5500 W: transfere 5500 J de energia para a água a cada segundo.']]}];
+
+LX.energia.jor=[
+ {t:'cena',h:'O dobro da velocidade',p:`<p>Dois carros iguais freiam: um a 36 km/h e outro a 72 km/h. O mais rápido precisa de <b>quatro vezes</b> mais pista para parar, e não só do dobro.</p><p>É porque a energia de movimento cresce de um jeito especial com a velocidade.</p>`},
+ {t:'lab',sim:'ramp',cfg:{fric:false},p:'O skatista parte do alto da pista. Observe as barras de energia. <b>Desafio:</b> dê play e <b>pause</b> quando a energia cinética (azul) estiver no máximo. Use a câmera lenta se precisar.',goal:s=>s.t>.2&&!s.playing&&Math.abs(s.x)<1.2,ok:'No fundo da pista a energia potencial (altura) virou toda energia cinética (movimento).',dica:'A cinética é máxima onde ele passa mais rápido: no ponto mais baixo.'},
+ {t:'medir',sim:'ramp',cfg:{fric:false},p:'Solte o skatista de <b>três alturas diferentes</b>. Pause quando ele passar pelo fundo e anote a altura de partida e a energia cinética.',rec:s=>!s.playing&&s.t>.2&&Math.abs(s.x)<1.2?[s.p.h0,s.p.m*GRAV*s.p.h0]:null,recMsg:'Dê play e pause quando o skatista estiver no fundo da pista.',cols:['altura de partida (m)','energia cinética no fundo (J)'],need:3,dec:0,
+  depois:{q:'A energia cinética no fundo é…',o:['proporcional à altura: dobrando a altura, dobra a energia','proporcional ao quadrado da altura','a mesma para qualquer altura'],why:'Os pontos formam uma reta pela origem. A energia "guardada" na altura é proporcional a ela: é a energia potencial.'}},
+ {t:'deduz',p:'De onde vem a energia potencial?',linhas:[
+   {txt:'Para erguer algo de massa m sem acelerar, a força é igual ao peso: ___',o:['m·g','m','g']},
+   {txt:'O trabalho para subir uma altura h é W = ___',o:['m·g·h','m·g/h','m·h']},
+   {txt:'Esse trabalho fica guardado na altura: E<sub>p</sub> = ___',o:['m·g·h','m·v²/2','m·g']}],fim:'E<sub class="up">p</sub> = m·g·h'},
+ {t:'deduz',p:'E a energia de movimento? Imagine uma força F que acelera um corpo do repouso até a velocidade v, ao longo de uma distância d.',linhas:[
+   {txt:'O trabalho dela é W = F·d = m·a·d. Por Torricelli, v² = 2·a·d, então a·d = ___',o:['v²/2','2·v²','v/2']},
+   {txt:'Logo, W = m·a·d = ___',o:['m·v²/2','m·v','m·v²']}],fim:'E<sub class="up">c</sub> = '+frac('m·v²','2')},
+ {t:'q',q:'Volte aos carros: de 36 para 72 km/h a velocidade dobrou. A energia cinética…',o:['quadruplicou','dobrou','ficou igual'],why:'v² ficou 4 vezes maior. Os freios precisam tirar 4 vezes mais energia, e por isso a distância de freada quadruplica.'},
+ {t:'n',q:'Uma bola de 0,4 kg é chutada a 20 m/s. Qual é a energia cinética dela?',a:80,u:'J',why:'E<sub>c</sub> = 0,4 × 20²/2 = 0,4 × 400/2 = 80 J.',dica:'Eleve a velocidade ao quadrado antes de multiplicar.'},
+ {t:'mundo',h:'Energia na sua volta',itens:[['Usina hidrelétrica','A água represada no alto tem energia potencial; ao cair, ela gira as turbinas.'],['Velocidade e acidentes','A 120 km/h um carro tem quase 3 vezes a energia que tem a 70 km/h.'],['Estilingue','Esticar o elástico guarda energia elástica, que vira cinética da pedra.']]}];
+
+LX.conservacao.jor=[
+ {t:'cena',h:'A montanha-russa sem motor',p:`<p>Numa montanha-russa, o carrinho é puxado só até o alto da primeira subida. Depois, nenhum motor empurra. Mesmo assim ele percorre o trajeto todo.</p><p>E repare: <b>o primeiro morro é sempre o mais alto</b>. Por quê?</p>`},
+ {t:'aposta',q:'Sem atrito, o skatista parte do repouso a 8 m de altura. Até que altura ele sobe do outro lado?',o:['8 m','menos de 8 m','mais de 8 m']},
+ {t:'lab',sim:'ramp',cfg:{fric:false},p:'<b>Desafio:</b> solte o skatista e veja até onde ele chega do outro lado.',goal:s=>s.x>0&&ymid(s)>s.p.h0-.35,ok:'Ele chega à <b>mesma altura</b>. Sem atrito, nenhuma energia se perde: a potencial vira cinética e volta a ser potencial.',dica:'Aperte "Iniciar" e espere ele subir a rampa da direita.'},
+ {t:'q',q:'Durante todo o movimento, a barra "total" (cinética + potencial)…',o:['fica constante','aumenta na descida','diminui na subida'],why:'É a <b>conservação da energia mecânica</b>: o que uma barra perde a outra ganha.'},
+ {t:'lab',sim:'ramp',cfg:{fric:true,mu:.06},p:'Agora a pista tem atrito. <b>Desafio:</b> deixe rodar até o skatista parar de vez.',goal:s=>s.stopped,ok:'A cada ida e volta ele sobe menos, até parar no fundo. A energia não sumiu: virou <b>calor</b> (barra vermelha), por causa do atrito.',dica:'Dê play e use a velocidade normal (1×). Pode levar uns 20 segundos.'},
+ {t:'deduz',p:'Use a conservação para achar a velocidade no fundo, sem atrito.',linhas:[
+   {txt:'No alto, só potencial. No fundo, só cinética: m·g·h = ___',o:['m·v²/2','m·v','m·g']},
+   {txt:'A massa aparece dos dois lados e se cancela: v² = ___',o:['2·g·h','g·h','2·h/g']},
+   {txt:'Então v = ___',o:['√(2·g·h)','2·g·h','g·h/2']}],fim:'v = √(2·g·h)   (não depende da massa nem do formato da pista)'},
+ {t:'q',q:'Por que o primeiro morro da montanha-russa é o mais alto?',o:['porque o carrinho nunca pode subir mais alto do que a energia inicial permite, e ainda perde um pouco com o atrito','porque assim fica mais bonito','porque os morros seguintes têm motor'],why:'Toda a energia vem da altura inicial. Um morro mais alto que o primeiro pediria mais energia do que o carrinho tem.'},
+ {t:'n',q:'Um carrinho parte do repouso a 20 m de altura. Com que velocidade passa pelo ponto mais baixo (0 m)? (sem atrito, g = 10 m/s²)',a:20,u:'m/s',why:'v = √(2 × 10 × 20) = √400 = 20 m/s, cerca de 72 km/h.'},
+ {t:'mundo',h:'Conservação na sua volta',itens:[['Balanço','Sem empurrar, ele sobe sempre um pouco menos: o atrito e o ar levam energia.'],['Freio regenerativo','Carros elétricos transformam a energia cinética da freada em energia na bateria.'],['Bola quicando','Cada quique é mais baixo: parte da energia vira calor e som.']]}];
+
+LX.impulso.jor=[
+ {t:'cena',h:'Dobre os joelhos',p:`<p>Pulando de um muro, você cai dobrando os joelhos, sem pensar. Cair de pernas duras dói muito mais, embora a velocidade de chegada seja a mesma.</p><p>O que muda é o <b>tempo</b> que você leva para parar.</p>`},
+ {t:'lab',sim:'impulse',p:'Um pé chuta a bola: o gráfico mostra a força durante o contato. Dê play com os valores iniciais e veja a velocidade da bola. <b>Desafio:</b> depois, faça a bola sair com a <b>mesma velocidade</b> usando metade da força (400 N).',goal:s=>s.p.F===400&&eq(s.p.dt,.04)&&eq(s.p.m,.45)&&s.ph>1,ok:'Metade da força durante o dobro do tempo: a área do gráfico é a mesma, e a velocidade também.',dica:'Se a força cair pela metade, o que precisa acontecer com o tempo de contato para a área continuar igual?'},
+ {t:'q',q:'O que decidiu a velocidade final da bola?',o:['a área do gráfico força × tempo','só a força máxima','só o tempo de contato'],why:'Essa área se chama <b>impulso</b>. Força grande por pouco tempo ou força pequena por muito tempo podem dar o mesmo resultado.'},
+ {t:'deduz',p:'Ligue o impulso à 2ª lei de Newton.',linhas:[
+   {txt:'F = m·a, e a aceleração é a = Δv/Δt. Então F = ___',o:['m·Δv/Δt','m·Δt/Δv','Δv/(m·Δt)']},
+   {txt:'Multiplicando os dois lados por Δt: F·Δt = ___',o:['m·Δv','m·v·t','Δv']},
+   {txt:'O produto m·v se chama quantidade de movimento Q. Assim, F·Δt = ___',o:['ΔQ','Q','m']}],fim:'I = F·Δt = ΔQ      Q = m·v'},
+ {t:'q',q:'Ao cair, seu corpo precisa perder a mesma quantidade de movimento de qualquer jeito. Dobrando os joelhos, o tempo de parada aumenta. A força nas pernas…',o:['diminui','aumenta','não muda'],why:'F·Δt é fixo: se Δt cresce, F diminui. É a mesma ideia do air bag e do colchão do salto em altura.'},
+ {t:'n',q:'Uma bola de 0,5 kg chega a 10 m/s às mãos de um goleiro, que a para em 0,05 s. Qual é a força média nas mãos dele?',a:100,u:'N',why:'ΔQ = 0,5 × 10 = 5 kg·m/s. F = ΔQ/Δt = 5/0,05 = 100 N. Recuando as mãos (0,1 s), cairia para 50 N.',dica:'Primeiro a variação da quantidade de movimento, depois divida pelo tempo.'},
+ {t:'mundo',h:'Impulso na sua volta',itens:[['Air bag','Faz o corpo parar em mais tempo: a força diminui.'],['Luva de boxe','O estofado aumenta o tempo do impacto.'],['Pegar um ovo','Você recua a mão ao pegá-lo: mais tempo, menos força, ovo inteiro.']]}];
+
+LX.colisoes.jor=[
+ {t:'cena',h:'A tacada de sinuca',p:`<p>Na sinuca, a bola branca bate em cheio numa bola parada. A branca <b>para</b> e a outra sai com a velocidade que a branca tinha.</p><p>É como se a "quantidade de movimento" passasse de uma bola para a outra. Vamos ver isso acontecer.</p>`},
+ {t:'lab',sim:'coll',p:'Dois carrinhos de 2 kg; o 1 vem a 5 m/s e o 2 está parado. <b>Desafio:</b> dê play e veja a batida.',goal:s=>s.hit&&s.t>s.hitT+.3,ok:'Massas iguais, batida elástica: eles <b>trocaram de velocidade</b>, como na sinuca.',dica:'Aperte "Iniciar".'},
+ {t:'medir',sim:'coll',p:'Faça <b>três batidas diferentes</b> (mude massas, velocidades ou o coeficiente e). Depois de cada batida, anote a quantidade de movimento total antes e depois.',rec:s=>s.hit&&s.t>s.hitT+.2?[s.p.m1*s.p.v1+s.p.m2*s.p.v2,s.p.m1*s.u1+s.p.m2*s.u2]:null,recMsg:'Dê play e espere a batida acontecer.',cols:['Q total antes (kg·m/s)','Q total depois (kg·m/s)'],need:3,dec:1,
+  depois:{q:'O que você percebe em todas as batidas?',o:['a quantidade de movimento total não muda','ela sempre diminui','ela sempre dobra'],why:'Os pontos caem sobre a reta "depois = antes". É a <b>conservação da quantidade de movimento</b>.'}},
+ {t:'lab',sim:'coll',p:'<b>Desafio:</b> faça os carrinhos <b>grudarem</b> na batida.',goal:s=>s.p.e===0&&s.hit&&s.t>s.hitT+.2,ok:'Com e = 0 eles saem juntos. Q total se conservou, mas veja a barra de energia: parte dela virou deformação e calor.',dica:'O coeficiente de restituição e mede o quanto eles "quicam". Zero: grudam.'},
+ {t:'deduz',p:'Por que Q total se conserva?',linhas:[
+   {txt:'Na batida, a força no carrinho 1 e a força no 2 são ação e reação, pelo mesmo tempo. Os impulsos: I₁ = ___',o:['−I₂','I₂','0']},
+   {txt:'Como I = ΔQ, temos ΔQ₁ + ΔQ₂ = ___',o:['0','2·ΔQ₁','m·v']},
+   {txt:'Então a quantidade de movimento total antes é igual à total ___',o:['depois','dividida por 2','zero']}],fim:'m₁·v₁ + m₂·v₂ = m₁·v₁\' + m₂·v₂\''},
+ {t:'n',q:'Um vagão de 3 t a 4 m/s engata num vagão de 1 t parado, e eles seguem juntos. Qual é a velocidade do conjunto?',a:3,u:'m/s',why:'Q antes = 3000 × 4 = 12 000 kg·m/s. Juntos: 4000·v\' = 12 000 → v\' = 3 m/s.',dica:'Depois de engatar, a massa é a soma: 4 t.'},
+ {t:'q',q:'Uma espingarda dá um "coice" para trás quando atira. Por quê?',o:['a quantidade de movimento total era zero e continua zero: bala para a frente, arma para trás','a pólvora empurra a arma para trás porque explode','o ar empurra a arma'],why:'Antes do tiro, tudo parado: Q = 0. Depois, a bala leva Q para a frente e a arma ganha Q igual para trás.'},
+ {t:'mundo',h:'Colisões na sua volta',itens:[['Foguete','Joga gases para trás e ganha quantidade de movimento para a frente, até no vácuo.'],['Teste de batida','Engenheiros medem a quantidade de movimento antes e depois para entender as forças.'],['Patinação','Se você empurra um amigo parado no gelo, os dois deslizam em sentidos opostos.']]}];
+
+LX.gravitacao.jor=[
+ {t:'cena',h:'A Lua está caindo',p:`<p>Newton percebeu que a Lua está <b>caindo</b> na direção da Terra o tempo todo, puxada pela mesma gravidade que derruba uma maçã.</p><p>Só que ela também anda muito rápido para o lado. Enquanto cai, a Terra "foge" por baixo dela, e ela nunca chega. Isso é uma órbita.</p>`},
+ {t:'lab',sim:'orbit',p:'O planeta parte com uma velocidade para o lado. <b>Desafio:</b> encontre a velocidade que faz a órbita ser um <b>círculo</b> e dê play.',goal:s=>eq(s.p.v,1,.001)&&s.t>1.5,ok:'Com a velocidade certa, o planeta cai exatamente o quanto a curva exige: órbita circular.',dica:'Na escala do controle, a órbita circular é 1.'},
+ {t:'lab',sim:'orbit',cfg:{v:.8},p:'Agora a velocidade é 0,8: a órbita vira uma elipse. As áreas coloridas são varridas em <b>tempos iguais</b>. <b>Desafio:</b> deixe o planeta dar uma volta completa.',goal:s=>!s.esc&&s.t>s.Tp,ok:'Perto da estrela as fatias são curtas e largas; longe, compridas e finas. Todas têm a mesma área: é a 2ª lei de Kepler.',dica:'Aperte "Iniciar" e espere uma volta.'},
+ {t:'q',q:'Para varrer áreas iguais em tempos iguais, onde o planeta precisa andar mais rápido?',o:['perto da estrela','longe da estrela','igual em todo lugar'],why:'Perto, o "raio" da fatia é curto; para ter a mesma área, o arco percorrido precisa ser maior. Por isso a Terra é mais rápida em janeiro, quando está mais perto do Sol.'},
+ {t:'lab',sim:'orbit',p:'<b>Desafio:</b> faça o planeta <b>escapar</b> da estrela.',goal:s=>s.esc&&s.t>1,ok:'Acima de √2 ≈ 1,41 vez a velocidade circular, a gravidade não consegue mais segurá-lo: é a <b>velocidade de escape</b>.',dica:'Aumente bastante a velocidade inicial.'},
+ {t:'deduz',p:'Newton juntou tudo numa lei só.',linhas:[
+   {txt:'A força da gravidade cai com o quadrado da distância. Dobrando a distância, ela fica ___',o:['4 vezes menor','2 vezes menor','4 vezes maior']},
+   {txt:'E é proporcional às duas massas. Então F = G·___',o:['M·m/d²','(M + m)/d','M/(m·d)']}],fim:'F = G·'+frac('M·m','d²')},
+ {t:'n',q:'Se a distância entre dois corpos cair à metade, a força gravitacional entre eles fica quantas vezes maior?',a:4,u:'vezes',why:'F ∝ 1/d². Com d/2: 1/(d/2)² = 4/d². Quatro vezes maior.'},
+ {t:'mundo',h:'Gravitação na sua volta',itens:[['Marés','A Lua puxa mais o lado do oceano que está mais perto dela.'],['GPS','Os satélites estão em órbita: caindo o tempo todo, sem nunca chegar.'],['Astronautas "flutuando"','Na estação espacial a gravidade é quase 90% da nossa. Eles flutuam porque estão em queda livre junto com a nave.']]}];
+
+LX.torque.jor=[
+ {t:'cena',h:'A porta e a dobradiça',p:`<p>Tente abrir uma porta empurrando bem perto da dobradiça: é difícil. Na maçaneta, longe da dobradiça, é fácil.</p><p>Para <b>girar</b> algo, não importa só a força, mas também <b>a que distância</b> do eixo ela age.</p>`},
+ {t:'lab',sim:'lever',p:'Na gangorra, uma criança de 40 kg está a 1,5 m do apoio. Do outro lado, uma de 20 kg. <b>Desafio:</b> equilibre a gangorra mudando <b>só a distância</b> da criança da direita.',goal:s=>s.p.m1===40&&eq(s.p.d1,1.5)&&s.p.m2===20&&eq(s.p.d2,3),ok:'A criança com metade da massa precisa sentar ao <b>dobro da distância</b>: 3 m.',dica:'Com metade do peso, ela precisa de mais "alavanca".'},
+ {t:'medir',sim:'lever',p:'Equilibre a gangorra de <b>três jeitos diferentes</b> (mude massas e distâncias). Quando aparecer "equilíbrio", anote.',rec:s=>Math.abs(s.p.m1*s.p.d1-s.p.m2*s.p.d2)<1e-9?[s.p.m1*s.p.d1,s.p.m2*s.p.d2]:null,recMsg:'Primeiro equilibre a gangorra: a mensagem no alto precisa dizer "equilíbrio".',key:s=>[s.p.m1,s.p.d1,s.p.m2,s.p.d2],cols:['massa × distância à esquerda','massa × distância à direita'],need:3,dec:2,
+  depois:{q:'Sempre que a gangorra equilibrou…',o:['massa × distância foi igual dos dois lados','as massas eram iguais','as distâncias eram iguais'],why:'O que conta é o produto. Peso × distância ao eixo é o <b>momento</b> (ou torque).'}},
+ {t:'deduz',p:'Monte a regra do equilíbrio.',linhas:[
+   {txt:'O "poder de girar" de uma força é ela vezes a distância ao eixo: M = ___',o:['F·d','F/d','F + d']},
+   {txt:'Para não girar, o momento de um lado é igual ao do ___',o:['outro lado','apoio','chão']}],fim:'M = F·d      equilíbrio: F₁·d₁ = F₂·d₂'},
+ {t:'n',q:'Com um pé de cabra de 1 m, apoiado a 10 cm da ponta que está sob uma pedra, você faz 100 N na outra ponta. Qual força chega à pedra?',a:900,u:'N',why:'Seu braço: 0,9 m. O da pedra: 0,1 m. 100 × 0,9 = F × 0,1 → F = 900 N. A alavanca multiplicou sua força por 9.',dica:'Iguale os momentos dos dois lados do apoio.'},
+ {t:'q',q:'Por que a maçaneta fica do lado oposto à dobradiça?',o:['quanto maior a distância ao eixo, menos força é preciso para o mesmo momento','para a porta ficar mais leve','porque é mais bonito'],why:'Mesma necessidade de momento, distância maior: força menor.'},
+ {t:'mundo',h:'Alavancas na sua volta',itens:[['Chave de roda','Um cabo mais comprido solta parafusos apertados com menos força.'],['Tesoura','Cortar perto do eixo é mais fácil: lá a força das lâminas é maior.'],['Carrinho de mão','O peso fica perto da roda (eixo) e você levanta longe dela.']]}];
+
+LX.pressao.jor=[
+ {t:'cena',h:'O ouvido no fundo da piscina',p:`<p>No fundo de uma piscina funda, o ouvido dói. A água acima de você está empurrando.</p><p>Um mergulhador a 10 m de profundidade sente o <b>dobro</b> da pressão que sente na superfície. De onde vem isso?</p>`},
+ {t:'lab',sim:'press',p:'Um sensor desce no lago. <b>Desafio:</b> leve o sensor a <b>10 m</b> de profundidade na água, somando a pressão do ar.',goal:s=>s.p.rho===1000&&eq(s.p.h,10)&&s.p.atm===1,ok:'2 atm: 1 atm do ar sobre o lago e mais 1 atm dos 10 m de água.',dica:'Arraste o controle de profundidade até o fim.'},
+ {t:'medir',sim:'press',cfg:{h:2},p:'Agora coloque "Somar a pressão do ar?" em <b>não</b>, para ver só a parte da água. Anote a pressão em <b>quatro profundidades</b>.',rec:s=>s.p.atm===0&&s.p.rho===1000?[s.p.h,s.p.rho*GRAV*s.p.h/1000]:null,recMsg:'Use água e escolha "não" em "Somar a pressão do ar?".',cols:['profundidade (m)','pressão da água (kPa)'],need:4,dec:1,
+  depois:{q:'A pressão da água…',o:['cresce em proporção à profundidade','cresce com o quadrado da profundidade','é a mesma em qualquer profundidade'],why:'Reta pela origem: a cada metro, mais 10 kPa. É o peso da coluna de água acima do sensor.'}},
+ {t:'deduz',p:'Calcule o peso da coluna de água em cima do sensor, numa área A.',linhas:[
+   {txt:'A coluna tem área A e altura h. Volume: ___',o:['A·h','A/h','h']},
+   {txt:'Massa: ρ·A·h. Peso: ___',o:['ρ·A·h·g','ρ·g','A·h']},
+   {txt:'Pressão = peso ÷ área = ___',o:['ρ·g·h','ρ·A·g','g·h/A']}],fim:'p = p<sub class="up">atm</sub> + ρ·g·h'},
+ {t:'q',q:'Dois mergulhadores estão a 10 m: um no mar aberto, outro numa piscina estreita. Quem sente mais pressão?',o:['os dois sentem a mesma','o do mar, porque há mais água','o da piscina, porque a água está apertada'],why:'A fórmula não tem a largura nem a quantidade total de água: só a profundidade (e o líquido).'},
+ {t:'n',q:'Qual é a pressão só da água (sem contar o ar) a 30 m de profundidade, em atmosferas? (1 atm ≈ 10⁵ Pa; g = 10 m/s²)',a:3,u:'atm',why:'ρ·g·h = 1000 × 10 × 30 = 300 000 Pa = 3 atm. Com o ar, o mergulhador sente 4 atm.'},
+ {t:'mundo',h:'Pressão na sua volta',itens:[['Caixa-d\'água no alto','Quanto mais alta, maior a coluna de água e mais forte o chuveiro.'],['Barragem','É mais grossa embaixo, onde a pressão da água é maior.'],['Macaco hidráulico','A pressão se transmite pelo óleo: área 50 vezes maior, força 50 vezes maior.']]}];
+
+LX.empuxo.jor=[
+ {t:'cena',h:'O navio de aço',p:`<p>Um navio de aço com milhares de toneladas flutua. Um prego de aço afunda.</p><p>Arquimedes descobriu o segredo há mais de 2000 anos: todo líquido empurra para cima o que está dentro dele. Esse empurrão é o <b>empuxo</b>.</p>`},
+ {t:'lab',sim:'buoy',p:'Um bloco de madeira (600 kg/m³) vai ser colocado na água (1000 kg/m³). <b>Desafio:</b> dê play e espere ele parar.',goal:s=>s.p.rb===600&&s.p.rf===1000&&s.t>3,ok:'Flutua com <b>60%</b> do volume submerso. O empuxo (seta azul) ficou igual ao peso (seta vermelha).',dica:'Aperte "Iniciar" e espere uns segundos.'},
+ {t:'medir',sim:'buoy',p:'Teste <b>três densidades menores que 1000</b> na água. Depois que o bloco parar, anote a densidade e a porcentagem submersa.',rec:s=>s.t>4&&s.p.rb<s.p.rf&&s.p.rf===1000?[s.p.rb,s.p.rb/s.p.rf*100]:null,recMsg:'Use água, uma densidade menor que 1000, dê play e espere uns 4 segundos.',cols:['densidade do bloco (kg/m³)','parte submersa (%)'],need:3,dec:1,
+  depois:{q:'A porcentagem submersa é…',o:['a densidade do bloco dividida pela da água','sempre metade','maior para blocos menos densos'],why:'Um bloco de 300 kg/m³ fica 30% submerso; um de 900, 90%. É por isso que só a "ponta do iceberg" aparece: o gelo tem 920 kg/m³.'}},
+ {t:'lab',sim:'buoy',p:'<b>Desafio:</b> faça o bloco <b>afundar</b>.',goal:s=>s.p.rb>s.p.rf&&s.t>2,ok:'Mais denso que o líquido: mesmo todo submerso, o empuxo não alcança o peso.',dica:'Aumente a densidade do bloco além da densidade do líquido.'},
+ {t:'deduz',p:'De onde vem o tamanho do empuxo?',linhas:[
+   {txt:'O corpo empurra para fora um volume de líquido igual ao volume submerso. A massa desse líquido é ___',o:['ρ<sub>líquido</sub>·V<sub>sub</sub>','ρ<sub>corpo</sub>·V','V<sub>sub</sub>/ρ']},
+   {txt:'O empuxo é o peso desse líquido deslocado: E = ___',o:['ρ<sub>líquido</sub>·V<sub>sub</sub>·g','ρ<sub>líquido</sub>·g','m·g']}],fim:'E = ρ<sub class="up">líquido</sub>·V<sub class="up">sub</sub>·g'},
+ {t:'q',q:'Então como o navio de aço flutua?',o:['o casco oco desloca muita água: a densidade média do navio (aço + ar) é menor que a da água','o aço de navio é mais leve','o motor o mantém em cima'],why:'Um prego maciço desloca pouca água. O navio, com o mesmo aço espalhado num casco cheio de ar, desloca água suficiente para um empuxo igual ao seu peso.'},
+ {t:'n',q:'Um objeto de 3 L é totalmente mergulhado em água. Qual é o empuxo? (1 L = 0,001 m³; g = 10 m/s²)',a:30,u:'N',why:'E = 1000 × 0,003 × 10 = 30 N: o peso de 3 kg de água.'},
+ {t:'mundo',h:'Empuxo na sua volta',itens:[['Colete salva-vidas','Aumenta seu volume com pouco peso: mais empuxo.'],['Submarino','Enche ou esvazia tanques de água para afundar ou subir.'],['Balão de ar quente','O ar também dá empuxo: o ar quente, menos denso, sobe.'],['Mar Morto','A água muito salgada é mais densa: você boia sem esforço.']]}];
+
+/* =====================================================================
+   Exemplos animados — Energia, Quantidade de movimento, Gravitação,
+   Estática e fluidos
+   ===================================================================== */
+LX.trabalho.exa={q:'Você puxa uma caixa de 2 kg por <b>5 m</b> com uma corda que faz <b>60°</b> com o chão, aplicando <b>20 N</b>. Quanto trabalho a corda realiza? Sem atrito, quanto tempo leva e qual a potência média?',sim:'work',set:{F:20,th:60,d:5},tx:.36,ty:22,passos:[
+ {txt:'Só a parte horizontal da força puxa a caixa para a frente: Fₓ = 20 × cos 60° = 20 × 0,5 = <b>10 N</b>.',ask:{q:'Quanto vale Fₓ = F·cos 60°?',a:10,u:'N'},tags:[['Fₓ = 10 N','vel']]},
+ {txt:'Trabalho: W = Fₓ·d = 10 × 5 = <b>50 J</b>. Veja a barra de energia encher até a bandeira.',ask:{q:'Qual é o trabalho?',a:50,u:'J'},ate:s=>s.x>=s.p.d,tags:[['W = 50 J','energy']]},
+ {txt:'A caixa acelera com a = 10/2 = 5 m/s² e cobre os 5 m em t = √(2 × 5/5) ≈ <b>1,41 s</b>.',tags:[['t ≈ 1,41 s','ink']]},
+ {txt:'Potência média: P = W/Δt = 50/1,41 ≈ <b>35 W</b>.',ask:{q:'Qual é a potência média?',a:35.4,u:'W',tol:.04},tags:[['P ≈ 35 W','force']]}]};
+
+LX.energia.exa={q:'Um skatista de <b>60 kg</b> parte do repouso a <b>5 m</b> de altura numa pista sem atrito. Qual é a energia potencial dele no alto? Com que velocidade passa pelo fundo? (g = 10 m/s²)',sim:'ramp',cfg:{fric:false,h0:5},set:{h0:5,m:60},tx:.34,ty:22,passos:[
+ {txt:'No alto, parado, toda a energia é potencial: E<sub>p</sub> = m·g·h = 60 × 10 × 5 = <b>3000 J</b>.',ask:{q:'Qual é a energia potencial no alto?',a:3000,u:'J'},tags:[['Ep = 3000 J','acc']]},
+ {txt:'No fundo, a altura é zero: os 3000 J viraram energia cinética. Veja as barras trocarem.',ate:s=>s.x>=0,tags:[['no fundo: Ec = 3000 J','vel']]},
+ {txt:'m·v²/2 = 3000 → 60·v²/2 = 3000 → v² = 100 → <b>v = 10 m/s</b> (36 km/h).',ask:{q:'Qual é a velocidade no fundo?',a:10,u:'m/s'},tags:[['v = 10 m/s','vel']]}]};
+
+LX.conservacao.exa={q:'Um skatista parte do repouso a <b>8 m</b> de altura numa pista sem atrito. Qual é a velocidade dele quando passa a <b>3 m</b> de altura? (g = 10 m/s²)',sim:'ramp',cfg:{fric:false,h0:8},set:{h0:8},tx:.34,ty:22,passos:[
+ {txt:'De 8 m para 3 m, ele desceu <b>5 m</b>. Só essa parte da energia potencial virou cinética.',ask:{q:'Quantos metros ele desceu?',a:5,u:'m'},ate:s=>s.x<0&&s.def.yx(s,s.x)<=3,tags:[['altura 3 m: desceu 5 m','acc']]},
+ {txt:'Conservação: m·g·5 = m·v²/2. A massa se cancela: v² = 2 × 10 × 5 = 100.',tags:[['m·g·Δh = m·v²/2','ink']]},
+ {txt:'<b>v = 10 m/s</b>, qualquer que seja a massa e o formato da pista.',ask:{q:'Qual é a velocidade a 3 m de altura?',a:10,u:'m/s'},tags:[['v = 10 m/s','vel']]},
+ {txt:'E do outro lado? Sem atrito, ele sobe até os mesmos 8 m e para por um instante.',ate:s=>s.x>0&&s.v<=0,tags:[['volta aos 8 m','ok']]}]};
+
+LX.impulso.exa={q:'Um pé chuta uma bola de <b>0,45 kg</b>. A força sobe até <b>800 N</b> e volta a zero em <b>20 ms</b> (gráfico triangular). Com que velocidade a bola sai?',sim:'impulse',set:{F:800,dt:.02,m:.45},tx:.3,ty:84,passos:[
+ {txt:'O impulso é a área do triângulo: base × altura ÷ 2 = 0,02 × 800 / 2 = <b>8 N·s</b>.',ask:{q:'Quanto vale o impulso?',a:8,u:'N·s'},ate:1,tags:[['I = 8 N·s','energy']]},
+ {txt:'O impulso vira quantidade de movimento: Q = 8 kg·m/s, e a bola partiu do repouso.'},
+ {txt:'v = Q/m = 8/0,45 ≈ <b>17,8 m/s</b>, uns 64 km/h.',ask:{q:'Com que velocidade a bola sai?',a:17.8,u:'m/s',tol:.03},ate:2.2,tags:[['v ≈ 17,8 m/s','vel']]}]};
+
+LX.colisoes.exa={q:'Um carrinho de <b>3 kg</b> a <b>4 m/s</b> bate num carrinho de <b>1 kg</b> parado, e eles saem grudados. Qual é a velocidade do conjunto? Quanta energia se perde?',sim:'coll',set:{m1:3,v1:4,m2:1,v2:0,e:0},ty:22,passos:[
+ {txt:'Antes: Q = 3 × 4 + 1 × 0 = <b>12 kg·m/s</b>.',ask:{q:'Qual é a quantidade de movimento total antes?',a:12,u:'kg·m/s'},tags:[['Q antes = 12 kg·m/s','acc']]},
+ {txt:'Depois, juntos: (3 + 1)·v\' = 12 → <b>v\' = 3 m/s</b>. Veja a batida.',ask:{q:'Com que velocidade saem juntos?',a:3,u:'m/s'},ate:s=>s.hit&&s.t>s.hitT+.8,tags:[['juntos a 3 m/s','acc']]},
+ {txt:'Energia cinética antes: 3 × 4²/2 = 24 J. Depois: 4 × 3²/2 = 18 J. <b>6 J</b> viraram deformação e calor.',ask:{q:'Quantos joules se perderam?',a:6,u:'J'},tags:[['24 J → 18 J','energy']]}]};
+
+LX.gravitacao.exa={q:'Um planeta parte com 0,8 vez a velocidade de órbita circular e descreve uma elipse. No ponto mais distante ele está <b>2,1 vezes</b> mais longe da estrela do que no mais próximo. Onde ele é mais rápido, e quantas vezes?',sim:'orbit',cfg:{v:.8},set:{v:.8,ar:1},ty:22,passos:[
+ {txt:'Ele parte do ponto mais distante, devagar. A gravidade o puxa para dentro e ele vai acelerando.',ate:1.2,tags:[['longe: mais devagar','vel']]},
+ {txt:'Pela 2ª lei de Kepler (áreas iguais em tempos iguais), no ponto mais próximo ele precisa ser mais rápido. Veja ele passar perto da estrela.',ate:s=>s.r[0]<0&&s.u[0]>=0,tags:[['perto: mais rápido','force']]},
+ {txt:'Nos dois extremos, distância × velocidade é igual. Se a distância ficou 2,1 vezes menor, a velocidade ficou <b>2,1 vezes maior</b>.',ask:{q:'Quantas vezes mais rápido ele passa no ponto mais próximo?',a:2.1,u:'vezes',tol:.03},tags:[['2,1 vezes mais rápido','force']]}]};
+
+LX.torque.exa={q:'Uma criança de <b>20 kg</b> senta a <b>3 m</b> do apoio da gangorra. Onde deve sentar o pai, de <b>60 kg</b>, para equilibrar?',sim:'lever',set:{m1:20,d1:3,m2:60,d2:3},ty:96,passos:[
+ {txt:'Com o pai também a 3 m, a gangorra despenca para o lado dele: o momento dele é 3 vezes maior.',tags:[['60 × 3 > 20 × 3','force']]},
+ {txt:'Equilíbrio: momentos iguais. 20 × 3 = 60 × d.',tags:[['m₁·d₁ = m₂·d₂','ink']]},
+ {txt:'<b>d = 1 m</b>. Com o triplo da massa, o pai precisa de um terço da distância.',ask:{q:'A que distância do apoio o pai deve sentar?',a:1,u:'m'},set:{d2:1},tags:[['equilibrou com d = 1 m','ok']]}]};
+
+LX.pressao.exa={q:'A que profundidade de um lago a pressão total chega a <b>1,8 atm</b>? (1 atm ≈ 10⁵ Pa; água: 1000 kg/m³; g = 10 m/s²)',sim:'press',set:{rho:1000,h:0,atm:1},tx:.72,ty:22,passos:[
+ {txt:'Na superfície já existe a pressão do ar: <b>1 atm</b>.',set:{h:0},tags:[['superfície: 1 atm','ink']]},
+ {txt:'Cada 10 m de água somam ρ·g·h = 1000 × 10 × 10 = 10⁵ Pa: mais <b>1 atm</b>.',ask:{q:'Quantas atmosferas 10 m de água acrescentam?',a:1,u:'atm'},set:{h:10},tags:[['10 m: 2 atm','force']]},
+ {txt:'Faltam 0,8 atm além da superfície. Se 10 m dão 1 atm, 0,8 atm pede <b>8 m</b>.',ask:{q:'Qual é a profundidade?',a:8,u:'m'},set:{h:8},tags:[['8 m: 1,8 atm','ok']]}]};
+
+LX.empuxo.exa={q:'Um bloco de gelo de <b>10 L</b> (densidade 920 kg/m³) flutua no mar (1030 kg/m³). Que volume fica embaixo da água? (g = 10 m/s²)',sim:'buoy',set:{rb:920,V:10,rf:1030},tx:.3,ty:22,passos:[
+ {txt:'Peso do gelo: P = 920 × 0,010 × 10 = <b>92 N</b>.',ask:{q:'Qual é o peso do bloco?',a:92,u:'N'},tags:[['P = 92 N','force']]},
+ {txt:'Flutuando parado, o empuxo equilibra o peso: E = 92 N. Veja o bloco se acomodar.',ate:6,tags:[['E = P = 92 N','vel']]},
+ {txt:'E = ρ<sub>mar</sub>·V<sub>sub</sub>·g → 92 = 1030 × V<sub>sub</sub> × 10 → V<sub>sub</sub> ≈ 0,0089 m³ = <b>8,9 L</b>.',ask:{q:'Quantos litros ficam submersos?',a:8.93,u:'L',tol:.03},tags:[['submerso ≈ 8,9 L (89%)','vel']]},
+ {txt:'Só 11% do gelo fica de fora: é a famosa "ponta do iceberg".'}]};
 
 if(document.body) boot(); else addEventListener('DOMContentLoaded',boot);
 </script>
