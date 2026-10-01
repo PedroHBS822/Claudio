@@ -8,7 +8,7 @@
    ===================================================================== */
 function ExPlayer(host,l,onDone){
   const E=l.exa; let k=-1, s=null, answered={}, tick=0;
-  host.innerHTML=`<div class="exa"><div class="exq"><p class="jtag">Problema</p><div>${E.q}</div></div><div class="exlab locked" id="exlab"></div>
+  host.innerHTML=`<div class="exa"><div class="exq"><p class="jtag">Problema</p><div>${E.q}</div></div><div class="exlab locked${E.noReads?' noreads':''}" id="exlab"></div>
     <div class="expanel"><ol class="exsteps"></ol><div class="exask" aria-live="polite"></div>
     <div class="exctl"><button class="btn ghost" type="button" data-x="prev" disabled>← Voltar</button><button class="btn ghost" type="button" data-x="replay" disabled>↺ Ver de novo</button><button class="btn" type="button" data-x="next">Começar ▶</button></div></div></div>`;
   s=SIMS[E.sim]($('#exlab',host),E.cfg||{}); SIMNOW.push(s);
