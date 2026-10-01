@@ -81,9 +81,10 @@ SIMS.proj=(host,cfg)=>{ const hero=!!cfg.hero; const angs=[30,45,60];
     const c=hero?cols[s.k%3]:COL.ink; g.ctx.save(); g.ctx.setLineDash([3,5]); g.poly(s.tr.map(P),hero?c:alpha(COL.ink,.6),2); g.ctx.restore();
     if(!hero){ let nt0=0; s.tr.forEach(p=>{ if(p[2]>=nt0-1e-9){ nt0+=.25; const [px,py]=P(p); g.ctx.save(); g.ctx.globalAlpha=.3; SK.ball(g,px,py,6,COL.force); g.ctx.restore(); } }); }
     if(!hero&&s.top){ const [tx,ty]=P(s.top); g.line(tx,ty,tx,base,COL.energy,1.2,[4,4]); g.tag('altura máx. '+nt(s.top[1])+' m',tx,ty-18,COL.energy,'center',11.5); }
+    const landed=!hero&&s.tr.length>2&&s.t>=2*s.p.v0*Math.sin(s.p.th*Math.PI/180)/g0-1e-6;
     const [px,py]=[x0+s.x*k,base-Math.max(0,s.y)*k]; SK.ball(g,px,py,7.5,hero?c:COL.force,s.t*6);
-    if(!hero&&s.tr.length){ const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th)-g0*Math.min(s.t,2*s.p.v0*Math.sin(th)/g0), sc=2.2; if(s.y>0||s.tr.length<3){ g.arrow(px,py,px+vx*sc,py,COL.vel,'vₓ',2.5); if(Math.abs(vy)>.5) g.arrow(px,py,px,py-vy*sc,COL.acc,'v_y',2.5); } }
-    if(!hero&&s.tr.length>2&&s.y<=0) SK.dim(g,x0,base-12,px,base-12,'alcance '+nt(s.x)+' m',COL.ink);
+    if(!hero&&s.tr.length){ const th=s.p.th*Math.PI/180, vx=s.p.v0*Math.cos(th), vy=s.p.v0*Math.sin(th)-g0*Math.min(s.t,2*s.p.v0*Math.sin(th)/g0), sc=2.2; if(!landed){ g.arrow(px,py,px+vx*sc,py,COL.vel,'vₓ',2.5); if(Math.abs(vy)>.5) g.arrow(px,py,px,py-vy*sc,COL.acc,'v_y',2.5); } }
+    if(landed) SK.dim(g,x0,base-12,px,base-12,'alcance '+nt(s.x)+' m',COL.ink);
     if(hero) g.tag('30° e 60° caem no mesmo lugar',W/2,18,COL.ink,'center',13); },
   reads:s=>{ if(hero) return [['Velocidade de lançamento','18 m/s'],['Ângulo atual',s.p.th+'°'],['Alcance',nt(s.p.v0**2*Math.sin(2*s.p.th*Math.PI/180)/s.p.g)+' m']];
     const th=s.p.th*Math.PI/180,v=s.p.v0,g0=s.p.g; return [['vₓ = v₀·cos θ',nt(v*Math.cos(th))+' m/s'],['v<sub>y</sub> inicial = v₀·sen θ',nt(v*Math.sin(th))+' m/s'],['Tempo de voo',nt(2*v*Math.sin(th)/g0)+' s'],['Altura máxima',nt((v*Math.sin(th))**2/(2*g0))+' m'],['Alcance',nt(v*v*Math.sin(2*th)/g0)+' m']]; }}); };
